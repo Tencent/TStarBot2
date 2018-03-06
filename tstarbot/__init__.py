@@ -1,0 +1,1 @@
+from tstarbot.zerg_bot import ZergBot
