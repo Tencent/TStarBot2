@@ -73,7 +73,6 @@ class DemoManager(ts.ManagerBase):
 class DemoBot:
   """A random agent for starcraft."""
   def __init__(self, env):
-    super(DemoBot, self).__init__()
     self._pools = []
     self._managers = []
     self._env = env
