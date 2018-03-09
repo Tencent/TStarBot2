@@ -1,0 +1,12911 @@
+unit_number= 1885
+unit_id: 0
+name: ""
+available: false
+
+unit_id: 1
+name: "System_Snapshot_Dummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 2
+name: "Ball"
+available: true
+attributes: Biological
+movement_speed: 6.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 3
+name: "StereoscopicOptionsUnit"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 4
+name: "Colossus"
+available: true
+cargo_size: 8
+attributes: Armored
+attributes: Mechanical
+attributes: Massive
+movement_speed: 2.25
+armor: 1.0
+weapons {
+  type: Ground
+  damage: 12.0
+  attacks: 2
+  range: 6.0
+  speed: 1.5
+}
+mineral_cost: 300
+vespene_cost: 200
+
+unit_id: 5
+name: "TechLab"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 50
+vespene_cost: 25
+
+unit_id: 6
+name: "Reactor"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 50
+vespene_cost: 50
+
+unit_id: 7
+name: "InfestorTerran"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 0.9375
+armor: 0.0
+weapons {
+  type: Any
+  damage: 8.0
+  attacks: 1
+  range: 5.0
+  speed: 0.86083984375
+}
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 8
+name: "BanelingCocoon"
+available: true
+attributes: Biological
+movement_speed: 2.5
+armor: 2.0
+mineral_cost: 50
+vespene_cost: 25
+
+unit_id: 9
+name: "Baneling"
+available: true
+cargo_size: 2
+attributes: Biological
+movement_speed: 2.5
+armor: 0.0
+mineral_cost: 50
+vespene_cost: 25
+
+unit_id: 10
+name: "Mothership"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Psionic
+attributes: Massive
+movement_speed: 1.875
+armor: 2.0
+weapons {
+  type: Any
+  damage: 6.0
+  attacks: 6
+  range: 7.0
+  speed: 2.2099609375
+}
+mineral_cost: 400
+vespene_cost: 400
+
+unit_id: 11
+name: "PointDefenseDrone"
+available: true
+attributes: Light
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 100
+vespene_cost: 0
+
+unit_id: 12
+name: "Changeling"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 2.25
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 13
+name: "ChangelingZealot"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 2.25
+armor: 1.0
+weapons {
+  type: Ground
+  damage: 8.0
+  attacks: 2
+  range: 0.10009765625
+  speed: 1.199951171875
+}
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 14
+name: "ChangelingMarineShield"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 2.25
+armor: 0.0
+weapons {
+  type: Any
+  damage: 6.0
+  attacks: 1
+  range: 5.0
+  speed: 0.86083984375
+}
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 15
+name: "ChangelingMarine"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 2.25
+armor: 0.0
+weapons {
+  type: Any
+  damage: 6.0
+  attacks: 1
+  range: 5.0
+  speed: 0.86083984375
+}
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 16
+name: "ChangelingZerglingWings"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 2.953125
+armor: 0.0
+weapons {
+  type: Ground
+  damage: 5.0
+  attacks: 1
+  range: 0.10009765625
+  speed: 0.696044921875
+}
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 17
+name: "ChangelingZergling"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 2.953125
+armor: 0.0
+weapons {
+  type: Ground
+  damage: 5.0
+  attacks: 1
+  range: 0.10009765625
+  speed: 0.696044921875
+}
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 18
+name: "CommandCenter"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 400
+vespene_cost: 0
+
+unit_id: 19
+name: "SupplyDepot"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 100
+vespene_cost: 0
+
+unit_id: 20
+name: "Refinery"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 75
+vespene_cost: 0
+
+unit_id: 21
+name: "Barracks"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 0
+
+unit_id: 22
+name: "EngineeringBay"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 125
+vespene_cost: 0
+
+unit_id: 23
+name: "MissileTurret"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+weapons {
+  type: Air
+  damage: 12.0
+  attacks: 2
+  range: 7.0
+  speed: 0.86083984375
+}
+mineral_cost: 100
+vespene_cost: 0
+
+unit_id: 24
+name: "Bunker"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 100
+vespene_cost: 0
+
+unit_id: 25
+name: "SensorTower"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 125
+vespene_cost: 100
+
+unit_id: 26
+name: "GhostAcademy"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 50
+
+unit_id: 27
+name: "Factory"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 100
+
+unit_id: 28
+name: "Starport"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 100
+
+unit_id: 29
+name: "Armory"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 100
+
+unit_id: 30
+name: "FusionCore"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 150
+
+unit_id: 31
+name: "AutoTurret"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+weapons {
+  type: Any
+  damage: 18.0
+  attacks: 1
+  range: 6.0
+  speed: 0.800048828125
+}
+mineral_cost: 100
+vespene_cost: 0
+
+unit_id: 32
+name: "SiegeTankSieged"
+available: true
+attributes: Armored
+attributes: Mechanical
+movement_speed: 0.0
+armor: 1.0
+weapons {
+  type: Ground
+  damage: 40.0
+  damage_bonus {
+    attribute: Armored
+    bonus: 30.0
+  }
+  attacks: 1
+  range: 13.0
+  speed: 3.0
+}
+mineral_cost: 150
+vespene_cost: 125
+
+unit_id: 33
+name: "SiegeTank"
+available: true
+cargo_size: 4
+attributes: Armored
+attributes: Mechanical
+movement_speed: 2.25
+armor: 1.0
+weapons {
+  type: Ground
+  damage: 15.0
+  damage_bonus {
+    attribute: Armored
+    bonus: 10.0
+  }
+  attacks: 1
+  range: 7.0
+  speed: 1.0400390625
+}
+mineral_cost: 150
+vespene_cost: 125
+
+unit_id: 34
+name: "VikingAssault"
+available: true
+cargo_size: 2
+attributes: Armored
+attributes: Mechanical
+movement_speed: 2.25
+armor: 0.0
+weapons {
+  type: Ground
+  damage: 12.0
+  damage_bonus {
+    attribute: Mechanical
+    bonus: 8.0
+  }
+  attacks: 1
+  range: 6.0
+  speed: 1.0
+}
+mineral_cost: 150
+vespene_cost: 75
+
+unit_id: 35
+name: "VikingFighter"
+available: true
+attributes: Armored
+attributes: Mechanical
+movement_speed: 2.75
+armor: 0.0
+weapons {
+  type: Air
+  damage: 10.0
+  damage_bonus {
+    attribute: Armored
+    bonus: 4.0
+  }
+  attacks: 2
+  range: 9.0
+  speed: 2.0
+}
+mineral_cost: 150
+vespene_cost: 75
+
+unit_id: 36
+name: "CommandCenterFlying"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.9375
+armor: 1.0
+mineral_cost: 400
+vespene_cost: 0
+
+unit_id: 37
+name: "BarracksTechLab"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 50
+vespene_cost: 25
+
+unit_id: 38
+name: "BarracksReactor"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 50
+vespene_cost: 50
+
+unit_id: 39
+name: "FactoryTechLab"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 50
+vespene_cost: 25
+
+unit_id: 40
+name: "FactoryReactor"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 50
+vespene_cost: 50
+
+unit_id: 41
+name: "StarportTechLab"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 50
+vespene_cost: 25
+
+unit_id: 42
+name: "StarportReactor"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 50
+vespene_cost: 50
+
+unit_id: 43
+name: "FactoryFlying"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.9375
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 100
+
+unit_id: 44
+name: "StarportFlying"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.9375
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 100
+
+unit_id: 45
+name: "SCV"
+available: true
+cargo_size: 1
+attributes: Light
+attributes: Biological
+attributes: Mechanical
+movement_speed: 2.8125
+armor: 0.0
+weapons {
+  type: Ground
+  damage: 5.0
+  attacks: 1
+  range: 0.10009765625
+  speed: 1.5
+}
+mineral_cost: 50
+vespene_cost: 0
+
+unit_id: 46
+name: "BarracksFlying"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.9375
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 0
+
+unit_id: 47
+name: "SupplyDepotLowered"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 100
+vespene_cost: 0
+
+unit_id: 48
+name: "Marine"
+available: true
+cargo_size: 1
+attributes: Light
+attributes: Biological
+movement_speed: 2.25
+armor: 0.0
+weapons {
+  type: Any
+  damage: 6.0
+  attacks: 1
+  range: 5.0
+  speed: 0.86083984375
+}
+mineral_cost: 50
+vespene_cost: 0
+
+unit_id: 49
+name: "Reaper"
+available: true
+cargo_size: 1
+attributes: Light
+attributes: Biological
+movement_speed: 3.75
+armor: 0.0
+weapons {
+  type: Ground
+  damage: 4.0
+  attacks: 2
+  range: 5.0
+  speed: 1.10009765625
+}
+mineral_cost: 50
+vespene_cost: 50
+
+unit_id: 50
+name: "Ghost"
+available: true
+cargo_size: 2
+attributes: Biological
+attributes: Psionic
+movement_speed: 2.8125
+armor: 0.0
+weapons {
+  type: Any
+  damage: 10.0
+  damage_bonus {
+    attribute: Light
+    bonus: 10.0
+  }
+  attacks: 1
+  range: 6.0
+  speed: 1.5
+}
+mineral_cost: 200
+vespene_cost: 100
+
+unit_id: 51
+name: "Marauder"
+available: true
+cargo_size: 2
+attributes: Armored
+attributes: Biological
+movement_speed: 2.25
+armor: 1.0
+weapons {
+  type: Ground
+  damage: 5.0
+  damage_bonus {
+    attribute: Armored
+    bonus: 5.0
+  }
+  attacks: 2
+  range: 6.0
+  speed: 1.5
+}
+mineral_cost: 100
+vespene_cost: 25
+
+unit_id: 52
+name: "Thor"
+available: true
+cargo_size: 8
+attributes: Armored
+attributes: Mechanical
+attributes: Massive
+movement_speed: 1.875
+armor: 2.0
+weapons {
+  type: Air
+  damage: 6.0
+  damage_bonus {
+    attribute: Light
+    bonus: 6.0
+  }
+  attacks: 4
+  range: 10.0
+  speed: 3.0
+}
+weapons {
+  type: Ground
+  damage: 30.0
+  attacks: 2
+  range: 7.0
+  speed: 1.280029296875
+}
+mineral_cost: 300
+vespene_cost: 200
+
+unit_id: 53
+name: "Hellion"
+available: true
+cargo_size: 2
+attributes: Light
+attributes: Mechanical
+movement_speed: 4.25
+armor: 0.0
+weapons {
+  type: Ground
+  damage: 8.0
+  damage_bonus {
+    attribute: Light
+    bonus: 6.0
+  }
+  attacks: 1
+  range: 5.0
+  speed: 2.5
+}
+mineral_cost: 100
+vespene_cost: 0
+
+unit_id: 54
+name: "Medivac"
+available: true
+attributes: Armored
+attributes: Mechanical
+movement_speed: 2.5
+armor: 1.0
+mineral_cost: 100
+vespene_cost: 100
+
+unit_id: 55
+name: "Banshee"
+available: true
+attributes: Light
+attributes: Mechanical
+movement_speed: 2.75
+armor: 0.0
+weapons {
+  type: Ground
+  damage: 12.0
+  attacks: 2
+  range: 6.0
+  speed: 1.25
+}
+mineral_cost: 150
+vespene_cost: 100
+
+unit_id: 56
+name: "Raven"
+available: true
+attributes: Light
+attributes: Mechanical
+movement_speed: 2.75
+armor: 1.0
+mineral_cost: 100
+vespene_cost: 200
+
+unit_id: 57
+name: "Battlecruiser"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Massive
+movement_speed: 1.875
+armor: 3.0
+weapons {
+  type: Ground
+  damage: 8.0
+  attacks: 1
+  range: 6.0
+  speed: 0.22509765625
+}
+weapons {
+  type: Air
+  damage: 6.0
+  attacks: 1
+  range: 6.0
+  speed: 0.22509765625
+}
+mineral_cost: 400
+vespene_cost: 300
+
+unit_id: 58
+name: "Nuke"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 100
+vespene_cost: 100
+
+unit_id: 59
+name: "Nexus"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 400
+vespene_cost: 0
+
+unit_id: 60
+name: "Pylon"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 100
+vespene_cost: 0
+
+unit_id: 61
+name: "Assimilator"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 75
+vespene_cost: 0
+
+unit_id: 62
+name: "Gateway"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 0
+
+unit_id: 63
+name: "Forge"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 0
+
+unit_id: 64
+name: "FleetBeacon"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 300
+vespene_cost: 200
+
+unit_id: 65
+name: "TwilightCouncil"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 100
+
+unit_id: 66
+name: "PhotonCannon"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+weapons {
+  type: Any
+  damage: 20.0
+  attacks: 1
+  range: 7.0
+  speed: 1.25
+}
+mineral_cost: 150
+vespene_cost: 0
+
+unit_id: 67
+name: "Stargate"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 150
+
+unit_id: 68
+name: "TemplarArchive"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 200
+
+unit_id: 69
+name: "DarkShrine"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 150
+
+unit_id: 70
+name: "RoboticsBay"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 200
+vespene_cost: 200
+
+unit_id: 71
+name: "RoboticsFacility"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 200
+vespene_cost: 100
+
+unit_id: 72
+name: "CyberneticsCore"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 0
+
+unit_id: 73
+name: "Zealot"
+available: true
+cargo_size: 2
+attributes: Light
+attributes: Biological
+movement_speed: 2.25
+armor: 1.0
+weapons {
+  type: Ground
+  damage: 8.0
+  attacks: 2
+  range: 0.10009765625
+  speed: 1.199951171875
+}
+mineral_cost: 100
+vespene_cost: 0
+
+unit_id: 74
+name: "Stalker"
+available: true
+cargo_size: 2
+attributes: Armored
+attributes: Mechanical
+movement_speed: 2.953125
+armor: 1.0
+weapons {
+  type: Any
+  damage: 10.0
+  damage_bonus {
+    attribute: Armored
+    bonus: 4.0
+  }
+  attacks: 1
+  range: 6.0
+  speed: 1.43994140625
+}
+mineral_cost: 125
+vespene_cost: 50
+
+unit_id: 75
+name: "HighTemplar"
+available: true
+cargo_size: 2
+attributes: Light
+attributes: Biological
+attributes: Psionic
+movement_speed: 1.875
+armor: 0.0
+mineral_cost: 50
+vespene_cost: 150
+
+unit_id: 76
+name: "DarkTemplar"
+available: true
+cargo_size: 2
+attributes: Light
+attributes: Biological
+attributes: Psionic
+movement_speed: 2.8125
+armor: 1.0
+weapons {
+  type: Ground
+  damage: 45.0
+  attacks: 1
+  range: 0.10009765625
+  speed: 1.694091796875
+}
+mineral_cost: 125
+vespene_cost: 125
+
+unit_id: 77
+name: "Sentry"
+available: true
+cargo_size: 2
+attributes: Light
+attributes: Mechanical
+attributes: Psionic
+movement_speed: 2.25
+armor: 1.0
+weapons {
+  type: Any
+  damage: 6.0
+  attacks: 1
+  range: 5.0
+  speed: 1.0
+}
+mineral_cost: 50
+vespene_cost: 100
+
+unit_id: 78
+name: "Phoenix"
+available: true
+attributes: Light
+attributes: Mechanical
+movement_speed: 4.25
+armor: 0.0
+weapons {
+  type: Air
+  damage: 5.0
+  damage_bonus {
+    attribute: Light
+    bonus: 5.0
+  }
+  attacks: 2
+  range: 5.0
+  speed: 1.10009765625
+}
+mineral_cost: 150
+vespene_cost: 100
+
+unit_id: 79
+name: "Carrier"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Massive
+movement_speed: 1.875
+armor: 2.0
+mineral_cost: 350
+vespene_cost: 250
+
+unit_id: 80
+name: "VoidRay"
+available: true
+attributes: Armored
+attributes: Mechanical
+movement_speed: 2.5
+armor: 0.0
+weapons {
+  type: Any
+  damage: 6.0
+  damage_bonus {
+    attribute: Armored
+    bonus: 4.0
+  }
+  attacks: 1
+  range: 6.0
+  speed: 0.5
+}
+mineral_cost: 250
+vespene_cost: 150
+
+unit_id: 81
+name: "WarpPrism"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Psionic
+movement_speed: 2.953125
+armor: 0.0
+mineral_cost: 200
+vespene_cost: 0
+
+unit_id: 82
+name: "Observer"
+available: true
+attributes: Light
+attributes: Mechanical
+movement_speed: 1.875
+armor: 0.0
+mineral_cost: 25
+vespene_cost: 75
+
+unit_id: 83
+name: "Immortal"
+available: true
+cargo_size: 4
+attributes: Armored
+attributes: Mechanical
+movement_speed: 2.25
+armor: 1.0
+weapons {
+  type: Ground
+  damage: 20.0
+  damage_bonus {
+    attribute: Armored
+    bonus: 30.0
+  }
+  attacks: 1
+  range: 6.0
+  speed: 1.449951171875
+}
+mineral_cost: 250
+vespene_cost: 100
+
+unit_id: 84
+name: "Probe"
+available: true
+cargo_size: 1
+attributes: Light
+attributes: Mechanical
+movement_speed: 2.8125
+armor: 0.0
+weapons {
+  type: Ground
+  damage: 5.0
+  attacks: 1
+  range: 0.10009765625
+  speed: 1.5
+}
+mineral_cost: 50
+vespene_cost: 0
+
+unit_id: 85
+name: "Interceptor"
+available: true
+attributes: Light
+attributes: Mechanical
+movement_speed: 7.5
+armor: 0.0
+weapons {
+  type: Any
+  damage: 5.0
+  attacks: 2
+  range: 2.0
+  speed: 3.0
+}
+mineral_cost: 10
+vespene_cost: 0
+
+unit_id: 86
+name: "Hatchery"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 350
+vespene_cost: 0
+
+unit_id: 87
+name: "CreepTumor"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 88
+name: "Extractor"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 75
+vespene_cost: 0
+
+unit_id: 89
+name: "SpawningPool"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 250
+vespene_cost: 0
+
+unit_id: 90
+name: "EvolutionChamber"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 125
+vespene_cost: 0
+
+unit_id: 91
+name: "HydraliskDen"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 100
+
+unit_id: 92
+name: "Spire"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 250
+vespene_cost: 200
+
+unit_id: 93
+name: "UltraliskCavern"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 200
+vespene_cost: 200
+
+unit_id: 94
+name: "InfestationPit"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 100
+
+unit_id: 95
+name: "NydusNetwork"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 200
+vespene_cost: 200
+
+unit_id: 96
+name: "BanelingNest"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 50
+
+unit_id: 97
+name: "RoachWarren"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 200
+vespene_cost: 0
+
+unit_id: 98
+name: "SpineCrawler"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 2.0
+weapons {
+  type: Ground
+  damage: 25.0
+  damage_bonus {
+    attribute: Armored
+    bonus: 5.0
+  }
+  attacks: 1
+  range: 7.0
+  speed: 1.85009765625
+}
+mineral_cost: 150
+vespene_cost: 0
+
+unit_id: 99
+name: "SporeCrawler"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+weapons {
+  type: Air
+  damage: 15.0
+  damage_bonus {
+    attribute: Biological
+    bonus: 15.0
+  }
+  attacks: 1
+  range: 7.0
+  speed: 0.86083984375
+}
+mineral_cost: 125
+vespene_cost: 0
+
+unit_id: 100
+name: "Lair"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 500
+vespene_cost: 100
+
+unit_id: 101
+name: "Hive"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 700
+vespene_cost: 250
+
+unit_id: 102
+name: "GreaterSpire"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 350
+vespene_cost: 350
+
+unit_id: 103
+name: "Egg"
+available: true
+attributes: Biological
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 104
+name: "Drone"
+available: true
+cargo_size: 1
+attributes: Light
+attributes: Biological
+movement_speed: 2.8125
+armor: 0.0
+weapons {
+  type: Ground
+  damage: 5.0
+  attacks: 1
+  range: 0.10009765625
+  speed: 1.5
+}
+mineral_cost: 50
+vespene_cost: 0
+
+unit_id: 105
+name: "Zergling"
+available: true
+cargo_size: 1
+attributes: Light
+attributes: Biological
+movement_speed: 2.953125
+armor: 0.0
+weapons {
+  type: Ground
+  damage: 5.0
+  attacks: 1
+  range: 0.10009765625
+  speed: 0.696044921875
+}
+mineral_cost: 25
+vespene_cost: 0
+
+unit_id: 106
+name: "Overlord"
+available: true
+attributes: Armored
+attributes: Biological
+movement_speed: 0.5859375
+armor: 0.0
+mineral_cost: 100
+vespene_cost: 0
+
+unit_id: 107
+name: "Hydralisk"
+available: true
+cargo_size: 2
+attributes: Light
+attributes: Biological
+movement_speed: 2.25
+armor: 0.0
+weapons {
+  type: Any
+  damage: 12.0
+  attacks: 1
+  range: 5.0
+  speed: 0.75
+}
+mineral_cost: 100
+vespene_cost: 50
+
+unit_id: 108
+name: "Mutalisk"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 4.0
+armor: 0.0
+weapons {
+  type: Any
+  damage: 9.0
+  attacks: 1
+  range: 3.0
+  speed: 1.524658203125
+}
+mineral_cost: 100
+vespene_cost: 100
+
+unit_id: 109
+name: "Ultralisk"
+available: true
+cargo_size: 8
+attributes: Armored
+attributes: Biological
+attributes: Massive
+movement_speed: 2.953125
+armor: 2.0
+weapons {
+  type: Ground
+  damage: 35.0
+  attacks: 1
+  range: 1.0
+  speed: 0.860107421875
+}
+mineral_cost: 300
+vespene_cost: 200
+
+unit_id: 110
+name: "Roach"
+available: true
+cargo_size: 2
+attributes: Armored
+attributes: Biological
+movement_speed: 2.25
+armor: 1.0
+weapons {
+  type: Ground
+  damage: 16.0
+  attacks: 1
+  range: 4.0
+  speed: 2.0
+}
+mineral_cost: 75
+vespene_cost: 25
+
+unit_id: 111
+name: "Infestor"
+available: true
+cargo_size: 2
+attributes: Armored
+attributes: Biological
+attributes: Psionic
+movement_speed: 2.25
+armor: 0.0
+mineral_cost: 100
+vespene_cost: 150
+
+unit_id: 112
+name: "Corruptor"
+available: true
+attributes: Armored
+attributes: Biological
+movement_speed: 3.375
+armor: 2.0
+weapons {
+  type: Air
+  damage: 14.0
+  damage_bonus {
+    attribute: Massive
+    bonus: 6.0
+  }
+  attacks: 1
+  range: 6.0
+  speed: 1.89990234375
+}
+mineral_cost: 150
+vespene_cost: 100
+
+unit_id: 113
+name: "BroodLordCocoon"
+available: true
+attributes: Biological
+attributes: Massive
+movement_speed: 1.40625
+armor: 2.0
+mineral_cost: 300
+vespene_cost: 250
+
+unit_id: 114
+name: "BroodLord"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Massive
+movement_speed: 1.40625
+armor: 1.0
+weapons {
+  type: Ground
+  damage: 20.0
+  attacks: 1
+  range: 10.0
+  speed: 2.5
+}
+mineral_cost: 300
+vespene_cost: 250
+
+unit_id: 115
+name: "BanelingBurrowed"
+available: true
+attributes: Biological
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 50
+vespene_cost: 25
+
+unit_id: 116
+name: "DroneBurrowed"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 50
+vespene_cost: 0
+
+unit_id: 117
+name: "HydraliskBurrowed"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 100
+vespene_cost: 50
+
+unit_id: 118
+name: "RoachBurrowed"
+available: true
+attributes: Armored
+attributes: Biological
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 75
+vespene_cost: 25
+
+unit_id: 119
+name: "ZerglingBurrowed"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 25
+vespene_cost: 0
+
+unit_id: 120
+name: "InfestorTerranBurrowed"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 121
+name: "RedstoneLavaCritterBurrowed"
+available: true
+attributes: Biological
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 122
+name: "RedstoneLavaCritterInjuredBurrowed"
+available: true
+attributes: Biological
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 123
+name: "RedstoneLavaCritter"
+available: true
+attributes: Biological
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 124
+name: "RedstoneLavaCritterInjured"
+available: true
+attributes: Biological
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 125
+name: "QueenBurrowed"
+available: true
+attributes: Biological
+attributes: Psionic
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 0
+
+unit_id: 126
+name: "Queen"
+available: true
+cargo_size: 2
+attributes: Biological
+attributes: Psionic
+movement_speed: 0.9375
+armor: 1.0
+weapons {
+  type: Air
+  damage: 9.0
+  attacks: 1
+  range: 8.0
+  speed: 1.0
+}
+weapons {
+  type: Ground
+  damage: 4.0
+  attacks: 2
+  range: 5.0
+  speed: 1.0
+}
+mineral_cost: 150
+vespene_cost: 0
+
+unit_id: 127
+name: "InfestorBurrowed"
+available: true
+cargo_size: 2
+attributes: Armored
+attributes: Biological
+attributes: Psionic
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 100
+vespene_cost: 150
+
+unit_id: 128
+name: "OverlordCocoon"
+available: true
+attributes: Biological
+movement_speed: 1.875
+armor: 2.0
+mineral_cost: 150
+vespene_cost: 100
+
+unit_id: 129
+name: "Overseer"
+available: true
+attributes: Armored
+attributes: Biological
+movement_speed: 1.875
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 50
+
+unit_id: 130
+name: "PlanetaryFortress"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+weapons {
+  type: Ground
+  damage: 40.0
+  attacks: 1
+  range: 6.0
+  speed: 2.0
+}
+mineral_cost: 550
+vespene_cost: 150
+
+unit_id: 131
+name: "UltraliskBurrowed"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Massive
+movement_speed: 0.0
+armor: 2.0
+mineral_cost: 300
+vespene_cost: 200
+
+unit_id: 132
+name: "OrbitalCommand"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 550
+vespene_cost: 0
+
+unit_id: 133
+name: "WarpGate"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 0
+
+unit_id: 134
+name: "OrbitalCommandFlying"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.9375
+armor: 1.0
+mineral_cost: 550
+vespene_cost: 0
+
+unit_id: 135
+name: "ForceField"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 136
+name: "WarpPrismPhasing"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Psionic
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 200
+vespene_cost: 0
+
+unit_id: 137
+name: "CreepTumorBurrowed"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 138
+name: "CreepTumorQueen"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 139
+name: "SpineCrawlerUprooted"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 1.0
+armor: 2.0
+mineral_cost: 150
+vespene_cost: 0
+
+unit_id: 140
+name: "SporeCrawlerUprooted"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 1.0
+armor: 1.0
+mineral_cost: 125
+vespene_cost: 0
+
+unit_id: 141
+name: "Archon"
+available: true
+cargo_size: 4
+attributes: Psionic
+attributes: Massive
+movement_speed: 2.8125
+armor: 0.0
+weapons {
+  type: Any
+  damage: 25.0
+  damage_bonus {
+    attribute: Biological
+    bonus: 10.0
+  }
+  attacks: 1
+  range: 3.0
+  speed: 1.75390625
+}
+mineral_cost: 175
+vespene_cost: 275
+
+unit_id: 142
+name: "NydusCanal"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 100
+vespene_cost: 100
+
+unit_id: 143
+name: "BroodlingEscort"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 6.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 144
+name: "GhostAlternate"
+available: true
+cargo_size: 2
+attributes: Biological
+attributes: Psionic
+movement_speed: 2.8125
+armor: 0.0
+weapons {
+  type: Any
+  damage: 10.0
+  damage_bonus {
+    attribute: Light
+    bonus: 10.0
+  }
+  attacks: 1
+  range: 6.0
+  speed: 1.5
+}
+mineral_cost: 200
+vespene_cost: 100
+
+unit_id: 145
+name: "GhostNova"
+available: true
+cargo_size: 2
+attributes: Biological
+attributes: Psionic
+movement_speed: 2.8125
+armor: 0.0
+weapons {
+  type: Any
+  damage: 10.0
+  damage_bonus {
+    attribute: Light
+    bonus: 10.0
+  }
+  attacks: 1
+  range: 6.0
+  speed: 1.5
+}
+mineral_cost: 200
+vespene_cost: 100
+
+unit_id: 146
+name: "RichMineralField"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 147
+name: "RichMineralField750"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 148
+name: "Ursadon"
+available: true
+attributes: Biological
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 149
+name: "XelNagaTower"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 150
+name: "InfestedTerransEgg"
+available: true
+attributes: Biological
+movement_speed: 0.0
+armor: 2.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 151
+name: "Larva"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 0.5625
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 152
+name: "ReaperPlaceholder"
+available: true
+attributes: Biological
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 153
+name: "MarineACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 154
+name: "FirebatACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 155
+name: "MedicACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 156
+name: "MarauderACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 157
+name: "VultureACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 158
+name: "SiegeTankACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 159
+name: "VikingACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 160
+name: "BansheeACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 161
+name: "BattlecruiserACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 162
+name: "OrbitalCommandACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 163
+name: "BunkerACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 164
+name: "BunkerUpgradedACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 165
+name: "MissileTurretACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 166
+name: "HellbatACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 167
+name: "GoliathACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 168
+name: "CycloneACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 169
+name: "WraithACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 170
+name: "ScienceVesselACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 171
+name: "HerculesACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 172
+name: "ThorACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 173
+name: "PerditionTurretACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 174
+name: "FlamingBettyACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 175
+name: "DevastationTurretACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 176
+name: "BlasterBillyACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 177
+name: "SpinningDizzyACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 178
+name: "ZerglingKerriganACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 179
+name: "RaptorACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 180
+name: "QueenCoopACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 181
+name: "HydraliskACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 182
+name: "HydraliskLurkerACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 183
+name: "MutaliskBroodlordACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 184
+name: "BroodLordACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 185
+name: "UltraliskACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 186
+name: "TorrasqueACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 187
+name: "OverseerACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 188
+name: "LurkerACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 189
+name: "SpineCrawlerACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 190
+name: "SporeCrawlerACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 191
+name: "NydusNetworkACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 192
+name: "OmegaNetworkACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 193
+name: "ZerglingZagaraACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 194
+name: "SwarmlingACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 195
+name: "BanelingACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 196
+name: "SplitterlingACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 197
+name: "AberrationACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 198
+name: "ScourgeACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 199
+name: "CorruptorACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 200
+name: "BileLauncherACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 201
+name: "SwarmQueenACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 202
+name: "RoachACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 203
+name: "RoachVileACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 204
+name: "RavagerACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 205
+name: "SwarmHostACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 206
+name: "MutaliskACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 207
+name: "GuardianACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 208
+name: "DevourerACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 209
+name: "ViperACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 210
+name: "BrutaliskACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 211
+name: "LeviathanACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 212
+name: "ZealotACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 213
+name: "ZealotAiurACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 214
+name: "DragoonACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 215
+name: "HighTemplarACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 216
+name: "ArchonACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 217
+name: "ImmortalACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 218
+name: "ObserverACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 219
+name: "PhoenixAiurACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 220
+name: "ReaverACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 221
+name: "TempestACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 222
+name: "PhotonCannonACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 223
+name: "ZealotVorazunACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 224
+name: "ZealotShakurasACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 225
+name: "StalkerShakurasACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 226
+name: "DarkTemplarShakurasACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 227
+name: "CorsairACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 228
+name: "VoidRayACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 229
+name: "VoidRayShakurasACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 230
+name: "OracleACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 231
+name: "DarkArchonACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 232
+name: "DarkPylonACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 233
+name: "ZealotPurifierACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 234
+name: "SentryPurifierACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 235
+name: "ImmortalKaraxACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 236
+name: "ColossusACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 237
+name: "ColossusPurifierACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 238
+name: "PhoenixPurifierACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 239
+name: "CarrierACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 240
+name: "CarrierAiurACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 241
+name: "KhaydarinMonolithACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 242
+name: "ShieldBatteryACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 243
+name: "EliteMarineACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 244
+name: "MarauderCommandoACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 245
+name: "SpecOpsGhostACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 246
+name: "HellbatRangerACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 247
+name: "StrikeGoliathACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 248
+name: "HeavySiegeTankACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 249
+name: "RaidLiberatorACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 250
+name: "RavenTypeIIACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 251
+name: "CovertBansheeACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 252
+name: "RailgunTurretACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 253
+name: "BlackOpsMissileTurretACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 254
+name: "SupplicantACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 255
+name: "StalkerTaldarimACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 256
+name: "SentryTaldarimACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 257
+name: "HighTemplarTaldarimACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 258
+name: "ImmortalTaldarimACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 259
+name: "ColossusTaldarimACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 260
+name: "WarpPrismTaldarimACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 261
+name: "PhotonCannonTaldarimACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 262
+name: "NeedleSpinesWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 263
+name: "CorruptionWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 264
+name: "InfestedTerransWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 265
+name: "NeuralParasiteWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 266
+name: "PointDefenseDroneReleaseWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 267
+name: "HunterSeekerWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 268
+name: "MULE"
+available: true
+attributes: Light
+attributes: Mechanical
+movement_speed: 2.8125
+armor: 0.0
+mineral_cost: 50
+vespene_cost: 0
+
+unit_id: 269
+name: "ThorAAWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 270
+name: "PunisherGrenadesLMWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 271
+name: "VikingFighterWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 272
+name: "ATALaserBatteryLMWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 273
+name: "ATSLaserBatteryLMWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 274
+name: "LongboltMissileWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 275
+name: "D8ChargeWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 276
+name: "YamatoWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 277
+name: "IonCannonsWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 278
+name: "AcidSalivaWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 279
+name: "SpineCrawlerWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 280
+name: "SporeCrawlerWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 281
+name: "GlaiveWurmWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 282
+name: "GlaiveWurmM2Weapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 283
+name: "GlaiveWurmM3Weapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 284
+name: "StalkerWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 285
+name: "EMP2Weapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 286
+name: "BacklashRocketsLMWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 287
+name: "PhotonCannonWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 288
+name: "ParasiteSporeWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 289
+name: "Broodling"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 3.8359375
+armor: 0.0
+weapons {
+  type: Ground
+  damage: 4.0
+  attacks: 1
+  range: 0.10009765625
+  speed: 0.6455078125
+}
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 290
+name: "BroodLordBWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 291
+name: "AutoTurretReleaseWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 292
+name: "LarvaReleaseMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 293
+name: "AcidSpinesWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 294
+name: "FrenzyWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 295
+name: "ContaminateWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 296
+name: "BeaconRally"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 297
+name: "BeaconArmy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 298
+name: "BeaconAttack"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 299
+name: "BeaconDefend"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 300
+name: "BeaconHarass"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 301
+name: "BeaconIdle"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 302
+name: "BeaconAuto"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 303
+name: "BeaconDetect"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 304
+name: "BeaconScout"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 305
+name: "BeaconClaim"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 306
+name: "BeaconExpand"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 307
+name: "BeaconCustom1"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 308
+name: "BeaconCustom2"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 309
+name: "BeaconCustom3"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 310
+name: "BeaconCustom4"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 311
+name: "Adept"
+available: true
+cargo_size: 2
+attributes: Light
+attributes: Biological
+movement_speed: 2.5
+armor: 1.0
+weapons {
+  type: Ground
+  damage: 10.0
+  damage_bonus {
+    attribute: Light
+    bonus: 12.0
+  }
+  attacks: 1
+  range: 4.0
+  speed: 2.25
+}
+mineral_cost: 100
+vespene_cost: 25
+
+unit_id: 312
+name: "Rocks2x2NonConjoined"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 313
+name: "FungalGrowthMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 314
+name: "NeuralParasiteTentacleMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 315
+name: "Beacon_Protoss"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 316
+name: "Beacon_ProtossSmall"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 317
+name: "Beacon_Terran"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 318
+name: "Beacon_TerranSmall"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 319
+name: "Beacon_Zerg"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 320
+name: "Beacon_ZergSmall"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 321
+name: "Lyote"
+available: true
+attributes: Biological
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 322
+name: "CarrionBird"
+available: true
+attributes: Biological
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 323
+name: "KarakMale"
+available: true
+attributes: Biological
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 324
+name: "KarakFemale"
+available: true
+attributes: Biological
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 325
+name: "UrsadakFemaleExotic"
+available: true
+attributes: Biological
+movement_speed: 1.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 326
+name: "UrsadakMale"
+available: true
+attributes: Biological
+movement_speed: 1.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 327
+name: "UrsadakFemale"
+available: true
+attributes: Biological
+movement_speed: 1.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 328
+name: "UrsadakCalf"
+available: true
+attributes: Biological
+movement_speed: 1.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 329
+name: "UrsadakMaleExotic"
+available: true
+attributes: Biological
+movement_speed: 1.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 330
+name: "UtilityBot"
+available: true
+attributes: Mechanical
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 331
+name: "CommentatorBot1"
+available: true
+attributes: Mechanical
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 332
+name: "CommentatorBot2"
+available: true
+attributes: Mechanical
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 333
+name: "CommentatorBot3"
+available: true
+attributes: Mechanical
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 334
+name: "CommentatorBot4"
+available: true
+attributes: Mechanical
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 335
+name: "Scantipede"
+available: true
+attributes: Biological
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 336
+name: "Dog"
+available: true
+attributes: Biological
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 337
+name: "Sheep"
+available: true
+attributes: Biological
+movement_speed: 1.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 338
+name: "Cow"
+available: true
+attributes: Biological
+movement_speed: 1.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 339
+name: "InfestedTerransEggPlacement"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 340
+name: "InfestorTerransWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 341
+name: "MineralField"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 342
+name: "VespeneGeyser"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 343
+name: "SpacePlatformGeyser"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 344
+name: "RichVespeneGeyser"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 345
+name: "DestructibleSearchlight"
+available: true
+attributes: Armored
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 346
+name: "DestructibleBullhornLights"
+available: true
+attributes: Armored
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 347
+name: "DestructibleStreetlight"
+available: true
+attributes: Armored
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 348
+name: "DestructibleSpacePlatformSign"
+available: true
+attributes: Armored
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 349
+name: "DestructibleStoreFrontCityProps"
+available: true
+attributes: Armored
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 350
+name: "DestructibleBillboardTall"
+available: true
+attributes: Armored
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 351
+name: "DestructibleBillboardScrollingText"
+available: true
+attributes: Armored
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 352
+name: "DestructibleSpacePlatformBarrier"
+available: true
+attributes: Armored
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 353
+name: "DestructibleSignsDirectional"
+available: true
+attributes: Armored
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 354
+name: "DestructibleSignsConstruction"
+available: true
+attributes: Armored
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 355
+name: "DestructibleSignsFunny"
+available: true
+attributes: Armored
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 356
+name: "DestructibleSignsIcons"
+available: true
+attributes: Armored
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 357
+name: "DestructibleSignsWarning"
+available: true
+attributes: Armored
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 358
+name: "DestructibleGarage"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 359
+name: "DestructibleGarageLarge"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 360
+name: "DestructibleTrafficSignal"
+available: true
+attributes: Armored
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 361
+name: "TrafficSignal"
+available: true
+attributes: Armored
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 362
+name: "BraxisAlphaDestructible1x1"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 363
+name: "BraxisAlphaDestructible2x2"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 364
+name: "DestructibleDebris4x4"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 365
+name: "DestructibleDebris6x6"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 366
+name: "DestructibleRock2x4Vertical"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 367
+name: "DestructibleRock2x4Horizontal"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 368
+name: "DestructibleRock2x6Vertical"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 369
+name: "DestructibleRock2x6Horizontal"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 370
+name: "DestructibleRock4x4"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 371
+name: "DestructibleRock6x6"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 372
+name: "DestructibleRampDiagonalHugeULBR"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 373
+name: "DestructibleRampDiagonalHugeBLUR"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 374
+name: "DestructibleRampVerticalHuge"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 375
+name: "DestructibleRampHorizontalHuge"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 376
+name: "DestructibleDebrisRampDiagonalHugeULBR"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 377
+name: "DestructibleDebrisRampDiagonalHugeBLUR"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 378
+name: "OverlordGenerateCreepKeybind"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 379
+name: "MengskStatueAlone"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 380
+name: "MengskStatue"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 381
+name: "WolfStatue"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 382
+name: "GlobeStatue"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 383
+name: "Weapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 384
+name: "GlaiveWurmBounceWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 385
+name: "BroodLordWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 386
+name: "BroodLordAWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 387
+name: "CreepBlocker1x1"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 388
+name: "PermanentCreepBlocker1x1"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 389
+name: "PathingBlocker1x1"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 390
+name: "PathingBlocker2x2"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 391
+name: "AutoTestAttackTargetGround"
+available: true
+cargo_size: 1
+attributes: Light
+attributes: Robotic
+movement_speed: 2.0859375
+armor: 0.0
+mineral_cost: 100
+vespene_cost: 100
+
+unit_id: 392
+name: "AutoTestAttackTargetAir"
+available: true
+attributes: Robotic
+movement_speed: 3.75
+armor: 0.0
+mineral_cost: 100
+vespene_cost: 100
+
+unit_id: 393
+name: "AutoTestAttacker"
+available: true
+cargo_size: 1
+attributes: Light
+attributes: Biological
+movement_speed: 2.25
+armor: 0.0
+mineral_cost: 50
+vespene_cost: 0
+
+unit_id: 394
+name: "HelperEmitterSelectionArrow"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 395
+name: "MultiKillObject"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 396
+name: "ShapeGolfball"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 397
+name: "ShapeCone"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 398
+name: "ShapeCube"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 399
+name: "ShapeCylinder"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 400
+name: "ShapeDodecahedron"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 401
+name: "ShapeIcosahedron"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 402
+name: "ShapeOctahedron"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 403
+name: "ShapePyramid"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 404
+name: "ShapeRoundedCube"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 405
+name: "ShapeSphere"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 406
+name: "ShapeTetrahedron"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 407
+name: "ShapeThickTorus"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 408
+name: "ShapeThinTorus"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 409
+name: "ShapeTorus"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 410
+name: "Shape4PointStar"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 411
+name: "Shape5PointStar"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 412
+name: "Shape6PointStar"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 413
+name: "Shape8PointStar"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 414
+name: "ShapeArrowPointer"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 415
+name: "ShapeBowl"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 416
+name: "ShapeBox"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 417
+name: "ShapeCapsule"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 418
+name: "ShapeCrescentMoon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 419
+name: "ShapeDecahedron"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 420
+name: "ShapeDiamond"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 421
+name: "ShapeFootball"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 422
+name: "ShapeGemstone"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 423
+name: "ShapeHeart"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 424
+name: "ShapeJack"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 425
+name: "ShapePlusSign"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 426
+name: "ShapeShamrock"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 427
+name: "ShapeSpade"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 428
+name: "ShapeTube"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 429
+name: "ShapeEgg"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 430
+name: "ShapeYenSign"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 431
+name: "ShapeX"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 432
+name: "ShapeWatermelon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 433
+name: "ShapeWonSign"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 434
+name: "ShapeTennisball"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 435
+name: "ShapeStrawberry"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 436
+name: "ShapeSmileyFace"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 437
+name: "ShapeSoccerball"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 438
+name: "ShapeRainbow"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 439
+name: "ShapeSadFace"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 440
+name: "ShapePoundSign"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 441
+name: "ShapePear"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 442
+name: "ShapePineapple"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 443
+name: "ShapeOrange"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 444
+name: "ShapePeanut"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 445
+name: "ShapeO"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 446
+name: "ShapeLemon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 447
+name: "ShapeMoneyBag"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 448
+name: "ShapeHorseshoe"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 449
+name: "ShapeHockeyStick"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 450
+name: "ShapeHockeyPuck"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 451
+name: "ShapeHand"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 452
+name: "ShapeGolfClub"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 453
+name: "ShapeGrape"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 454
+name: "ShapeEuroSign"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 455
+name: "ShapeDollarSign"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 456
+name: "ShapeBasketball"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 457
+name: "ShapeCarrot"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 458
+name: "ShapeCherry"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 459
+name: "ShapeBaseball"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 460
+name: "ShapeBaseballBat"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 461
+name: "ShapeBanana"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 462
+name: "ShapeApple"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 463
+name: "ShapeCashLarge"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 464
+name: "ShapeCashMedium"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 465
+name: "ShapeCashSmall"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 466
+name: "ShapeFootballColored"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 467
+name: "ShapeLemonSmall"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 468
+name: "ShapeOrangeSmall"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 469
+name: "ShapeTreasureChestOpen"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 470
+name: "ShapeTreasureChestClosed"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 471
+name: "ShapeWatermelonSmall"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 472
+name: "UnbuildableRocksDestructible"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 473
+name: "UnbuildableBricksDestructible"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 474
+name: "UnbuildablePlatesDestructible"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 475
+name: "Debris2x2NonConjoined"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 476
+name: "EnemyPathingBlocker1x1"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 477
+name: "EnemyPathingBlocker2x2"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 478
+name: "EnemyPathingBlocker4x4"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 479
+name: "EnemyPathingBlocker8x8"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 480
+name: "EnemyPathingBlocker16x16"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 481
+name: "ScopeTest"
+available: true
+cargo_size: 1
+attributes: Light
+attributes: Biological
+movement_speed: 2.25
+armor: 0.0
+weapons {
+  type: Any
+  damage: 6.0
+  attacks: 1
+  range: 5.0
+  speed: 0.86083984375
+}
+mineral_cost: 50
+vespene_cost: 0
+
+unit_id: 482
+name: "SentryACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 483
+name: "MineralField750"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 484
+name: "HellionTank"
+available: true
+cargo_size: 4
+attributes: Light
+attributes: Biological
+attributes: Mechanical
+movement_speed: 2.25
+armor: 0.0
+weapons {
+  type: Ground
+  damage: 18.0
+  attacks: 1
+  range: 2.0
+  speed: 2.0
+}
+mineral_cost: 100
+vespene_cost: 0
+
+unit_id: 485
+name: "CollapsibleTerranTowerDebris"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 486
+name: "DebrisRampLeft"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 487
+name: "DebrisRampRight"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 488
+name: "MothershipCore"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Psionic
+movement_speed: 1.875
+armor: 1.0
+weapons {
+  type: Ground
+  damage: 8.0
+  attacks: 1
+  range: 5.0
+  speed: 0.85009765625
+}
+mineral_cost: 100
+vespene_cost: 100
+
+unit_id: 489
+name: "LocustMP"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 1.875
+armor: 0.0
+weapons {
+  type: Ground
+  damage: 10.0
+  attacks: 1
+  range: 3.0
+  speed: 0.60009765625
+}
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 490
+name: "CollapsibleRockTowerDebris"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 491
+name: "NydusCanalAttacker"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+weapons {
+  type: Any
+  damage: 10.0
+  attacks: 1
+  range: 7.0
+  speed: 2.0
+}
+mineral_cost: 200
+vespene_cost: 0
+
+unit_id: 492
+name: "NydusCanalCreeper"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 75
+
+unit_id: 493
+name: "SwarmHostBurrowedMP"
+available: true
+attributes: Armored
+attributes: Biological
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 100
+vespene_cost: 75
+
+unit_id: 494
+name: "SwarmHostMP"
+available: true
+cargo_size: 4
+attributes: Armored
+attributes: Biological
+movement_speed: 2.953125
+armor: 1.0
+mineral_cost: 100
+vespene_cost: 75
+
+unit_id: 495
+name: "Oracle"
+available: true
+attributes: Light
+attributes: Mechanical
+attributes: Psionic
+movement_speed: 4.0
+armor: 0.0
+mineral_cost: 150
+vespene_cost: 150
+
+unit_id: 496
+name: "Tempest"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Massive
+movement_speed: 1.875
+armor: 2.0
+weapons {
+  type: Air
+  damage: 30.0
+  damage_bonus {
+    attribute: Massive
+    bonus: 22.0
+  }
+  attacks: 1
+  range: 15.0
+  speed: 3.300048828125
+}
+weapons {
+  type: Ground
+  damage: 40.0
+  attacks: 1
+  range: 10.0
+  speed: 3.300048828125
+}
+mineral_cost: 300
+vespene_cost: 200
+
+unit_id: 497
+name: "WarHound"
+available: true
+cargo_size: 4
+attributes: Armored
+attributes: Mechanical
+movement_speed: 2.8125
+armor: 1.0
+weapons {
+  type: Ground
+  damage: 23.0
+  attacks: 1
+  range: 7.0
+  speed: 1.300048828125
+}
+mineral_cost: 150
+vespene_cost: 75
+
+unit_id: 498
+name: "WidowMine"
+available: true
+cargo_size: 2
+attributes: Light
+attributes: Mechanical
+movement_speed: 2.8125
+armor: 0.0
+mineral_cost: 75
+vespene_cost: 25
+
+unit_id: 499
+name: "Viper"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Psionic
+movement_speed: 2.953125
+armor: 1.0
+mineral_cost: 100
+vespene_cost: 200
+
+unit_id: 500
+name: "WidowMineBurrowed"
+available: true
+attributes: Light
+attributes: Mechanical
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 75
+vespene_cost: 25
+
+unit_id: 501
+name: "LurkerMPEgg"
+available: true
+attributes: Biological
+movement_speed: 3.375
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 502
+name: "LurkerMP"
+available: true
+cargo_size: 4
+attributes: Armored
+attributes: Biological
+movement_speed: 2.953125
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 150
+
+unit_id: 503
+name: "LurkerMPBurrowed"
+available: true
+attributes: Armored
+attributes: Biological
+movement_speed: 0.0
+armor: 1.0
+weapons {
+  type: Ground
+  damage: 20.0
+  damage_bonus {
+    attribute: Armored
+    bonus: 10.0
+  }
+  attacks: 1
+  range: 9.0
+  speed: 2.0
+}
+mineral_cost: 150
+vespene_cost: 150
+
+unit_id: 504
+name: "LurkerDenMP"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 300
+vespene_cost: 250
+
+unit_id: 505
+name: "ExtendingBridgeNEWide8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 506
+name: "ExtendingBridgeNEWide8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 507
+name: "ExtendingBridgeNWWide8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 508
+name: "ExtendingBridgeNWWide8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 509
+name: "ExtendingBridgeNEWide10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 510
+name: "ExtendingBridgeNEWide10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 511
+name: "ExtendingBridgeNWWide10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 512
+name: "ExtendingBridgeNWWide10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 513
+name: "ExtendingBridgeNEWide12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 514
+name: "ExtendingBridgeNEWide12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 515
+name: "ExtendingBridgeNWWide12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 516
+name: "ExtendingBridgeNWWide12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 517
+name: "CollapsibleRockTowerDebrisRampRight"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 518
+name: "CollapsibleRockTowerDebrisRampLeft"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 519
+name: "XelNaga_Caverns_DoorE"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 520
+name: "XelNaga_Caverns_DoorEOpened"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 521
+name: "XelNaga_Caverns_DoorN"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 522
+name: "XelNaga_Caverns_DoorNE"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 523
+name: "XelNaga_Caverns_DoorNEOpened"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 524
+name: "XelNaga_Caverns_DoorNOpened"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 525
+name: "XelNaga_Caverns_DoorNW"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 526
+name: "XelNaga_Caverns_DoorNWOpened"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 527
+name: "XelNaga_Caverns_DoorS"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 528
+name: "XelNaga_Caverns_DoorSE"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 529
+name: "XelNaga_Caverns_DoorSEOpened"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 530
+name: "XelNaga_Caverns_DoorSOpened"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 531
+name: "XelNaga_Caverns_DoorSW"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 532
+name: "XelNaga_Caverns_DoorSWOpened"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 533
+name: "XelNaga_Caverns_DoorW"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 534
+name: "XelNaga_Caverns_DoorWOpened"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 535
+name: "XelNaga_Caverns_Floating_BridgeNE8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 536
+name: "XelNaga_Caverns_Floating_BridgeNE8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 537
+name: "XelNaga_Caverns_Floating_BridgeNW8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 538
+name: "XelNaga_Caverns_Floating_BridgeNW8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 539
+name: "XelNaga_Caverns_Floating_BridgeNE10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 540
+name: "XelNaga_Caverns_Floating_BridgeNE10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 541
+name: "XelNaga_Caverns_Floating_BridgeNW10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 542
+name: "XelNaga_Caverns_Floating_BridgeNW10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 543
+name: "XelNaga_Caverns_Floating_BridgeNE12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 544
+name: "XelNaga_Caverns_Floating_BridgeNE12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 545
+name: "XelNaga_Caverns_Floating_BridgeNW12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 546
+name: "XelNaga_Caverns_Floating_BridgeNW12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 547
+name: "XelNaga_Caverns_Floating_BridgeH8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 548
+name: "XelNaga_Caverns_Floating_BridgeH8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 549
+name: "XelNaga_Caverns_Floating_BridgeV8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 550
+name: "XelNaga_Caverns_Floating_BridgeV8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 551
+name: "XelNaga_Caverns_Floating_BridgeH10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 552
+name: "XelNaga_Caverns_Floating_BridgeH10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 553
+name: "XelNaga_Caverns_Floating_BridgeV10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 554
+name: "XelNaga_Caverns_Floating_BridgeV10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 555
+name: "XelNaga_Caverns_Floating_BridgeH12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 556
+name: "XelNaga_Caverns_Floating_BridgeH12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 557
+name: "XelNaga_Caverns_Floating_BridgeV12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 558
+name: "XelNaga_Caverns_Floating_BridgeV12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 559
+name: "CollapsibleTerranTowerPushUnitRampLeft"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 560
+name: "CollapsibleTerranTowerPushUnitRampRight"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 561
+name: "CollapsibleRockTowerPushUnit"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 562
+name: "CollapsibleTerranTowerPushUnit"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 563
+name: "CollapsibleRockTowerPushUnitRampRight"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 564
+name: "CollapsibleRockTowerPushUnitRampLeft"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 565
+name: "DigesterCreepSprayTargetUnit"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Mechanical
+attributes: Massive
+attributes: Structure
+attributes: Heroic
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 566
+name: "DigesterCreepSprayUnit"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 567
+name: "NydusCanalAttackerWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 568
+name: "ViperConsumeStructureWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 569
+name: "ResourceBlocker"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 570
+name: "TempestWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 571
+name: "YoinkMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 572
+name: "YoinkVikingAirMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 573
+name: "YoinkVikingGroundMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 574
+name: "YoinkSiegeTankMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 575
+name: "WarHoundWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 576
+name: "EyeStalkWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 577
+name: "WidowMineWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 578
+name: "WidowMineAirWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 579
+name: "MothershipCoreWeaponWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 580
+name: "TornadoMissileWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 581
+name: "TornadoMissileDummyWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 582
+name: "TalonsMissileWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 583
+name: "CreepTumorMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 584
+name: "LocustMPEggAMissileWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 585
+name: "LocustMPEggBMissileWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 586
+name: "LocustMPWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 587
+name: "RepulsorCannonWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 588
+name: "CollapsibleRockTowerDiagonal"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 589
+name: "CollapsibleTerranTowerDiagonal"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 590
+name: "CollapsibleTerranTowerRampLeft"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 591
+name: "CollapsibleTerranTowerRampRight"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 592
+name: "Ice2x2NonConjoined"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 593
+name: "IceProtossCrates"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 594
+name: "ProtossCrates"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 595
+name: "TowerMine"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 50
+vespene_cost: 0
+
+unit_id: 596
+name: "PickupPalletGas"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 597
+name: "PickupPalletMinerals"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 598
+name: "PickupScrapSalvage1x1"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 599
+name: "PickupScrapSalvage2x2"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 600
+name: "PickupScrapSalvage3x3"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 601
+name: "RoughTerrain"
+available: true
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 602
+name: "UnbuildableBricksSmallUnit"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 603
+name: "UnbuildablePlatesSmallUnit"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 604
+name: "UnbuildablePlatesUnit"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 605
+name: "UnbuildableRocksSmallUnit"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 606
+name: "XelNagaHealingShrine"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 607
+name: "InvisibleTargetDummy"
+available: true
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 608
+name: "ProtossVespeneGeyser"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 609
+name: "CollapsibleRockTower"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 610
+name: "CollapsibleTerranTower"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 611
+name: "ThornLizard"
+available: true
+attributes: Biological
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 612
+name: "CleaningBot"
+available: true
+attributes: Mechanical
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 613
+name: "DestructibleRock6x6Weak"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 614
+name: "ProtossSnakeSegmentDemo"
+available: true
+attributes: Armored
+attributes: Biological
+movement_speed: 4.0
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 100
+
+unit_id: 615
+name: "PhysicsCapsule"
+available: true
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 616
+name: "PhysicsCube"
+available: true
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 617
+name: "PhysicsCylinder"
+available: true
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 618
+name: "PhysicsKnot"
+available: true
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 619
+name: "PhysicsL"
+available: true
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 620
+name: "PhysicsPrimitives"
+available: true
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 621
+name: "PhysicsSphere"
+available: true
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 622
+name: "PhysicsStar"
+available: true
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 623
+name: "CreepBlocker4x4"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 624
+name: "DestructibleCityDebris2x4Vertical"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 625
+name: "DestructibleCityDebris2x4Horizontal"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 626
+name: "DestructibleCityDebris2x6Vertical"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 627
+name: "DestructibleCityDebris2x6Horizontal"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 628
+name: "DestructibleCityDebris4x4"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 629
+name: "DestructibleCityDebris6x6"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 630
+name: "DestructibleCityDebrisHugeDiagonalBLUR"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 631
+name: "DestructibleCityDebrisHugeDiagonalULBR"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 632
+name: "TestZerg"
+available: true
+cargo_size: 2
+attributes: Light
+attributes: Biological
+movement_speed: 2.94921875
+armor: 1.0
+mineral_cost: 50
+vespene_cost: 0
+
+unit_id: 633
+name: "PathingBlockerRadius1"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 634
+name: "DestructibleRockEx12x4Vertical"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 635
+name: "DestructibleRockEx12x4Horizontal"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 636
+name: "DestructibleRockEx12x6Vertical"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 637
+name: "DestructibleRockEx12x6Horizontal"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 638
+name: "DestructibleRockEx14x4"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 639
+name: "DestructibleRockEx16x6"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 640
+name: "DestructibleRockEx1DiagonalHugeULBR"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 641
+name: "DestructibleRockEx1DiagonalHugeBLUR"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 642
+name: "DestructibleRockEx1VerticalHuge"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 643
+name: "DestructibleRockEx1HorizontalHuge"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 644
+name: "DestructibleIce2x4Vertical"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 645
+name: "DestructibleIce2x4Horizontal"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 646
+name: "DestructibleIce2x6Vertical"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 647
+name: "DestructibleIce2x6Horizontal"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 648
+name: "DestructibleIce4x4"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 649
+name: "DestructibleIce6x6"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 650
+name: "DestructibleIceDiagonalHugeULBR"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 651
+name: "DestructibleIceDiagonalHugeBLUR"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 652
+name: "DestructibleIceVerticalHuge"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 653
+name: "DestructibleIceHorizontalHuge"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 654
+name: "DesertPlanetSearchlight"
+available: true
+attributes: Armored
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 655
+name: "DesertPlanetStreetlight"
+available: true
+attributes: Armored
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 656
+name: "UnbuildableBricksUnit"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 657
+name: "UnbuildableRocksUnit"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 658
+name: "ZerusDestructibleArch"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 659
+name: "Artosilope"
+available: true
+attributes: Biological
+movement_speed: 2.25
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 660
+name: "Anteplott"
+available: true
+attributes: Biological
+movement_speed: 2.25
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 661
+name: "LabBot"
+available: true
+attributes: Mechanical
+attributes: Hover
+movement_speed: 2.25
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 662
+name: "Crabeetle"
+available: true
+attributes: Biological
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 663
+name: "CollapsibleRockTowerRampRight"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 664
+name: "CollapsibleRockTowerRampLeft"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 665
+name: "LabMineralField"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 666
+name: "LabMineralField750"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 667
+name: "SnowRefinery_Terran_ExtendingBridgeNEShort8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 668
+name: "SnowRefinery_Terran_ExtendingBridgeNEShort8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 669
+name: "SnowRefinery_Terran_ExtendingBridgeNWShort8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 670
+name: "SnowRefinery_Terran_ExtendingBridgeNWShort8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 671
+name: "Tarsonis_DoorN"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 672
+name: "Tarsonis_DoorNLowered"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 673
+name: "Tarsonis_DoorNE"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 674
+name: "Tarsonis_DoorNELowered"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 675
+name: "Tarsonis_DoorE"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 676
+name: "Tarsonis_DoorELowered"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 677
+name: "Tarsonis_DoorNW"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 678
+name: "Tarsonis_DoorNWLowered"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 679
+name: "CompoundMansion_DoorN"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 680
+name: "CompoundMansion_DoorNLowered"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 681
+name: "CompoundMansion_DoorNE"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 682
+name: "CompoundMansion_DoorNELowered"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 683
+name: "CompoundMansion_DoorE"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 684
+name: "CompoundMansion_DoorELowered"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 685
+name: "CompoundMansion_DoorNW"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 686
+name: "CompoundMansion_DoorNWLowered"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 687
+name: "RavagerCocoon"
+available: true
+attributes: Biological
+movement_speed: 0.0
+armor: 5.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 688
+name: "Ravager"
+available: true
+cargo_size: 4
+attributes: Biological
+movement_speed: 2.75
+armor: 1.0
+weapons {
+  type: Ground
+  damage: 16.0
+  attacks: 1
+  range: 6.0
+  speed: 1.60009765625
+}
+mineral_cost: 100
+vespene_cost: 100
+
+unit_id: 689
+name: "Liberator"
+available: true
+attributes: Armored
+attributes: Mechanical
+movement_speed: 3.375
+armor: 0.0
+weapons {
+  type: Air
+  damage: 5.0
+  attacks: 2
+  range: 5.0
+  speed: 1.800048828125
+}
+mineral_cost: 150
+vespene_cost: 150
+
+unit_id: 690
+name: "RavagerBurrowed"
+available: true
+attributes: Biological
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 100
+vespene_cost: 100
+
+unit_id: 691
+name: "ThorAP"
+available: true
+cargo_size: 8
+attributes: Armored
+attributes: Mechanical
+attributes: Massive
+movement_speed: 1.875
+armor: 2.0
+weapons {
+  type: Air
+  damage: 35.0
+  damage_bonus {
+    attribute: Armored
+    bonus: 15.0
+  }
+  attacks: 1
+  range: 10.0
+  speed: 3.0
+}
+weapons {
+  type: Ground
+  damage: 30.0
+  attacks: 2
+  range: 7.0
+  speed: 1.280029296875
+}
+mineral_cost: 300
+vespene_cost: 200
+
+unit_id: 692
+name: "Cyclone"
+available: true
+cargo_size: 4
+attributes: Armored
+attributes: Mechanical
+movement_speed: 2.953125
+armor: 1.0
+weapons {
+  type: Ground
+  damage: 3.0
+  damage_bonus {
+    attribute: Armored
+    bonus: 2.0
+  }
+  attacks: 1
+  range: 6.0
+  speed: 0.139892578125
+}
+mineral_cost: 150
+vespene_cost: 100
+
+unit_id: 693
+name: "LocustMPFlying"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 1.875
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 694
+name: "Disruptor"
+available: true
+cargo_size: 4
+attributes: Armored
+attributes: Mechanical
+movement_speed: 2.25
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 150
+
+unit_id: 695
+name: "AiurLightBridgeNE8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 696
+name: "AiurLightBridgeNE8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 697
+name: "AiurLightBridgeNE10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 698
+name: "AiurLightBridgeNE10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 699
+name: "AiurLightBridgeNE12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 700
+name: "AiurLightBridgeNE12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 701
+name: "AiurLightBridgeNW8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 702
+name: "AiurLightBridgeNW8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 703
+name: "AiurLightBridgeNW10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 704
+name: "AiurLightBridgeNW10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 705
+name: "AiurLightBridgeNW12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 706
+name: "AiurLightBridgeNW12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 707
+name: "AiurTempleBridgeNE8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 708
+name: "AiurTempleBridgeNE10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 709
+name: "AiurTempleBridgeNE12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 710
+name: "AiurTempleBridgeNW8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 711
+name: "AiurTempleBridgeNW10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 712
+name: "AiurTempleBridgeNW12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 713
+name: "ShakurasLightBridgeNE8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 714
+name: "ShakurasLightBridgeNE8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 715
+name: "ShakurasLightBridgeNE10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 716
+name: "ShakurasLightBridgeNE10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 717
+name: "ShakurasLightBridgeNE12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 718
+name: "ShakurasLightBridgeNE12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 719
+name: "ShakurasLightBridgeNW8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 720
+name: "ShakurasLightBridgeNW8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 721
+name: "ShakurasLightBridgeNW10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 722
+name: "ShakurasLightBridgeNW10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 723
+name: "ShakurasLightBridgeNW12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 724
+name: "ShakurasLightBridgeNW12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 725
+name: "VoidMPImmortalReviveCorpse"
+available: true
+cargo_size: 4
+attributes: Armored
+attributes: Mechanical
+movement_speed: 2.25
+armor: 1.0
+mineral_cost: 250
+vespene_cost: 100
+
+unit_id: 726
+name: "GuardianCocoonMP"
+available: true
+attributes: Biological
+attributes: Massive
+movement_speed: 1.40625
+armor: 2.0
+mineral_cost: 150
+vespene_cost: 200
+
+unit_id: 727
+name: "GuardianMP"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Massive
+movement_speed: 1.5
+armor: 2.0
+weapons {
+  type: Ground
+  damage: 20.0
+  attacks: 1
+  range: 9.0
+  speed: 1.300048828125
+}
+mineral_cost: 150
+vespene_cost: 200
+
+unit_id: 728
+name: "DevourerCocoonMP"
+available: true
+attributes: Biological
+attributes: Massive
+movement_speed: 1.40625
+armor: 2.0
+mineral_cost: 150
+vespene_cost: 200
+
+unit_id: 729
+name: "DevourerMP"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Massive
+movement_speed: 2.25
+armor: 2.0
+weapons {
+  type: Air
+  damage: 25.0
+  attacks: 1
+  range: 5.0
+  speed: 3.0
+}
+mineral_cost: 250
+vespene_cost: 150
+
+unit_id: 730
+name: "DefilerMPBurrowed"
+available: true
+cargo_size: 2
+attributes: Biological
+attributes: Psionic
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 50
+vespene_cost: 150
+
+unit_id: 731
+name: "DefilerMP"
+available: true
+cargo_size: 2
+attributes: Biological
+attributes: Psionic
+movement_speed: 2.25
+armor: 1.0
+mineral_cost: 50
+vespene_cost: 150
+
+unit_id: 732
+name: "OracleStasisTrap"
+available: true
+attributes: Light
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 733
+name: "DisruptorPhased"
+available: true
+cargo_size: 4
+attributes: Armored
+attributes: Mechanical
+movement_speed: 2.25
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 734
+name: "LiberatorAG"
+available: true
+attributes: Armored
+attributes: Mechanical
+movement_speed: 0.0
+armor: 0.0
+weapons {
+  type: Ground
+  damage: 75.0
+  attacks: 1
+  range: 10.0
+  speed: 1.60009765625
+}
+mineral_cost: 150
+vespene_cost: 150
+
+unit_id: 735
+name: "AiurLightBridgeAbandonedNE8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 736
+name: "AiurLightBridgeAbandonedNE8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 737
+name: "AiurLightBridgeAbandonedNE10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 738
+name: "AiurLightBridgeAbandonedNE10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 739
+name: "AiurLightBridgeAbandonedNE12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 740
+name: "AiurLightBridgeAbandonedNE12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 741
+name: "AiurLightBridgeAbandonedNW8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 742
+name: "AiurLightBridgeAbandonedNW8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 743
+name: "AiurLightBridgeAbandonedNW10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 744
+name: "AiurLightBridgeAbandonedNW10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 745
+name: "AiurLightBridgeAbandonedNW12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 746
+name: "AiurLightBridgeAbandonedNW12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 747
+name: "CollapsiblePurifierTowerDebris"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 748
+name: "PortCity_Bridge_UnitNE8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 749
+name: "PortCity_Bridge_UnitNE8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 750
+name: "PortCity_Bridge_UnitSE8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 751
+name: "PortCity_Bridge_UnitSE8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 752
+name: "PortCity_Bridge_UnitNW8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 753
+name: "PortCity_Bridge_UnitNW8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 754
+name: "PortCity_Bridge_UnitSW8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 755
+name: "PortCity_Bridge_UnitSW8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 756
+name: "PortCity_Bridge_UnitNE10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 757
+name: "PortCity_Bridge_UnitNE10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 758
+name: "PortCity_Bridge_UnitSE10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 759
+name: "PortCity_Bridge_UnitSE10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 760
+name: "PortCity_Bridge_UnitNW10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 761
+name: "PortCity_Bridge_UnitNW10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 762
+name: "PortCity_Bridge_UnitSW10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 763
+name: "PortCity_Bridge_UnitSW10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 764
+name: "PortCity_Bridge_UnitNE12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 765
+name: "PortCity_Bridge_UnitNE12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 766
+name: "PortCity_Bridge_UnitSE12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 767
+name: "PortCity_Bridge_UnitSE12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 768
+name: "PortCity_Bridge_UnitNW12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 769
+name: "PortCity_Bridge_UnitNW12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 770
+name: "PortCity_Bridge_UnitSW12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 771
+name: "PortCity_Bridge_UnitSW12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 772
+name: "PortCity_Bridge_UnitN8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 773
+name: "PortCity_Bridge_UnitN8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 774
+name: "PortCity_Bridge_UnitS8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 775
+name: "PortCity_Bridge_UnitS8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 776
+name: "PortCity_Bridge_UnitE8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 777
+name: "PortCity_Bridge_UnitE8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 778
+name: "PortCity_Bridge_UnitW8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 779
+name: "PortCity_Bridge_UnitW8"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 780
+name: "PortCity_Bridge_UnitN10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 781
+name: "PortCity_Bridge_UnitN10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 782
+name: "PortCity_Bridge_UnitS10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 783
+name: "PortCity_Bridge_UnitS10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 784
+name: "PortCity_Bridge_UnitE10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 785
+name: "PortCity_Bridge_UnitE10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 786
+name: "PortCity_Bridge_UnitW10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 787
+name: "PortCity_Bridge_UnitW10"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 788
+name: "PortCity_Bridge_UnitN12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 789
+name: "PortCity_Bridge_UnitN12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 790
+name: "PortCity_Bridge_UnitS12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 791
+name: "PortCity_Bridge_UnitS12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 792
+name: "PortCity_Bridge_UnitE12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 793
+name: "PortCity_Bridge_UnitE12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 794
+name: "PortCity_Bridge_UnitW12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 795
+name: "PortCity_Bridge_UnitW12"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 796
+name: "PurifierRichMineralField"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 797
+name: "PurifierRichMineralField750"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 798
+name: "CollapsiblePurifierTowerPushUnit"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 799
+name: "LocustMPPrecursor"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 800
+name: "ReleaseInterceptorsBeacon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 801
+name: "AdeptPhaseShift"
+available: true
+cargo_size: 2
+attributes: Light
+attributes: Biological
+movement_speed: 2.25
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 802
+name: "RavagerCorrosiveBileMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 803
+name: "HydraliskImpaleMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 804
+name: "CycloneMissileLargeAir"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 805
+name: "CycloneMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 806
+name: "CycloneMissileLarge"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 807
+name: "ThorAALance"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 808
+name: "OracleWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 809
+name: "TempestWeaponGround"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 810
+name: "RavagerWeaponMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 811
+name: "ScoutMPAirWeaponLeft"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 812
+name: "ScoutMPAirWeaponRight"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 813
+name: "ArbiterMPWeaponMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 814
+name: "GuardianMPWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 815
+name: "DevourerMPWeaponMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 816
+name: "DefilerMPDarkSwarmWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 817
+name: "QueenMPEnsnareMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 818
+name: "QueenMPSpawnBroodlingsMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 819
+name: "LightningBombWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 820
+name: "HERCPlacement"
+available: true
+cargo_size: 2
+attributes: Armored
+attributes: Biological
+movement_speed: 2.25
+armor: 1.0
+weapons {
+  type: Ground
+  damage: 20.0
+  attacks: 1
+  range: 6.0
+  speed: 1.5
+}
+mineral_cost: 200
+vespene_cost: 100
+
+unit_id: 821
+name: "GrappleWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 822
+name: "CausticSprayMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 823
+name: "ParasiticBombMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 824
+name: "ParasiticBombDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 825
+name: "AdeptWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 826
+name: "AdeptUpgradeWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 827
+name: "LiberatorMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 828
+name: "LiberatorDamageMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 829
+name: "LiberatorAGMissile"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 830
+name: "KD8Charge"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 831
+name: "KD8ChargeWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 832
+name: "SlaynElementalGrabWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 833
+name: "SlaynElementalGrabAirUnit"
+available: true
+attributes: Biological
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 834
+name: "SlaynElementalGrabGroundUnit"
+available: true
+attributes: Biological
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 835
+name: "SlaynElementalWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 836
+name: "DestructibleExpeditionGate6x6"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 837
+name: "DestructibleZergInfestation3x3"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 838
+name: "HERC"
+available: true
+cargo_size: 2
+attributes: Armored
+attributes: Biological
+movement_speed: 2.25
+armor: 1.0
+weapons {
+  type: Ground
+  damage: 20.0
+  attacks: 1
+  range: 6.0
+  speed: 1.5
+}
+mineral_cost: 200
+vespene_cost: 100
+
+unit_id: 839
+name: "Moopy"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 2.25
+armor: 1.0
+weapons {
+  type: Any
+  damage: 1.0
+  attacks: 1
+  range: 0.10009765625
+  speed: 1.0
+}
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 840
+name: "Replicant"
+available: true
+cargo_size: 4
+attributes: Light
+attributes: Biological
+movement_speed: 2.25
+armor: 1.0
+mineral_cost: 150
+vespene_cost: 300
+
+unit_id: 841
+name: "SeekerMissile"
+available: true
+movement_speed: 0.09765625
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 842
+name: "AiurTempleBridgeDestructibleNE8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 843
+name: "AiurTempleBridgeDestructibleNE10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 844
+name: "AiurTempleBridgeDestructibleNE12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 845
+name: "AiurTempleBridgeDestructibleNW8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 846
+name: "AiurTempleBridgeDestructibleNW10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 847
+name: "AiurTempleBridgeDestructibleNW12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 848
+name: "AiurTempleBridgeDestructibleSW8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 849
+name: "AiurTempleBridgeDestructibleSW10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 850
+name: "AiurTempleBridgeDestructibleSW12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 851
+name: "AiurTempleBridgeDestructibleSE8Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 852
+name: "AiurTempleBridgeDestructibleSE10Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 853
+name: "AiurTempleBridgeDestructibleSE12Out"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 854
+name: "FlyoverUnit"
+available: true
+movement_speed: 2.75
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 855
+name: "CorsairMP"
+available: true
+attributes: Light
+attributes: Mechanical
+movement_speed: 2.8125
+armor: 1.0
+weapons {
+  type: Air
+  damage: 5.0
+  attacks: 1
+  range: 5.0
+  speed: 0.472412109375
+}
+mineral_cost: 150
+vespene_cost: 100
+
+unit_id: 856
+name: "ScoutMP"
+available: true
+attributes: Armored
+attributes: Mechanical
+movement_speed: 2.8125
+armor: 0.0
+weapons {
+  type: Ground
+  damage: 8.0
+  attacks: 1
+  range: 4.0
+  speed: 1.694091796875
+}
+weapons {
+  type: Air
+  damage: 7.0
+  damage_bonus {
+    attribute: Armored
+    bonus: 7.0
+  }
+  attacks: 2
+  range: 4.0
+  speed: 1.25
+}
+mineral_cost: 275
+vespene_cost: 125
+
+unit_id: 857
+name: "ArbiterMP"
+available: true
+attributes: Armored
+attributes: Mechanical
+movement_speed: 2.25
+armor: 0.0
+weapons {
+  type: Any
+  damage: 10.0
+  attacks: 1
+  range: 5.0
+  speed: 1.5
+}
+mineral_cost: 100
+vespene_cost: 350
+
+unit_id: 858
+name: "ScourgeMP"
+available: true
+attributes: Light
+attributes: Biological
+movement_speed: 3.5
+armor: 0.0
+weapons {
+  type: Air
+  damage: 110.0
+  attacks: 1
+  range: 0.0
+  speed: 0.833251953125
+}
+mineral_cost: 12
+vespene_cost: 37
+
+unit_id: 859
+name: "DefilerMPPlagueWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 860
+name: "QueenMP"
+available: true
+attributes: Biological
+movement_speed: 3.25
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 861
+name: "XelNagaDestructibleRampBlocker6S"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 862
+name: "XelNagaDestructibleRampBlocker6SE"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 863
+name: "XelNagaDestructibleRampBlocker6E"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 864
+name: "XelNagaDestructibleRampBlocker6NE"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 865
+name: "XelNagaDestructibleRampBlocker6N"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 866
+name: "XelNagaDestructibleRampBlocker6NW"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 867
+name: "XelNagaDestructibleRampBlocker6W"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 868
+name: "XelNagaDestructibleRampBlocker6SW"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 869
+name: "XelNagaDestructibleRampBlocker8S"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 870
+name: "XelNagaDestructibleRampBlocker8SE"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 871
+name: "XelNagaDestructibleRampBlocker8E"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 872
+name: "XelNagaDestructibleRampBlocker8NE"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 873
+name: "XelNagaDestructibleRampBlocker8N"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 874
+name: "XelNagaDestructibleRampBlocker8NW"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 875
+name: "XelNagaDestructibleRampBlocker8W"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 876
+name: "XelNagaDestructibleRampBlocker8SW"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 877
+name: "ReptileCrate"
+available: true
+attributes: Biological
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 878
+name: "SlaynSwarmHostSpawnFlyer"
+available: true
+attributes: Biological
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 879
+name: "SlaynElemental"
+available: true
+attributes: Armored
+attributes: Biological
+attributes: Massive
+attributes: Heroic
+movement_speed: 1.0
+armor: 1.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 880
+name: "PurifierVespeneGeyser"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 881
+name: "ShakurasVespeneGeyser"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 882
+name: "CollapsiblePurifierTowerDiagonal"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 883
+name: "CreepOnlyBlocker4x4"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 884
+name: "PurifierMineralField"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 885
+name: "PurifierMineralField750"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 886
+name: "BattleStationMineralField"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 887
+name: "BattleStationMineralField750"
+available: true
+attributes: Structure
+movement_speed: 0.0
+armor: 10.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 888
+name: "Beacon_Nova"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 889
+name: "Beacon_NovaSmall"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 890
+name: "Ursula"
+available: true
+attributes: Biological
+movement_speed: 2.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 891
+name: "Elsecaro_Colonist_Hut"
+available: true
+attributes: Armored
+attributes: Mechanical
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 100
+vespene_cost: 0
+
+unit_id: 892
+name: "TransportOverlordCocoon"
+available: true
+attributes: Biological
+movement_speed: 1.875
+armor: 2.0
+mineral_cost: 150
+vespene_cost: 100
+
+unit_id: 893
+name: "OverlordTransport"
+available: true
+attributes: Armored
+attributes: Biological
+movement_speed: 0.5859375
+armor: 0.0
+mineral_cost: 100
+vespene_cost: 0
+
+unit_id: 894
+name: "PylonOvercharged"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 1.0
+mineral_cost: 100
+vespene_cost: 0
+
+unit_id: 895
+name: "BypassArmorDrone"
+available: true
+attributes: Light
+attributes: Mechanical
+attributes: Structure
+movement_speed: 5.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 896
+name: "AdeptPiercingWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 897
+name: "CorrosiveParasiteWeapon"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 898
+name: "InfestedTerran"
+available: false
+
+unit_id: 899
+name: "MercCompound"
+available: false
+
+unit_id: 900
+name: "SupplyDepotDrop"
+available: false
+
+unit_id: 901
+name: "LurkerDen"
+available: false
+
+unit_id: 902
+name: "D8Charge"
+available: false
+
+unit_id: 903
+name: "ThorWreckage"
+available: false
+
+unit_id: 904
+name: "Goliath"
+available: false
+
+unit_id: 905
+name: ""
+available: false
+
+unit_id: 906
+name: ""
+available: false
+
+unit_id: 907
+name: ""
+available: false
+
+unit_id: 908
+name: ""
+available: false
+
+unit_id: 909
+name: ""
+available: false
+
+unit_id: 910
+name: ""
+available: false
+
+unit_id: 911
+name: ""
+available: false
+
+unit_id: 912
+name: ""
+available: false
+
+unit_id: 913
+name: ""
+available: false
+
+unit_id: 914
+name: ""
+available: false
+
+unit_id: 915
+name: ""
+available: false
+
+unit_id: 916
+name: ""
+available: false
+
+unit_id: 917
+name: ""
+available: false
+
+unit_id: 918
+name: ""
+available: false
+
+unit_id: 919
+name: ""
+available: false
+
+unit_id: 920
+name: ""
+available: false
+
+unit_id: 921
+name: ""
+available: false
+
+unit_id: 922
+name: ""
+available: false
+
+unit_id: 923
+name: ""
+available: false
+
+unit_id: 924
+name: ""
+available: false
+
+unit_id: 925
+name: ""
+available: false
+
+unit_id: 926
+name: ""
+available: false
+
+unit_id: 927
+name: ""
+available: false
+
+unit_id: 928
+name: ""
+available: false
+
+unit_id: 929
+name: ""
+available: false
+
+unit_id: 930
+name: ""
+available: false
+
+unit_id: 931
+name: ""
+available: false
+
+unit_id: 932
+name: ""
+available: false
+
+unit_id: 933
+name: ""
+available: false
+
+unit_id: 934
+name: ""
+available: false
+
+unit_id: 935
+name: ""
+available: false
+
+unit_id: 936
+name: ""
+available: false
+
+unit_id: 937
+name: ""
+available: false
+
+unit_id: 938
+name: ""
+available: false
+
+unit_id: 939
+name: ""
+available: false
+
+unit_id: 940
+name: ""
+available: false
+
+unit_id: 941
+name: ""
+available: false
+
+unit_id: 942
+name: ""
+available: false
+
+unit_id: 943
+name: ""
+available: false
+
+unit_id: 944
+name: ""
+available: false
+
+unit_id: 945
+name: ""
+available: false
+
+unit_id: 946
+name: ""
+available: false
+
+unit_id: 947
+name: ""
+available: false
+
+unit_id: 948
+name: ""
+available: false
+
+unit_id: 949
+name: ""
+available: false
+
+unit_id: 950
+name: ""
+available: false
+
+unit_id: 951
+name: ""
+available: false
+
+unit_id: 952
+name: ""
+available: false
+
+unit_id: 953
+name: ""
+available: false
+
+unit_id: 954
+name: ""
+available: false
+
+unit_id: 955
+name: ""
+available: false
+
+unit_id: 956
+name: ""
+available: false
+
+unit_id: 957
+name: ""
+available: false
+
+unit_id: 958
+name: ""
+available: false
+
+unit_id: 959
+name: ""
+available: false
+
+unit_id: 960
+name: ""
+available: false
+
+unit_id: 961
+name: ""
+available: false
+
+unit_id: 962
+name: ""
+available: false
+
+unit_id: 963
+name: ""
+available: false
+
+unit_id: 964
+name: ""
+available: false
+
+unit_id: 965
+name: ""
+available: false
+
+unit_id: 966
+name: ""
+available: false
+
+unit_id: 967
+name: ""
+available: false
+
+unit_id: 968
+name: ""
+available: false
+
+unit_id: 969
+name: ""
+available: false
+
+unit_id: 970
+name: ""
+available: false
+
+unit_id: 971
+name: ""
+available: false
+
+unit_id: 972
+name: ""
+available: false
+
+unit_id: 973
+name: ""
+available: false
+
+unit_id: 974
+name: ""
+available: false
+
+unit_id: 975
+name: ""
+available: false
+
+unit_id: 976
+name: ""
+available: false
+
+unit_id: 977
+name: ""
+available: false
+
+unit_id: 978
+name: ""
+available: false
+
+unit_id: 979
+name: ""
+available: false
+
+unit_id: 980
+name: ""
+available: false
+
+unit_id: 981
+name: ""
+available: false
+
+unit_id: 982
+name: ""
+available: false
+
+unit_id: 983
+name: ""
+available: false
+
+unit_id: 984
+name: ""
+available: false
+
+unit_id: 985
+name: ""
+available: false
+
+unit_id: 986
+name: ""
+available: false
+
+unit_id: 987
+name: ""
+available: false
+
+unit_id: 988
+name: ""
+available: false
+
+unit_id: 989
+name: ""
+available: false
+
+unit_id: 990
+name: ""
+available: false
+
+unit_id: 991
+name: ""
+available: false
+
+unit_id: 992
+name: ""
+available: false
+
+unit_id: 993
+name: ""
+available: false
+
+unit_id: 994
+name: ""
+available: false
+
+unit_id: 995
+name: ""
+available: false
+
+unit_id: 996
+name: ""
+available: false
+
+unit_id: 997
+name: ""
+available: false
+
+unit_id: 998
+name: ""
+available: false
+
+unit_id: 999
+name: ""
+available: false
+
+unit_id: 1000
+name: ""
+available: false
+
+unit_id: 1001
+name: ""
+available: false
+
+unit_id: 1002
+name: ""
+available: false
+
+unit_id: 1003
+name: ""
+available: false
+
+unit_id: 1004
+name: ""
+available: false
+
+unit_id: 1005
+name: ""
+available: false
+
+unit_id: 1006
+name: ""
+available: false
+
+unit_id: 1007
+name: ""
+available: false
+
+unit_id: 1008
+name: ""
+available: false
+
+unit_id: 1009
+name: ""
+available: false
+
+unit_id: 1010
+name: ""
+available: false
+
+unit_id: 1011
+name: ""
+available: false
+
+unit_id: 1012
+name: ""
+available: false
+
+unit_id: 1013
+name: ""
+available: false
+
+unit_id: 1014
+name: ""
+available: false
+
+unit_id: 1015
+name: ""
+available: false
+
+unit_id: 1016
+name: ""
+available: false
+
+unit_id: 1017
+name: ""
+available: false
+
+unit_id: 1018
+name: ""
+available: false
+
+unit_id: 1019
+name: ""
+available: false
+
+unit_id: 1020
+name: ""
+available: false
+
+unit_id: 1021
+name: ""
+available: false
+
+unit_id: 1022
+name: ""
+available: false
+
+unit_id: 1023
+name: ""
+available: false
+
+unit_id: 1024
+name: ""
+available: false
+
+unit_id: 1025
+name: ""
+available: false
+
+unit_id: 1026
+name: ""
+available: false
+
+unit_id: 1027
+name: ""
+available: false
+
+unit_id: 1028
+name: ""
+available: false
+
+unit_id: 1029
+name: ""
+available: false
+
+unit_id: 1030
+name: ""
+available: false
+
+unit_id: 1031
+name: ""
+available: false
+
+unit_id: 1032
+name: ""
+available: false
+
+unit_id: 1033
+name: ""
+available: false
+
+unit_id: 1034
+name: ""
+available: false
+
+unit_id: 1035
+name: ""
+available: false
+
+unit_id: 1036
+name: ""
+available: false
+
+unit_id: 1037
+name: ""
+available: false
+
+unit_id: 1038
+name: ""
+available: false
+
+unit_id: 1039
+name: ""
+available: false
+
+unit_id: 1040
+name: ""
+available: false
+
+unit_id: 1041
+name: ""
+available: false
+
+unit_id: 1042
+name: ""
+available: false
+
+unit_id: 1043
+name: ""
+available: false
+
+unit_id: 1044
+name: ""
+available: false
+
+unit_id: 1045
+name: ""
+available: false
+
+unit_id: 1046
+name: ""
+available: false
+
+unit_id: 1047
+name: ""
+available: false
+
+unit_id: 1048
+name: ""
+available: false
+
+unit_id: 1049
+name: ""
+available: false
+
+unit_id: 1050
+name: ""
+available: false
+
+unit_id: 1051
+name: ""
+available: false
+
+unit_id: 1052
+name: ""
+available: false
+
+unit_id: 1053
+name: ""
+available: false
+
+unit_id: 1054
+name: ""
+available: false
+
+unit_id: 1055
+name: ""
+available: false
+
+unit_id: 1056
+name: ""
+available: false
+
+unit_id: 1057
+name: ""
+available: false
+
+unit_id: 1058
+name: ""
+available: false
+
+unit_id: 1059
+name: ""
+available: false
+
+unit_id: 1060
+name: ""
+available: false
+
+unit_id: 1061
+name: ""
+available: false
+
+unit_id: 1062
+name: ""
+available: false
+
+unit_id: 1063
+name: ""
+available: false
+
+unit_id: 1064
+name: ""
+available: false
+
+unit_id: 1065
+name: ""
+available: false
+
+unit_id: 1066
+name: ""
+available: false
+
+unit_id: 1067
+name: ""
+available: false
+
+unit_id: 1068
+name: ""
+available: false
+
+unit_id: 1069
+name: ""
+available: false
+
+unit_id: 1070
+name: ""
+available: false
+
+unit_id: 1071
+name: ""
+available: false
+
+unit_id: 1072
+name: ""
+available: false
+
+unit_id: 1073
+name: ""
+available: false
+
+unit_id: 1074
+name: ""
+available: false
+
+unit_id: 1075
+name: ""
+available: false
+
+unit_id: 1076
+name: ""
+available: false
+
+unit_id: 1077
+name: ""
+available: false
+
+unit_id: 1078
+name: ""
+available: false
+
+unit_id: 1079
+name: ""
+available: false
+
+unit_id: 1080
+name: ""
+available: false
+
+unit_id: 1081
+name: ""
+available: false
+
+unit_id: 1082
+name: ""
+available: false
+
+unit_id: 1083
+name: ""
+available: false
+
+unit_id: 1084
+name: ""
+available: false
+
+unit_id: 1085
+name: ""
+available: false
+
+unit_id: 1086
+name: ""
+available: false
+
+unit_id: 1087
+name: ""
+available: false
+
+unit_id: 1088
+name: ""
+available: false
+
+unit_id: 1089
+name: ""
+available: false
+
+unit_id: 1090
+name: ""
+available: false
+
+unit_id: 1091
+name: ""
+available: false
+
+unit_id: 1092
+name: ""
+available: false
+
+unit_id: 1093
+name: ""
+available: false
+
+unit_id: 1094
+name: ""
+available: false
+
+unit_id: 1095
+name: ""
+available: false
+
+unit_id: 1096
+name: ""
+available: false
+
+unit_id: 1097
+name: ""
+available: false
+
+unit_id: 1098
+name: ""
+available: false
+
+unit_id: 1099
+name: ""
+available: false
+
+unit_id: 1100
+name: ""
+available: false
+
+unit_id: 1101
+name: ""
+available: false
+
+unit_id: 1102
+name: ""
+available: false
+
+unit_id: 1103
+name: ""
+available: false
+
+unit_id: 1104
+name: ""
+available: false
+
+unit_id: 1105
+name: ""
+available: false
+
+unit_id: 1106
+name: ""
+available: false
+
+unit_id: 1107
+name: ""
+available: false
+
+unit_id: 1108
+name: ""
+available: false
+
+unit_id: 1109
+name: ""
+available: false
+
+unit_id: 1110
+name: ""
+available: false
+
+unit_id: 1111
+name: ""
+available: false
+
+unit_id: 1112
+name: ""
+available: false
+
+unit_id: 1113
+name: ""
+available: false
+
+unit_id: 1114
+name: ""
+available: false
+
+unit_id: 1115
+name: ""
+available: false
+
+unit_id: 1116
+name: ""
+available: false
+
+unit_id: 1117
+name: ""
+available: false
+
+unit_id: 1118
+name: ""
+available: false
+
+unit_id: 1119
+name: ""
+available: false
+
+unit_id: 1120
+name: ""
+available: false
+
+unit_id: 1121
+name: ""
+available: false
+
+unit_id: 1122
+name: ""
+available: false
+
+unit_id: 1123
+name: ""
+available: false
+
+unit_id: 1124
+name: ""
+available: false
+
+unit_id: 1125
+name: ""
+available: false
+
+unit_id: 1126
+name: ""
+available: false
+
+unit_id: 1127
+name: ""
+available: false
+
+unit_id: 1128
+name: ""
+available: false
+
+unit_id: 1129
+name: ""
+available: false
+
+unit_id: 1130
+name: ""
+available: false
+
+unit_id: 1131
+name: ""
+available: false
+
+unit_id: 1132
+name: ""
+available: false
+
+unit_id: 1133
+name: ""
+available: false
+
+unit_id: 1134
+name: ""
+available: false
+
+unit_id: 1135
+name: ""
+available: false
+
+unit_id: 1136
+name: ""
+available: false
+
+unit_id: 1137
+name: ""
+available: false
+
+unit_id: 1138
+name: ""
+available: false
+
+unit_id: 1139
+name: ""
+available: false
+
+unit_id: 1140
+name: ""
+available: false
+
+unit_id: 1141
+name: ""
+available: false
+
+unit_id: 1142
+name: ""
+available: false
+
+unit_id: 1143
+name: ""
+available: false
+
+unit_id: 1144
+name: ""
+available: false
+
+unit_id: 1145
+name: ""
+available: false
+
+unit_id: 1146
+name: ""
+available: false
+
+unit_id: 1147
+name: ""
+available: false
+
+unit_id: 1148
+name: ""
+available: false
+
+unit_id: 1149
+name: ""
+available: false
+
+unit_id: 1150
+name: ""
+available: false
+
+unit_id: 1151
+name: ""
+available: false
+
+unit_id: 1152
+name: ""
+available: false
+
+unit_id: 1153
+name: ""
+available: false
+
+unit_id: 1154
+name: ""
+available: false
+
+unit_id: 1155
+name: ""
+available: false
+
+unit_id: 1156
+name: ""
+available: false
+
+unit_id: 1157
+name: ""
+available: false
+
+unit_id: 1158
+name: ""
+available: false
+
+unit_id: 1159
+name: ""
+available: false
+
+unit_id: 1160
+name: ""
+available: false
+
+unit_id: 1161
+name: ""
+available: false
+
+unit_id: 1162
+name: ""
+available: false
+
+unit_id: 1163
+name: ""
+available: false
+
+unit_id: 1164
+name: ""
+available: false
+
+unit_id: 1165
+name: ""
+available: false
+
+unit_id: 1166
+name: ""
+available: false
+
+unit_id: 1167
+name: ""
+available: false
+
+unit_id: 1168
+name: ""
+available: false
+
+unit_id: 1169
+name: ""
+available: false
+
+unit_id: 1170
+name: ""
+available: false
+
+unit_id: 1171
+name: ""
+available: false
+
+unit_id: 1172
+name: ""
+available: false
+
+unit_id: 1173
+name: ""
+available: false
+
+unit_id: 1174
+name: ""
+available: false
+
+unit_id: 1175
+name: ""
+available: false
+
+unit_id: 1176
+name: ""
+available: false
+
+unit_id: 1177
+name: ""
+available: false
+
+unit_id: 1178
+name: ""
+available: false
+
+unit_id: 1179
+name: ""
+available: false
+
+unit_id: 1180
+name: ""
+available: false
+
+unit_id: 1181
+name: ""
+available: false
+
+unit_id: 1182
+name: ""
+available: false
+
+unit_id: 1183
+name: ""
+available: false
+
+unit_id: 1184
+name: ""
+available: false
+
+unit_id: 1185
+name: ""
+available: false
+
+unit_id: 1186
+name: ""
+available: false
+
+unit_id: 1187
+name: ""
+available: false
+
+unit_id: 1188
+name: ""
+available: false
+
+unit_id: 1189
+name: ""
+available: false
+
+unit_id: 1190
+name: ""
+available: false
+
+unit_id: 1191
+name: ""
+available: false
+
+unit_id: 1192
+name: ""
+available: false
+
+unit_id: 1193
+name: ""
+available: false
+
+unit_id: 1194
+name: ""
+available: false
+
+unit_id: 1195
+name: ""
+available: false
+
+unit_id: 1196
+name: ""
+available: false
+
+unit_id: 1197
+name: ""
+available: false
+
+unit_id: 1198
+name: ""
+available: false
+
+unit_id: 1199
+name: ""
+available: false
+
+unit_id: 1200
+name: ""
+available: false
+
+unit_id: 1201
+name: ""
+available: false
+
+unit_id: 1202
+name: ""
+available: false
+
+unit_id: 1203
+name: ""
+available: false
+
+unit_id: 1204
+name: ""
+available: false
+
+unit_id: 1205
+name: ""
+available: false
+
+unit_id: 1206
+name: ""
+available: false
+
+unit_id: 1207
+name: ""
+available: false
+
+unit_id: 1208
+name: ""
+available: false
+
+unit_id: 1209
+name: ""
+available: false
+
+unit_id: 1210
+name: ""
+available: false
+
+unit_id: 1211
+name: ""
+available: false
+
+unit_id: 1212
+name: ""
+available: false
+
+unit_id: 1213
+name: ""
+available: false
+
+unit_id: 1214
+name: ""
+available: false
+
+unit_id: 1215
+name: ""
+available: false
+
+unit_id: 1216
+name: ""
+available: false
+
+unit_id: 1217
+name: ""
+available: false
+
+unit_id: 1218
+name: ""
+available: false
+
+unit_id: 1219
+name: ""
+available: false
+
+unit_id: 1220
+name: ""
+available: false
+
+unit_id: 1221
+name: ""
+available: false
+
+unit_id: 1222
+name: ""
+available: false
+
+unit_id: 1223
+name: ""
+available: false
+
+unit_id: 1224
+name: ""
+available: false
+
+unit_id: 1225
+name: ""
+available: false
+
+unit_id: 1226
+name: ""
+available: false
+
+unit_id: 1227
+name: ""
+available: false
+
+unit_id: 1228
+name: ""
+available: false
+
+unit_id: 1229
+name: ""
+available: false
+
+unit_id: 1230
+name: ""
+available: false
+
+unit_id: 1231
+name: ""
+available: false
+
+unit_id: 1232
+name: ""
+available: false
+
+unit_id: 1233
+name: ""
+available: false
+
+unit_id: 1234
+name: ""
+available: false
+
+unit_id: 1235
+name: ""
+available: false
+
+unit_id: 1236
+name: ""
+available: false
+
+unit_id: 1237
+name: ""
+available: false
+
+unit_id: 1238
+name: ""
+available: false
+
+unit_id: 1239
+name: ""
+available: false
+
+unit_id: 1240
+name: ""
+available: false
+
+unit_id: 1241
+name: ""
+available: false
+
+unit_id: 1242
+name: ""
+available: false
+
+unit_id: 1243
+name: ""
+available: false
+
+unit_id: 1244
+name: ""
+available: false
+
+unit_id: 1245
+name: ""
+available: false
+
+unit_id: 1246
+name: ""
+available: false
+
+unit_id: 1247
+name: ""
+available: false
+
+unit_id: 1248
+name: ""
+available: false
+
+unit_id: 1249
+name: ""
+available: false
+
+unit_id: 1250
+name: ""
+available: false
+
+unit_id: 1251
+name: ""
+available: false
+
+unit_id: 1252
+name: ""
+available: false
+
+unit_id: 1253
+name: ""
+available: false
+
+unit_id: 1254
+name: ""
+available: false
+
+unit_id: 1255
+name: ""
+available: false
+
+unit_id: 1256
+name: ""
+available: false
+
+unit_id: 1257
+name: ""
+available: false
+
+unit_id: 1258
+name: ""
+available: false
+
+unit_id: 1259
+name: ""
+available: false
+
+unit_id: 1260
+name: ""
+available: false
+
+unit_id: 1261
+name: ""
+available: false
+
+unit_id: 1262
+name: ""
+available: false
+
+unit_id: 1263
+name: ""
+available: false
+
+unit_id: 1264
+name: ""
+available: false
+
+unit_id: 1265
+name: ""
+available: false
+
+unit_id: 1266
+name: ""
+available: false
+
+unit_id: 1267
+name: ""
+available: false
+
+unit_id: 1268
+name: ""
+available: false
+
+unit_id: 1269
+name: ""
+available: false
+
+unit_id: 1270
+name: ""
+available: false
+
+unit_id: 1271
+name: ""
+available: false
+
+unit_id: 1272
+name: ""
+available: false
+
+unit_id: 1273
+name: ""
+available: false
+
+unit_id: 1274
+name: ""
+available: false
+
+unit_id: 1275
+name: ""
+available: false
+
+unit_id: 1276
+name: ""
+available: false
+
+unit_id: 1277
+name: ""
+available: false
+
+unit_id: 1278
+name: ""
+available: false
+
+unit_id: 1279
+name: ""
+available: false
+
+unit_id: 1280
+name: ""
+available: false
+
+unit_id: 1281
+name: ""
+available: false
+
+unit_id: 1282
+name: ""
+available: false
+
+unit_id: 1283
+name: ""
+available: false
+
+unit_id: 1284
+name: ""
+available: false
+
+unit_id: 1285
+name: ""
+available: false
+
+unit_id: 1286
+name: ""
+available: false
+
+unit_id: 1287
+name: ""
+available: false
+
+unit_id: 1288
+name: ""
+available: false
+
+unit_id: 1289
+name: ""
+available: false
+
+unit_id: 1290
+name: ""
+available: false
+
+unit_id: 1291
+name: ""
+available: false
+
+unit_id: 1292
+name: ""
+available: false
+
+unit_id: 1293
+name: ""
+available: false
+
+unit_id: 1294
+name: ""
+available: false
+
+unit_id: 1295
+name: ""
+available: false
+
+unit_id: 1296
+name: ""
+available: false
+
+unit_id: 1297
+name: ""
+available: false
+
+unit_id: 1298
+name: ""
+available: false
+
+unit_id: 1299
+name: ""
+available: false
+
+unit_id: 1300
+name: ""
+available: false
+
+unit_id: 1301
+name: ""
+available: false
+
+unit_id: 1302
+name: ""
+available: false
+
+unit_id: 1303
+name: ""
+available: false
+
+unit_id: 1304
+name: ""
+available: false
+
+unit_id: 1305
+name: ""
+available: false
+
+unit_id: 1306
+name: ""
+available: false
+
+unit_id: 1307
+name: ""
+available: false
+
+unit_id: 1308
+name: ""
+available: false
+
+unit_id: 1309
+name: ""
+available: false
+
+unit_id: 1310
+name: ""
+available: false
+
+unit_id: 1311
+name: ""
+available: false
+
+unit_id: 1312
+name: ""
+available: false
+
+unit_id: 1313
+name: ""
+available: false
+
+unit_id: 1314
+name: ""
+available: false
+
+unit_id: 1315
+name: ""
+available: false
+
+unit_id: 1316
+name: ""
+available: false
+
+unit_id: 1317
+name: ""
+available: false
+
+unit_id: 1318
+name: ""
+available: false
+
+unit_id: 1319
+name: ""
+available: false
+
+unit_id: 1320
+name: ""
+available: false
+
+unit_id: 1321
+name: ""
+available: false
+
+unit_id: 1322
+name: ""
+available: false
+
+unit_id: 1323
+name: ""
+available: false
+
+unit_id: 1324
+name: ""
+available: false
+
+unit_id: 1325
+name: ""
+available: false
+
+unit_id: 1326
+name: ""
+available: false
+
+unit_id: 1327
+name: ""
+available: false
+
+unit_id: 1328
+name: ""
+available: false
+
+unit_id: 1329
+name: ""
+available: false
+
+unit_id: 1330
+name: ""
+available: false
+
+unit_id: 1331
+name: ""
+available: false
+
+unit_id: 1332
+name: ""
+available: false
+
+unit_id: 1333
+name: ""
+available: false
+
+unit_id: 1334
+name: ""
+available: false
+
+unit_id: 1335
+name: ""
+available: false
+
+unit_id: 1336
+name: ""
+available: false
+
+unit_id: 1337
+name: ""
+available: false
+
+unit_id: 1338
+name: ""
+available: false
+
+unit_id: 1339
+name: ""
+available: false
+
+unit_id: 1340
+name: ""
+available: false
+
+unit_id: 1341
+name: ""
+available: false
+
+unit_id: 1342
+name: ""
+available: false
+
+unit_id: 1343
+name: ""
+available: false
+
+unit_id: 1344
+name: ""
+available: false
+
+unit_id: 1345
+name: ""
+available: false
+
+unit_id: 1346
+name: ""
+available: false
+
+unit_id: 1347
+name: ""
+available: false
+
+unit_id: 1348
+name: ""
+available: false
+
+unit_id: 1349
+name: ""
+available: false
+
+unit_id: 1350
+name: ""
+available: false
+
+unit_id: 1351
+name: ""
+available: false
+
+unit_id: 1352
+name: ""
+available: false
+
+unit_id: 1353
+name: ""
+available: false
+
+unit_id: 1354
+name: ""
+available: false
+
+unit_id: 1355
+name: ""
+available: false
+
+unit_id: 1356
+name: ""
+available: false
+
+unit_id: 1357
+name: ""
+available: false
+
+unit_id: 1358
+name: ""
+available: false
+
+unit_id: 1359
+name: ""
+available: false
+
+unit_id: 1360
+name: ""
+available: false
+
+unit_id: 1361
+name: ""
+available: false
+
+unit_id: 1362
+name: ""
+available: false
+
+unit_id: 1363
+name: ""
+available: false
+
+unit_id: 1364
+name: ""
+available: false
+
+unit_id: 1365
+name: ""
+available: false
+
+unit_id: 1366
+name: ""
+available: false
+
+unit_id: 1367
+name: ""
+available: false
+
+unit_id: 1368
+name: ""
+available: false
+
+unit_id: 1369
+name: ""
+available: false
+
+unit_id: 1370
+name: ""
+available: false
+
+unit_id: 1371
+name: ""
+available: false
+
+unit_id: 1372
+name: ""
+available: false
+
+unit_id: 1373
+name: ""
+available: false
+
+unit_id: 1374
+name: ""
+available: false
+
+unit_id: 1375
+name: ""
+available: false
+
+unit_id: 1376
+name: ""
+available: false
+
+unit_id: 1377
+name: ""
+available: false
+
+unit_id: 1378
+name: ""
+available: false
+
+unit_id: 1379
+name: ""
+available: false
+
+unit_id: 1380
+name: ""
+available: false
+
+unit_id: 1381
+name: ""
+available: false
+
+unit_id: 1382
+name: ""
+available: false
+
+unit_id: 1383
+name: ""
+available: false
+
+unit_id: 1384
+name: ""
+available: false
+
+unit_id: 1385
+name: ""
+available: false
+
+unit_id: 1386
+name: ""
+available: false
+
+unit_id: 1387
+name: ""
+available: false
+
+unit_id: 1388
+name: ""
+available: false
+
+unit_id: 1389
+name: ""
+available: false
+
+unit_id: 1390
+name: ""
+available: false
+
+unit_id: 1391
+name: ""
+available: false
+
+unit_id: 1392
+name: ""
+available: false
+
+unit_id: 1393
+name: ""
+available: false
+
+unit_id: 1394
+name: ""
+available: false
+
+unit_id: 1395
+name: ""
+available: false
+
+unit_id: 1396
+name: ""
+available: false
+
+unit_id: 1397
+name: ""
+available: false
+
+unit_id: 1398
+name: ""
+available: false
+
+unit_id: 1399
+name: ""
+available: false
+
+unit_id: 1400
+name: ""
+available: false
+
+unit_id: 1401
+name: ""
+available: false
+
+unit_id: 1402
+name: ""
+available: false
+
+unit_id: 1403
+name: ""
+available: false
+
+unit_id: 1404
+name: ""
+available: false
+
+unit_id: 1405
+name: ""
+available: false
+
+unit_id: 1406
+name: ""
+available: false
+
+unit_id: 1407
+name: ""
+available: false
+
+unit_id: 1408
+name: ""
+available: false
+
+unit_id: 1409
+name: ""
+available: false
+
+unit_id: 1410
+name: ""
+available: false
+
+unit_id: 1411
+name: ""
+available: false
+
+unit_id: 1412
+name: ""
+available: false
+
+unit_id: 1413
+name: ""
+available: false
+
+unit_id: 1414
+name: ""
+available: false
+
+unit_id: 1415
+name: ""
+available: false
+
+unit_id: 1416
+name: ""
+available: false
+
+unit_id: 1417
+name: ""
+available: false
+
+unit_id: 1418
+name: ""
+available: false
+
+unit_id: 1419
+name: ""
+available: false
+
+unit_id: 1420
+name: ""
+available: false
+
+unit_id: 1421
+name: ""
+available: false
+
+unit_id: 1422
+name: ""
+available: false
+
+unit_id: 1423
+name: ""
+available: false
+
+unit_id: 1424
+name: ""
+available: false
+
+unit_id: 1425
+name: ""
+available: false
+
+unit_id: 1426
+name: ""
+available: false
+
+unit_id: 1427
+name: ""
+available: false
+
+unit_id: 1428
+name: ""
+available: false
+
+unit_id: 1429
+name: ""
+available: false
+
+unit_id: 1430
+name: ""
+available: false
+
+unit_id: 1431
+name: ""
+available: false
+
+unit_id: 1432
+name: ""
+available: false
+
+unit_id: 1433
+name: ""
+available: false
+
+unit_id: 1434
+name: ""
+available: false
+
+unit_id: 1435
+name: ""
+available: false
+
+unit_id: 1436
+name: ""
+available: false
+
+unit_id: 1437
+name: ""
+available: false
+
+unit_id: 1438
+name: ""
+available: false
+
+unit_id: 1439
+name: ""
+available: false
+
+unit_id: 1440
+name: ""
+available: false
+
+unit_id: 1441
+name: ""
+available: false
+
+unit_id: 1442
+name: ""
+available: false
+
+unit_id: 1443
+name: ""
+available: false
+
+unit_id: 1444
+name: ""
+available: false
+
+unit_id: 1445
+name: ""
+available: false
+
+unit_id: 1446
+name: ""
+available: false
+
+unit_id: 1447
+name: ""
+available: false
+
+unit_id: 1448
+name: ""
+available: false
+
+unit_id: 1449
+name: ""
+available: false
+
+unit_id: 1450
+name: ""
+available: false
+
+unit_id: 1451
+name: ""
+available: false
+
+unit_id: 1452
+name: ""
+available: false
+
+unit_id: 1453
+name: ""
+available: false
+
+unit_id: 1454
+name: ""
+available: false
+
+unit_id: 1455
+name: ""
+available: false
+
+unit_id: 1456
+name: ""
+available: false
+
+unit_id: 1457
+name: ""
+available: false
+
+unit_id: 1458
+name: ""
+available: false
+
+unit_id: 1459
+name: ""
+available: false
+
+unit_id: 1460
+name: ""
+available: false
+
+unit_id: 1461
+name: ""
+available: false
+
+unit_id: 1462
+name: ""
+available: false
+
+unit_id: 1463
+name: ""
+available: false
+
+unit_id: 1464
+name: ""
+available: false
+
+unit_id: 1465
+name: ""
+available: false
+
+unit_id: 1466
+name: ""
+available: false
+
+unit_id: 1467
+name: ""
+available: false
+
+unit_id: 1468
+name: ""
+available: false
+
+unit_id: 1469
+name: ""
+available: false
+
+unit_id: 1470
+name: ""
+available: false
+
+unit_id: 1471
+name: ""
+available: false
+
+unit_id: 1472
+name: ""
+available: false
+
+unit_id: 1473
+name: ""
+available: false
+
+unit_id: 1474
+name: ""
+available: false
+
+unit_id: 1475
+name: ""
+available: false
+
+unit_id: 1476
+name: ""
+available: false
+
+unit_id: 1477
+name: ""
+available: false
+
+unit_id: 1478
+name: ""
+available: false
+
+unit_id: 1479
+name: ""
+available: false
+
+unit_id: 1480
+name: ""
+available: false
+
+unit_id: 1481
+name: ""
+available: false
+
+unit_id: 1482
+name: ""
+available: false
+
+unit_id: 1483
+name: ""
+available: false
+
+unit_id: 1484
+name: ""
+available: false
+
+unit_id: 1485
+name: ""
+available: false
+
+unit_id: 1486
+name: ""
+available: false
+
+unit_id: 1487
+name: ""
+available: false
+
+unit_id: 1488
+name: ""
+available: false
+
+unit_id: 1489
+name: ""
+available: false
+
+unit_id: 1490
+name: ""
+available: false
+
+unit_id: 1491
+name: ""
+available: false
+
+unit_id: 1492
+name: ""
+available: false
+
+unit_id: 1493
+name: ""
+available: false
+
+unit_id: 1494
+name: ""
+available: false
+
+unit_id: 1495
+name: ""
+available: false
+
+unit_id: 1496
+name: ""
+available: false
+
+unit_id: 1497
+name: ""
+available: false
+
+unit_id: 1498
+name: ""
+available: false
+
+unit_id: 1499
+name: ""
+available: false
+
+unit_id: 1500
+name: ""
+available: false
+
+unit_id: 1501
+name: ""
+available: false
+
+unit_id: 1502
+name: ""
+available: false
+
+unit_id: 1503
+name: ""
+available: false
+
+unit_id: 1504
+name: ""
+available: false
+
+unit_id: 1505
+name: ""
+available: false
+
+unit_id: 1506
+name: ""
+available: false
+
+unit_id: 1507
+name: ""
+available: false
+
+unit_id: 1508
+name: ""
+available: false
+
+unit_id: 1509
+name: ""
+available: false
+
+unit_id: 1510
+name: ""
+available: false
+
+unit_id: 1511
+name: ""
+available: false
+
+unit_id: 1512
+name: ""
+available: false
+
+unit_id: 1513
+name: ""
+available: false
+
+unit_id: 1514
+name: ""
+available: false
+
+unit_id: 1515
+name: ""
+available: false
+
+unit_id: 1516
+name: ""
+available: false
+
+unit_id: 1517
+name: ""
+available: false
+
+unit_id: 1518
+name: ""
+available: false
+
+unit_id: 1519
+name: ""
+available: false
+
+unit_id: 1520
+name: ""
+available: false
+
+unit_id: 1521
+name: ""
+available: false
+
+unit_id: 1522
+name: ""
+available: false
+
+unit_id: 1523
+name: ""
+available: false
+
+unit_id: 1524
+name: ""
+available: false
+
+unit_id: 1525
+name: ""
+available: false
+
+unit_id: 1526
+name: ""
+available: false
+
+unit_id: 1527
+name: ""
+available: false
+
+unit_id: 1528
+name: ""
+available: false
+
+unit_id: 1529
+name: ""
+available: false
+
+unit_id: 1530
+name: ""
+available: false
+
+unit_id: 1531
+name: ""
+available: false
+
+unit_id: 1532
+name: ""
+available: false
+
+unit_id: 1533
+name: ""
+available: false
+
+unit_id: 1534
+name: ""
+available: false
+
+unit_id: 1535
+name: ""
+available: false
+
+unit_id: 1536
+name: ""
+available: false
+
+unit_id: 1537
+name: ""
+available: false
+
+unit_id: 1538
+name: ""
+available: false
+
+unit_id: 1539
+name: ""
+available: false
+
+unit_id: 1540
+name: ""
+available: false
+
+unit_id: 1541
+name: ""
+available: false
+
+unit_id: 1542
+name: ""
+available: false
+
+unit_id: 1543
+name: ""
+available: false
+
+unit_id: 1544
+name: ""
+available: false
+
+unit_id: 1545
+name: ""
+available: false
+
+unit_id: 1546
+name: ""
+available: false
+
+unit_id: 1547
+name: ""
+available: false
+
+unit_id: 1548
+name: ""
+available: false
+
+unit_id: 1549
+name: ""
+available: false
+
+unit_id: 1550
+name: ""
+available: false
+
+unit_id: 1551
+name: ""
+available: false
+
+unit_id: 1552
+name: ""
+available: false
+
+unit_id: 1553
+name: ""
+available: false
+
+unit_id: 1554
+name: ""
+available: false
+
+unit_id: 1555
+name: ""
+available: false
+
+unit_id: 1556
+name: ""
+available: false
+
+unit_id: 1557
+name: ""
+available: false
+
+unit_id: 1558
+name: ""
+available: false
+
+unit_id: 1559
+name: ""
+available: false
+
+unit_id: 1560
+name: ""
+available: false
+
+unit_id: 1561
+name: ""
+available: false
+
+unit_id: 1562
+name: ""
+available: false
+
+unit_id: 1563
+name: ""
+available: false
+
+unit_id: 1564
+name: ""
+available: false
+
+unit_id: 1565
+name: ""
+available: false
+
+unit_id: 1566
+name: ""
+available: false
+
+unit_id: 1567
+name: ""
+available: false
+
+unit_id: 1568
+name: ""
+available: false
+
+unit_id: 1569
+name: ""
+available: false
+
+unit_id: 1570
+name: ""
+available: false
+
+unit_id: 1571
+name: ""
+available: false
+
+unit_id: 1572
+name: ""
+available: false
+
+unit_id: 1573
+name: ""
+available: false
+
+unit_id: 1574
+name: ""
+available: false
+
+unit_id: 1575
+name: ""
+available: false
+
+unit_id: 1576
+name: ""
+available: false
+
+unit_id: 1577
+name: ""
+available: false
+
+unit_id: 1578
+name: ""
+available: false
+
+unit_id: 1579
+name: ""
+available: false
+
+unit_id: 1580
+name: ""
+available: false
+
+unit_id: 1581
+name: ""
+available: false
+
+unit_id: 1582
+name: ""
+available: false
+
+unit_id: 1583
+name: ""
+available: false
+
+unit_id: 1584
+name: ""
+available: false
+
+unit_id: 1585
+name: ""
+available: false
+
+unit_id: 1586
+name: ""
+available: false
+
+unit_id: 1587
+name: ""
+available: false
+
+unit_id: 1588
+name: ""
+available: false
+
+unit_id: 1589
+name: ""
+available: false
+
+unit_id: 1590
+name: ""
+available: false
+
+unit_id: 1591
+name: ""
+available: false
+
+unit_id: 1592
+name: ""
+available: false
+
+unit_id: 1593
+name: ""
+available: false
+
+unit_id: 1594
+name: ""
+available: false
+
+unit_id: 1595
+name: ""
+available: false
+
+unit_id: 1596
+name: ""
+available: false
+
+unit_id: 1597
+name: ""
+available: false
+
+unit_id: 1598
+name: ""
+available: false
+
+unit_id: 1599
+name: ""
+available: false
+
+unit_id: 1600
+name: ""
+available: false
+
+unit_id: 1601
+name: ""
+available: false
+
+unit_id: 1602
+name: ""
+available: false
+
+unit_id: 1603
+name: ""
+available: false
+
+unit_id: 1604
+name: ""
+available: false
+
+unit_id: 1605
+name: ""
+available: false
+
+unit_id: 1606
+name: ""
+available: false
+
+unit_id: 1607
+name: ""
+available: false
+
+unit_id: 1608
+name: ""
+available: false
+
+unit_id: 1609
+name: ""
+available: false
+
+unit_id: 1610
+name: ""
+available: false
+
+unit_id: 1611
+name: ""
+available: false
+
+unit_id: 1612
+name: ""
+available: false
+
+unit_id: 1613
+name: ""
+available: false
+
+unit_id: 1614
+name: ""
+available: false
+
+unit_id: 1615
+name: ""
+available: false
+
+unit_id: 1616
+name: ""
+available: false
+
+unit_id: 1617
+name: ""
+available: false
+
+unit_id: 1618
+name: ""
+available: false
+
+unit_id: 1619
+name: ""
+available: false
+
+unit_id: 1620
+name: ""
+available: false
+
+unit_id: 1621
+name: ""
+available: false
+
+unit_id: 1622
+name: ""
+available: false
+
+unit_id: 1623
+name: ""
+available: false
+
+unit_id: 1624
+name: ""
+available: false
+
+unit_id: 1625
+name: ""
+available: false
+
+unit_id: 1626
+name: ""
+available: false
+
+unit_id: 1627
+name: ""
+available: false
+
+unit_id: 1628
+name: ""
+available: false
+
+unit_id: 1629
+name: ""
+available: false
+
+unit_id: 1630
+name: ""
+available: false
+
+unit_id: 1631
+name: ""
+available: false
+
+unit_id: 1632
+name: ""
+available: false
+
+unit_id: 1633
+name: ""
+available: false
+
+unit_id: 1634
+name: ""
+available: false
+
+unit_id: 1635
+name: ""
+available: false
+
+unit_id: 1636
+name: ""
+available: false
+
+unit_id: 1637
+name: ""
+available: false
+
+unit_id: 1638
+name: ""
+available: false
+
+unit_id: 1639
+name: ""
+available: false
+
+unit_id: 1640
+name: ""
+available: false
+
+unit_id: 1641
+name: ""
+available: false
+
+unit_id: 1642
+name: ""
+available: false
+
+unit_id: 1643
+name: ""
+available: false
+
+unit_id: 1644
+name: ""
+available: false
+
+unit_id: 1645
+name: ""
+available: false
+
+unit_id: 1646
+name: ""
+available: false
+
+unit_id: 1647
+name: ""
+available: false
+
+unit_id: 1648
+name: ""
+available: false
+
+unit_id: 1649
+name: ""
+available: false
+
+unit_id: 1650
+name: ""
+available: false
+
+unit_id: 1651
+name: ""
+available: false
+
+unit_id: 1652
+name: ""
+available: false
+
+unit_id: 1653
+name: ""
+available: false
+
+unit_id: 1654
+name: ""
+available: false
+
+unit_id: 1655
+name: ""
+available: false
+
+unit_id: 1656
+name: ""
+available: false
+
+unit_id: 1657
+name: ""
+available: false
+
+unit_id: 1658
+name: ""
+available: false
+
+unit_id: 1659
+name: ""
+available: false
+
+unit_id: 1660
+name: ""
+available: false
+
+unit_id: 1661
+name: ""
+available: false
+
+unit_id: 1662
+name: ""
+available: false
+
+unit_id: 1663
+name: ""
+available: false
+
+unit_id: 1664
+name: ""
+available: false
+
+unit_id: 1665
+name: ""
+available: false
+
+unit_id: 1666
+name: ""
+available: false
+
+unit_id: 1667
+name: ""
+available: false
+
+unit_id: 1668
+name: ""
+available: false
+
+unit_id: 1669
+name: ""
+available: false
+
+unit_id: 1670
+name: ""
+available: false
+
+unit_id: 1671
+name: ""
+available: false
+
+unit_id: 1672
+name: ""
+available: false
+
+unit_id: 1673
+name: ""
+available: false
+
+unit_id: 1674
+name: ""
+available: false
+
+unit_id: 1675
+name: ""
+available: false
+
+unit_id: 1676
+name: ""
+available: false
+
+unit_id: 1677
+name: ""
+available: false
+
+unit_id: 1678
+name: ""
+available: false
+
+unit_id: 1679
+name: ""
+available: false
+
+unit_id: 1680
+name: ""
+available: false
+
+unit_id: 1681
+name: ""
+available: false
+
+unit_id: 1682
+name: ""
+available: false
+
+unit_id: 1683
+name: ""
+available: false
+
+unit_id: 1684
+name: ""
+available: false
+
+unit_id: 1685
+name: ""
+available: false
+
+unit_id: 1686
+name: ""
+available: false
+
+unit_id: 1687
+name: ""
+available: false
+
+unit_id: 1688
+name: ""
+available: false
+
+unit_id: 1689
+name: ""
+available: false
+
+unit_id: 1690
+name: ""
+available: false
+
+unit_id: 1691
+name: ""
+available: false
+
+unit_id: 1692
+name: ""
+available: false
+
+unit_id: 1693
+name: ""
+available: false
+
+unit_id: 1694
+name: ""
+available: false
+
+unit_id: 1695
+name: ""
+available: false
+
+unit_id: 1696
+name: ""
+available: false
+
+unit_id: 1697
+name: ""
+available: false
+
+unit_id: 1698
+name: ""
+available: false
+
+unit_id: 1699
+name: ""
+available: false
+
+unit_id: 1700
+name: ""
+available: false
+
+unit_id: 1701
+name: ""
+available: false
+
+unit_id: 1702
+name: ""
+available: false
+
+unit_id: 1703
+name: ""
+available: false
+
+unit_id: 1704
+name: ""
+available: false
+
+unit_id: 1705
+name: ""
+available: false
+
+unit_id: 1706
+name: ""
+available: false
+
+unit_id: 1707
+name: ""
+available: false
+
+unit_id: 1708
+name: ""
+available: false
+
+unit_id: 1709
+name: ""
+available: false
+
+unit_id: 1710
+name: ""
+available: false
+
+unit_id: 1711
+name: ""
+available: false
+
+unit_id: 1712
+name: ""
+available: false
+
+unit_id: 1713
+name: ""
+available: false
+
+unit_id: 1714
+name: ""
+available: false
+
+unit_id: 1715
+name: ""
+available: false
+
+unit_id: 1716
+name: ""
+available: false
+
+unit_id: 1717
+name: ""
+available: false
+
+unit_id: 1718
+name: ""
+available: false
+
+unit_id: 1719
+name: ""
+available: false
+
+unit_id: 1720
+name: ""
+available: false
+
+unit_id: 1721
+name: ""
+available: false
+
+unit_id: 1722
+name: ""
+available: false
+
+unit_id: 1723
+name: ""
+available: false
+
+unit_id: 1724
+name: ""
+available: false
+
+unit_id: 1725
+name: ""
+available: false
+
+unit_id: 1726
+name: ""
+available: false
+
+unit_id: 1727
+name: ""
+available: false
+
+unit_id: 1728
+name: ""
+available: false
+
+unit_id: 1729
+name: ""
+available: false
+
+unit_id: 1730
+name: ""
+available: false
+
+unit_id: 1731
+name: ""
+available: false
+
+unit_id: 1732
+name: ""
+available: false
+
+unit_id: 1733
+name: ""
+available: false
+
+unit_id: 1734
+name: ""
+available: false
+
+unit_id: 1735
+name: ""
+available: false
+
+unit_id: 1736
+name: ""
+available: false
+
+unit_id: 1737
+name: ""
+available: false
+
+unit_id: 1738
+name: ""
+available: false
+
+unit_id: 1739
+name: ""
+available: false
+
+unit_id: 1740
+name: ""
+available: false
+
+unit_id: 1741
+name: ""
+available: false
+
+unit_id: 1742
+name: ""
+available: false
+
+unit_id: 1743
+name: ""
+available: false
+
+unit_id: 1744
+name: ""
+available: false
+
+unit_id: 1745
+name: ""
+available: false
+
+unit_id: 1746
+name: ""
+available: false
+
+unit_id: 1747
+name: ""
+available: false
+
+unit_id: 1748
+name: ""
+available: false
+
+unit_id: 1749
+name: ""
+available: false
+
+unit_id: 1750
+name: ""
+available: false
+
+unit_id: 1751
+name: ""
+available: false
+
+unit_id: 1752
+name: ""
+available: false
+
+unit_id: 1753
+name: ""
+available: false
+
+unit_id: 1754
+name: ""
+available: false
+
+unit_id: 1755
+name: ""
+available: false
+
+unit_id: 1756
+name: ""
+available: false
+
+unit_id: 1757
+name: ""
+available: false
+
+unit_id: 1758
+name: ""
+available: false
+
+unit_id: 1759
+name: ""
+available: false
+
+unit_id: 1760
+name: ""
+available: false
+
+unit_id: 1761
+name: ""
+available: false
+
+unit_id: 1762
+name: ""
+available: false
+
+unit_id: 1763
+name: ""
+available: false
+
+unit_id: 1764
+name: ""
+available: false
+
+unit_id: 1765
+name: ""
+available: false
+
+unit_id: 1766
+name: ""
+available: false
+
+unit_id: 1767
+name: ""
+available: false
+
+unit_id: 1768
+name: ""
+available: false
+
+unit_id: 1769
+name: ""
+available: false
+
+unit_id: 1770
+name: ""
+available: false
+
+unit_id: 1771
+name: ""
+available: false
+
+unit_id: 1772
+name: ""
+available: false
+
+unit_id: 1773
+name: ""
+available: false
+
+unit_id: 1774
+name: ""
+available: false
+
+unit_id: 1775
+name: ""
+available: false
+
+unit_id: 1776
+name: ""
+available: false
+
+unit_id: 1777
+name: ""
+available: false
+
+unit_id: 1778
+name: ""
+available: false
+
+unit_id: 1779
+name: ""
+available: false
+
+unit_id: 1780
+name: ""
+available: false
+
+unit_id: 1781
+name: ""
+available: false
+
+unit_id: 1782
+name: ""
+available: false
+
+unit_id: 1783
+name: ""
+available: false
+
+unit_id: 1784
+name: ""
+available: false
+
+unit_id: 1785
+name: ""
+available: false
+
+unit_id: 1786
+name: ""
+available: false
+
+unit_id: 1787
+name: ""
+available: false
+
+unit_id: 1788
+name: ""
+available: false
+
+unit_id: 1789
+name: ""
+available: false
+
+unit_id: 1790
+name: ""
+available: false
+
+unit_id: 1791
+name: ""
+available: false
+
+unit_id: 1792
+name: ""
+available: false
+
+unit_id: 1793
+name: ""
+available: false
+
+unit_id: 1794
+name: ""
+available: false
+
+unit_id: 1795
+name: ""
+available: false
+
+unit_id: 1796
+name: ""
+available: false
+
+unit_id: 1797
+name: ""
+available: false
+
+unit_id: 1798
+name: ""
+available: false
+
+unit_id: 1799
+name: ""
+available: false
+
+unit_id: 1800
+name: ""
+available: false
+
+unit_id: 1801
+name: ""
+available: false
+
+unit_id: 1802
+name: ""
+available: false
+
+unit_id: 1803
+name: ""
+available: false
+
+unit_id: 1804
+name: ""
+available: false
+
+unit_id: 1805
+name: ""
+available: false
+
+unit_id: 1806
+name: ""
+available: false
+
+unit_id: 1807
+name: ""
+available: false
+
+unit_id: 1808
+name: ""
+available: false
+
+unit_id: 1809
+name: ""
+available: false
+
+unit_id: 1810
+name: ""
+available: false
+
+unit_id: 1811
+name: ""
+available: false
+
+unit_id: 1812
+name: ""
+available: false
+
+unit_id: 1813
+name: ""
+available: false
+
+unit_id: 1814
+name: ""
+available: false
+
+unit_id: 1815
+name: ""
+available: false
+
+unit_id: 1816
+name: ""
+available: false
+
+unit_id: 1817
+name: ""
+available: false
+
+unit_id: 1818
+name: ""
+available: false
+
+unit_id: 1819
+name: ""
+available: false
+
+unit_id: 1820
+name: ""
+available: false
+
+unit_id: 1821
+name: ""
+available: false
+
+unit_id: 1822
+name: ""
+available: false
+
+unit_id: 1823
+name: ""
+available: false
+
+unit_id: 1824
+name: ""
+available: false
+
+unit_id: 1825
+name: ""
+available: false
+
+unit_id: 1826
+name: ""
+available: false
+
+unit_id: 1827
+name: ""
+available: false
+
+unit_id: 1828
+name: ""
+available: false
+
+unit_id: 1829
+name: ""
+available: false
+
+unit_id: 1830
+name: ""
+available: false
+
+unit_id: 1831
+name: ""
+available: false
+
+unit_id: 1832
+name: ""
+available: false
+
+unit_id: 1833
+name: ""
+available: false
+
+unit_id: 1834
+name: ""
+available: false
+
+unit_id: 1835
+name: ""
+available: false
+
+unit_id: 1836
+name: ""
+available: false
+
+unit_id: 1837
+name: ""
+available: false
+
+unit_id: 1838
+name: ""
+available: false
+
+unit_id: 1839
+name: ""
+available: false
+
+unit_id: 1840
+name: ""
+available: false
+
+unit_id: 1841
+name: ""
+available: false
+
+unit_id: 1842
+name: ""
+available: false
+
+unit_id: 1843
+name: "StukovInfestedCivilianACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1844
+name: "StukovInfestedMarineACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1845
+name: "StukovInfestedSiegeTankACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1846
+name: "StukovInfestedDiamondbackACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1847
+name: "StukovInfestedBansheeACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1848
+name: "SILiberatorACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1849
+name: "StukovInfestedBunkerACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1850
+name: "StukovInfestedMissileTurretACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1851
+name: "StukovBroodQueenACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1852
+name: "ZealotFenixACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1853
+name: "SentryFenixACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1854
+name: "AdeptFenixACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1855
+name: "ImmortalFenixACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1856
+name: "ColossusFenixACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1857
+name: "DisruptorACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1858
+name: "ObserverFenixACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1859
+name: "ScoutACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1860
+name: "CarrierFenixACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1861
+name: "PhotonCannonFenixACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1862
+name: "HighTemplarSkinPreview"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1863
+name: "WarpPrismSkinPreview"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1864
+name: "SiegeTankSkinPreview"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1865
+name: "VikingSkinPreview"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1866
+name: "LiberatorSkinPreview"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1867
+name: "StukovInfestedTrooperACGluescreenDummy"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1868
+name: "XelNagaDestructibleBlocker6S"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1869
+name: "XelNagaDestructibleBlocker6SE"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1870
+name: "XelNagaDestructibleBlocker6E"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1871
+name: "XelNagaDestructibleBlocker6NE"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1872
+name: "XelNagaDestructibleBlocker6N"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1873
+name: "XelNagaDestructibleBlocker6NW"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1874
+name: "XelNagaDestructibleBlocker6W"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1875
+name: "XelNagaDestructibleBlocker6SW"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1876
+name: "XelNagaDestructibleBlocker8S"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1877
+name: "XelNagaDestructibleBlocker8SE"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1878
+name: "XelNagaDestructibleBlocker8E"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1879
+name: "XelNagaDestructibleBlocker8NE"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1880
+name: "XelNagaDestructibleBlocker8N"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1881
+name: "XelNagaDestructibleBlocker8NW"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1882
+name: "XelNagaDestructibleBlocker8W"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1883
+name: "XelNagaDestructibleBlocker8SW"
+available: true
+attributes: Armored
+attributes: Structure
+movement_speed: 0.0
+armor: 3.0
+mineral_cost: 0
+vespene_cost: 0
+
+unit_id: 1884
+name: "SnowGlazeStarterMP"
+available: true
+movement_speed: 0.0
+armor: 0.0
+mineral_cost: 0
+vespene_cost: 0
+
