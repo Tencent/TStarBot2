@@ -7,7 +7,7 @@ setup(
     keywords='TStartBot',
     packages=[
         'tstarbot',
-        'bin',
+        'tstarbot.bin',
     ],
 
     install_requires=[

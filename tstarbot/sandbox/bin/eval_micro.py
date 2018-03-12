@@ -1,9 +1,9 @@
 from pysc2.env import sc2_env
-from agents.rule_micro_agent import MicroAgent
+from tstarbot.sandbox.agents.rule_micro_agent import MicroAgent
 from absl import app
 import os
 
-os.environ["SC2PATH"] = "/Volumes/Macintosh2/Game/StarCraft II"
+os.environ["SC2PATH"] = "/home/psun/StarCraftII"
 
 
 def demo(unused_argv):

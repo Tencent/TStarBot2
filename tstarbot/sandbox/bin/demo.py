@@ -1,10 +1,10 @@
 from pysc2.env import sc2_env
-import tstarbot as ts
+from tstarbot.sandbox.demo_bot import DemoBot
 from absl import app
 from absl import flags
 import os
 
-os.environ["SC2PATH"] = "/Volumes/Macintosh2/Game/StarCraft II"
+os.environ["SC2PATH"] = "/home/psun/StarCraftII"
 
 def demo(unused_argv):
   env = sc2_env.SC2Env(map_name='Simple64',
@@ -17,7 +17,7 @@ def demo(unused_argv):
                        game_steps_per_episode=0,
                        visualize=True)
 
-  bot = ts.DemoBot(env)
+  bot = DemoBot(env)
   bot.setup()
   bot.run(100)
 
