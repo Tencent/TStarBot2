@@ -10,7 +10,8 @@ import random
 import math
 import numpy as np
 from s2clientprotocol import sc2api_pb2 as sc_pb
-import tstarbot as ts
+from tstarbot.sandbox.bot_base import PoolBase, ManagerBase
+from tstarbot.sandbox.act_executor import ActExecutor
 
 
 UNIT_TYPE_MARINE = 48
@@ -24,7 +25,7 @@ ROACH_ATTACK_RANGE = 5.0
 
 
 # A pool containing all units that you want to operate
-class UnitPool(ts.PoolBase):
+class UnitPool(PoolBase):
     def __init__(self):
         self.marines = []
         self.roaches = []
@@ -58,7 +59,7 @@ class UnitPool(ts.PoolBase):
         return self.roaches
 
 
-class MicroManager(ts.ManagerBase):
+class MicroManager(ManagerBase):
     def __init__(self, pool):
         self._pool = pool
         self._range_high = 5
@@ -153,7 +154,7 @@ class MicroAgent:
         task_manager = MicroManager(pool)
         self._pools.append(pool)
         self._managers.append(task_manager)
-        self._executor = ts.ActExecutor(self._env)
+        self._executor = ActExecutor(self._env)
 
     def reset(self):
         timesteps = self._env.reset()
