@@ -17,7 +17,7 @@ class ZergBuildingMgr(BaseBuildingMgr):
         super(ZergBuildingMgr, self).__init__()
 
     def update(self, obs_mgr, act_mgr):
-        super(ZergBuildingMgr, self).__init__()
+        super(ZergBuildingMgr, self).update(obs_mgr, act_mgr)
 
         actions = []
         # TODO: impl here

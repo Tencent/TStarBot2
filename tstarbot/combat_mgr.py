@@ -28,7 +28,7 @@ class DefeatRoachesCombatMgr(BaseCombatMgr):
         self.roaches = None
 
     def update(self, obs_mgr, act_mgr):
-        super(DefeatRoachesCombatMgr, self).__init__()
+        super(DefeatRoachesCombatMgr, self).update(obs_mgr, act_mgr)
         self.marines = obs_mgr.marines
         self.roaches = obs_mgr.roaches
 
@@ -110,7 +110,7 @@ class ZergCombatMgr(BaseCombatMgr):
         super(ZergCombatMgr, self).__init__()
 
     def update(self, obs_mgr, act_mgr):
-        super(ZergCombatMgr, self).__init__()
+        super(ZergCombatMgr, self).update(obs_mgr, act_mgr)
 
         actions = list()
 

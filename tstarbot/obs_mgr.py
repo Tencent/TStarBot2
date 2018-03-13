@@ -31,7 +31,7 @@ class DancingDronesObsMgr(BaseObsMgr):
         self._hatcherys = []
 
     def update(self, timestep):
-        super(DancingDronesObsMgr, self).__init__()
+        super(DancingDronesObsMgr, self).update(timestep=timestep)
 
         units = timestep.observation['units']
         self._locate_hatcherys(units)
@@ -69,7 +69,7 @@ class DefeatRoachesObsMgr(BaseObsMgr):
         self.roaches = []  # for enemy
 
     def update(self, timestep):
-        super(DefeatRoachesObsMgr, self).__init__()
+        super(DefeatRoachesObsMgr, self).update(timestep=timestep)
 
         units = timestep.observation['units']
         # print(units)
@@ -110,6 +110,6 @@ class ZergObsMgr(BaseObsMgr):
         self.b = None
 
     def update(self, timestep):
-        super(ZergObsMgr, self).__init__()
+        super(ZergObsMgr, self).update(timestep=timestep)
 
         self.units = timestep.observation['units']

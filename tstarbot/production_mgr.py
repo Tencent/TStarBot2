@@ -17,7 +17,7 @@ class ZergProductionMgr(BaseProductionMgr):
         super(ZergProductionMgr, self).__init__()
 
     def update(self, obs_mgr, act_mgr):
-        super(ZergProductionMgr, self).__init__()
+        super(ZergProductionMgr, self).update(obs_mgr, act_mgr)
 
         actions = []
         # TODO: impl here

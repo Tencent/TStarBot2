@@ -23,7 +23,7 @@ class DancingDronesResourceMgr(BaseResourceMgr):
         self._move_ability = 1
 
     def update(self, obs_mgr, act_mgr):
-        super(DancingDronesResourceMgr, self).__init__()
+        super(DancingDronesResourceMgr, self).update(obs_mgr, act_mgr)
 
         drone_ids = obs_mgr.get_drones()
         pos = obs_mgr.get_hatcherys()

@@ -19,7 +19,7 @@ class ZergScoutMgr(BaseScoutMgr):
         self.roaches = None
 
     def update(self, obs_mgr, act_mgr):
-        super(ZergScoutMgr, self).__init__()
+        super(ZergScoutMgr, self).update(obs_mgr, act_mgr)
 
         actions = list()
         # TODO: impl here
