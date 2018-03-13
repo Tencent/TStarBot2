@@ -24,6 +24,9 @@ class BaseCombatMgr:
 
 
 class DefeatRoachesCombatMgr(BaseCombatMgr):
+    """ Combat Manager for the DefeatRoaches minimap"""
+
+
     def __init__(self):
         super(DefeatRoachesCombatMgr, self).__init__()
         self.marines = None
@@ -103,3 +106,19 @@ class DefeatRoachesCombatMgr(BaseCombatMgr):
     @staticmethod
     def cal_square_dist(u1, u2):
         return pow(u1.float_attr.pos_x - u2.float_attr.pos_x, 2) + pow(u1.float_attr.pos_y - u2.float_attr.pos_y, 2)
+
+
+class ZergCombatMgr(BaseCombatMgr):
+    """ A zvz Zerg combat manager """
+
+    def __init__(self):
+        super(ZergCombatMgr, self).__init__()
+
+    def update(self, obs_mgr, act_mgr):
+        super(ZergCombatMgr, self).__init__()
+
+        actions = list()
+
+        # TODO: impl
+
+        act_mgr.push_actions(actions)

@@ -1,6 +1,6 @@
 """Adopted from
 
-Zheng Yang's demo_bot.py
+Zheng Yang's demo_bot.py showing the per-unit-control via raw interface of s2client-proto.
 """
 from __future__ import absolute_import
 from __future__ import division

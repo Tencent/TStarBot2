@@ -34,3 +34,12 @@ python -m pysc2.bin.agent \
     --bot_race Z
 ```
 
+```
+python -m pysc2.bin.agent \
+    --map Simple64 \
+    --agent tstarbot.agents.zerg_agent.ZergAgent \
+    --screen_resolution 64 \
+    --agent_race Z \
+    --bot_race Z
+```
+

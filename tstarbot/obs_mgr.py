@@ -4,12 +4,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import numpy
-from copy import deepcopy
-
-from pysc2.agents import base_agent
-from pysc2.lib import actions
-from pysc2.lib import features
 
 UNIT_TYPE_MARINE = 48
 UNIT_TYPE_ROACH = 110
@@ -31,7 +25,9 @@ class BaseObsMgr:
 
 
 class DancingDronesObsMgr(BaseObsMgr):
-    """ adopted from Zheng Yang's code."""
+    """ Let drones dance around their base.
+
+    adopted from Zheng Yang's code."""
 
     def __init__(self):
         super(DancingDronesObsMgr, self).__init__()
@@ -105,3 +101,19 @@ class DefeatRoachesObsMgr(BaseObsMgr):
 
     def get_roaches(self):
         return self.roaches
+
+
+class ZergObsMgr(BaseObsMgr):
+    """ Z v Z obs manager
+    """
+
+    def __init__(self):
+        super(ZergObsMgr, self).__init__()
+        self.units = None
+        self.a = None
+        self.b = None
+
+    def update(self, timestep):
+        super(ZergObsMgr, self).__init__()
+
+        self.units = timestep.observation['units']

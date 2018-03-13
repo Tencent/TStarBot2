@@ -7,7 +7,6 @@ import random
 from s2clientprotocol import sc2api_pb2 as sc_pb
 
 
-
 class BaseResourceMgr:
     def __init__(self):
         pass
@@ -47,3 +46,17 @@ class DancingDronesResourceMgr(BaseResourceMgr):
             action.action_raw.unit_command.unit_tags.append(drone)
             actions.append(action)
         return actions
+
+
+class ZergResourceMgr(BaseResourceMgr):
+    def __init__(self):
+        super(ZergResourceMgr, self).__init__()
+
+    def update(self, obs_mgr, act_mgr):
+        super(ZergResourceMgr, self).__init__()
+
+        actions = []
+
+        # TODO: imple here
+
+        act_mgr.push_actions(actions)
