@@ -43,3 +43,29 @@ python -m pysc2.bin.agent \
     --bot_race Z
 ```
 
+## Evaluate
+Evaluate the agent (e.g., winning rate) using `tstarbot.bin.eval_agent`. Examples:
+```
+python -m tstarbot.bin.eval_agent \
+    --max_agent_episodes 5 \
+    --map AbyssalReef \
+    --difficulty 3 \
+    --norender \
+    --agent tstarbot.agents.zerg_agent.ZergAgent \
+    --screen_resolution 64 \
+    --agent_race Z \
+    --bot_race Z
+```
+
+```
+python -m tstarbot.bin.eval_agent \
+    --max_agent_episodes 5 \
+    --map AbyssalReef \
+    --difficulty 8 \
+    --render \
+    --agent pysc2.agents.random_agent.RandomAgent \
+    --screen_resolution 64 \
+    --agent_race Z \
+    --bot_race Z
+```
+

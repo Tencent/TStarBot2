@@ -21,7 +21,7 @@ class ZergBuildingMgr(BaseBuildingMgr):
 
         actions = []
         # TODO: impl here
-        print('a', obs_mgr.a)
-        print('b', obs_mgr.b)
+        #print('a', obs_mgr.a)
+        #print('b', obs_mgr.b)
 
         act_mgr.push_actions(actions)
