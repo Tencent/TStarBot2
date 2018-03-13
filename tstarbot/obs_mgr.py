@@ -4,11 +4,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-
-UNIT_TYPE_MARINE = 48
-UNIT_TYPE_ROACH = 110
-UNIT_TYPE_HATCHERY = 86
-UNIT_TYPE_DRONE = 104
+import pysc2.lib.typeenums as tp
 
 
 class BaseObsMgr:
@@ -43,13 +39,13 @@ class DancingDronesObsMgr(BaseObsMgr):
 
     def _locate_hatcherys(self, units):
         for u in units:
-            if u.unit_type == UNIT_TYPE_HATCHERY:
+            if u.unit_type == tp.UNIT_TYPEID.ZERG_HATCHERY.value:
                 self._hatcherys.append((u.float_attr.pos_x, u.float_attr.pos_y, u.float_attr.pos_z))
 
     def _update_drone(self, units):
         drone_ids = []
         for u in units:
-            if u.unit_type == UNIT_TYPE_DRONE:
+            if u.unit_type == tp.UNIT_TYPEID.ZERG_DRONE.value:
                 drone_ids.append(u.tag)
 
         self._drone_ids = drone_ids
@@ -83,7 +79,7 @@ class DefeatRoachesObsMgr(BaseObsMgr):
     def collect_marine(self, units):
         marines = []
         for u in units:
-            if u.unit_type == UNIT_TYPE_MARINE and u.int_attr.owner == 1:
+            if u.unit_type == tp.UNIT_TYPEID.TERRAN_MARINE.value and u.int_attr.owner == 1:
                 marines.append(u)
                 # print("marine assigned_harvesters: {}".format(u.int_attr.assigned_harvesters))
         self.marines = marines
@@ -91,7 +87,7 @@ class DefeatRoachesObsMgr(BaseObsMgr):
     def collect_roach(self, units):
         roaches = []
         for u in units:
-            if u.unit_type == UNIT_TYPE_ROACH and u.int_attr.owner == 2:
+            if u.unit_type == tp.UNIT_TYPEID.ZERG_ROACH.value and u.int_attr.owner == 2:
                 roaches.append(u)
                 # print("roach target: {}".format(u.int_attr.engaged_target_tag))
         self.roaches = roaches

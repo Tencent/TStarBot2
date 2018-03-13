@@ -6,11 +6,7 @@ from __future__ import print_function
 import numpy as np
 import math
 from s2clientprotocol import sc2api_pb2 as sc_pb
-
-
-MOVE = 1
-ATTACK = 23
-ATTACK_TOWARDS = 24
+import pysc2.lib.typeenums as tp
 
 ROACH_ATTACK_RANGE = 5.0
 
@@ -25,7 +21,6 @@ class BaseCombatMgr:
 
 class DefeatRoachesCombatMgr(BaseCombatMgr):
     """ Combat Manager for the DefeatRoaches minimap"""
-
 
     def __init__(self):
         super(DefeatRoachesCombatMgr, self).__init__()
@@ -51,7 +46,7 @@ class DefeatRoachesCombatMgr(BaseCombatMgr):
 
     def attack_closest_enemy(self, u):
         action = sc_pb.Action()
-        action.action_raw.unit_command.ability_id = ATTACK
+        action.action_raw.unit_command.ability_id = tp.ABILITY_ID.ATTACK_ATTACK.value
         target = self.find_closest_enemy(u, enemies=self.roaches)
 
         action.action_raw.unit_command.target_unit_tag = u.tag
@@ -60,7 +55,7 @@ class DefeatRoachesCombatMgr(BaseCombatMgr):
 
     def attack_weakest_enemy(self, u):
         action = sc_pb.Action()
-        action.action_raw.unit_command.ability_id = ATTACK
+        action.action_raw.unit_command.ability_id = tp.ABILITY_ID.ATTACK_ATTACK.value
         target = self.find_weakest_enemy(enemies=self.roaches)
 
         action.action_raw.unit_command.target_unit_tag = target.tag
@@ -69,7 +64,7 @@ class DefeatRoachesCombatMgr(BaseCombatMgr):
 
     def run_away_from_closest_enemy(self, u):
         action = sc_pb.Action()
-        action.action_raw.unit_command.ability_id = MOVE
+        action.action_raw.unit_command.ability_id = tp.ABILITY_ID.SMART.value
         target = self.find_closest_enemy(u, enemies=self.roaches)
 
         action.action_raw.unit_command.target_world_space_pos.x = u.float_attr.pos_x + (
