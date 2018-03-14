@@ -12,6 +12,9 @@ from tstarbot.obs_mgr import DefeatRoachesObsMgr
 from tstarbot.combat_mgr import DefeatRoachesCombatMgr
 from tstarbot.act_mgr import ActMgr
 from pysc2.agents import base_agent
+from pysc2.lib import stopwatch
+
+sw = stopwatch.sw
 
 
 class MicroDefeatRoachesAgent(base_agent.BaseAgent):
@@ -25,6 +28,14 @@ class MicroDefeatRoachesAgent(base_agent.BaseAgent):
 
     def step(self, timestep):
         super(MicroDefeatRoachesAgent, self).step(timestep)
-        self.obs_mgr.update(timestep=timestep)
-        self.combat_mgr.update(self.obs_mgr, self.act_mgr)
-        return self.act_mgr.pop_actions()
+        return self.mystep(timestep)
+
+    @sw.decorate
+    def mystep(self, timestep):
+        with sw('obs_mgr'):
+            self.obs_mgr.update(timestep=timestep)
+        with sw('combat_mgr'):
+            self.combat_mgr.update(self.obs_mgr, self.act_mgr)
+        with sw('act_mgr'):
+            actions = self.act_mgr.pop_actions()
+        return actions
