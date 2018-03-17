@@ -2,5 +2,4 @@
 TStarBot.egg-info/
 tstarbot/__pycache__/
 agents/__pycache__/
-docs/
 __pycache__

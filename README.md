@@ -1,6 +1,6 @@
 # TStarBot
 
-A Star Craft II bot. Compatible with `pysc2.agents` (i.e., it can be run by `pysc2.bin.agent`).
+A rule-based Star Craft II bot. Compatible with `pysc2.agents`.
 
 ## Install
 cd to the folder and run the command:
@@ -14,7 +14,7 @@ pysc2 (Zheng Yang's fork)
 ```
 
 ## How to Run
-Examples:
+Run the agent using `pysc2.bin.agent`. Example:
 
 ```
 python -m pysc2.bin.agent \
@@ -24,27 +24,10 @@ python -m pysc2.bin.agent \
     --agent_race T \
     --bot_race Z
 ```
-
-```
-python -m pysc2.bin.agent \
-    --map Simple64 \
-    --agent tstarbot.agents.dancing_drones_agent.DancingDronesAgent \
-    --screen_resolution 64 \
-    --agent_race Z \
-    --bot_race Z
-```
-
-```
-python -m pysc2.bin.agent \
-    --map Simple64 \
-    --agent tstarbot.agents.zerg_agent.ZergAgent \
-    --screen_resolution 64 \
-    --agent_race Z \
-    --bot_race Z
-```
+See more examples [here](docs/examples_howtorun.md).
 
 ## Evaluate
-Evaluate the agent (e.g., winning rate) using `tstarbot.bin.eval_agent`. Examples:
+Evaluate the agent (e.g., winning rate) using `tstarbot.bin.eval_agent`. Example:
 ```
 python -m tstarbot.bin.eval_agent \
     --max_agent_episodes 5 \
@@ -56,18 +39,7 @@ python -m tstarbot.bin.eval_agent \
     --agent_race Z \
     --bot_race Z
 ```
-
-```
-python -m tstarbot.bin.eval_agent \
-    --max_agent_episodes 5 \
-    --map AbyssalReef \
-    --difficulty 8 \
-    --render \
-    --agent pysc2.agents.random_agent.RandomAgent \
-    --screen_resolution 64 \
-    --agent_race Z \
-    --bot_race Z
-```
+See more examples [here](docs/examples_evaluate.md).
 
 ## Profiling
 Use `pysc2.lib.stopwatch` to profile the code. 
