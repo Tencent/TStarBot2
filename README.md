@@ -53,3 +53,7 @@ python -m pysc2.bin.agent \
     --bot_race Z \
     --profile
 ```
+
+## Coding Style
+Use the google python coding style:
+http://zh-google-styleguide.readthedocs.io/en/latest/google-python-styleguide/python_style_rules/
