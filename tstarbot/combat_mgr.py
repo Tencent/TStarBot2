@@ -11,7 +11,7 @@ import pysc2.lib.typeenums as tp
 ROACH_ATTACK_RANGE = 5.0
 
 
-class BaseCombatMgr:
+class BaseCombatMgr(object):
     def __init__(self):
         pass
 

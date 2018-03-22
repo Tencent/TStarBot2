@@ -4,7 +4,7 @@ from __future__ import division
 from __future__ import print_function
 
 
-class BaseProductionMgr:
+class BaseProductionMgr(object):
     def __init__(self):
         pass
 

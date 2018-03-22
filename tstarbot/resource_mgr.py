@@ -7,7 +7,7 @@ import random
 from s2clientprotocol import sc2api_pb2 as sc_pb
 
 
-class BaseResourceMgr:
+class BaseResourceMgr(object):
     def __init__(self):
         pass
 

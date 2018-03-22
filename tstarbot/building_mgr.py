@@ -4,7 +4,7 @@ from __future__ import division
 from __future__ import print_function
 
 
-class BaseBuildingMgr:
+class BaseBuildingMgr(object):
     def __init__(self):
         pass
 

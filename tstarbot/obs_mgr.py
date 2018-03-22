@@ -7,7 +7,7 @@ from __future__ import print_function
 import pysc2.lib.typeenums as tp
 
 
-class BaseObsMgr:
+class BaseObsMgr(object):
     def __init__(self):
         self.obs_feat = None
         self.obs_raw = None
