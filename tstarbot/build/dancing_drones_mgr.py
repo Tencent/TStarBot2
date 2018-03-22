@@ -14,11 +14,11 @@ class DancingDronesMgr(BaseBuildingMgr):
         self._range_low = -5
         self._move_ability = 1
 
-    def update(self, pool, am):
+    def update(self, dc, am):
         super(DancingDronesMgr, self).update()
 
-        drone_ids = pool.get_drones()
-        pos = pool.get_hatcherys()
+        drone_ids = dc.get_drones()
+        pos = dc.get_hatcherys()
 
         print('pos=', pos)
         actions = self.move_drone_random_round_hatchery(drone_ids, pos[0])

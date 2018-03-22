@@ -11,7 +11,7 @@ from __future__ import print_function
 from tstarbot.combat import DefeatRoachesCombatMgr
 from pysc2.agents import base_agent
 from pysc2.lib import stopwatch
-from tstarbot.data.demo_pool import DefeatRoaches
+from tstarbot.data.demo_dc import DefeatRoaches
 from tstarbot.act_mgr import ActMgr
 
 sw = stopwatch.sw
@@ -21,7 +21,7 @@ class MicroDefeatRoachesAgent(base_agent.BaseAgent):
 
     def __init__(self):
         super(MicroDefeatRoachesAgent, self).__init__()
-        self.pool = DefeatRoaches()
+        self.dc = DefeatRoaches()
         self.am = ActMgr()
         self._mgr = DefeatRoachesCombatMgr()
 
@@ -31,8 +31,8 @@ class MicroDefeatRoachesAgent(base_agent.BaseAgent):
 
     @sw.decorate
     def mystep(self, timestep):
-        self.pool.update(timestep.observation)
-        self._mgr.update(self.pool, self.am)
+        self.dc.update(timestep)
+        self._mgr.update(self.dc, self.am)
 
         actions = self.am.pop_actions()
         return actions

@@ -109,7 +109,7 @@ class ZergObsMgr(BaseObsMgr):
         self.a = None
         self.b = None
 
-    def update(self, timestep):
+    def update(self, dc, am):
         super(ZergObsMgr, self).update(timestep=timestep)
 
         self.units = timestep.observation['units']

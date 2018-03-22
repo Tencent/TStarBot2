@@ -8,7 +8,7 @@ class BaseStrategyMgr(object):
     def __init__(self):
         pass
 
-    def update(self, obs_mgr, act_mgr):
+    def update(self, dc, am):
         pass
 
 
@@ -16,12 +16,11 @@ class ZergStrategyMgr(BaseStrategyMgr):
     def __init__(self):
         super(ZergStrategyMgr, self).__init__()
 
-    def update(self, obs_mgr, act_mgr):
-        super(ZergStrategyMgr, self).update(obs_mgr, act_mgr)
+    def update(self, dc, am):
+        super(ZergStrategyMgr, self).update(dc, am)
 
         actions = []
-        # TODO: impl here
-        obs_mgr.a = 3
-        obs_mgr.b = 4
 
-        act_mgr.push_actions(actions)
+        # TODO: impl here
+
+        am.push_actions(actions)

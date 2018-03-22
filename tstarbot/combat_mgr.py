@@ -68,9 +68,9 @@ class DefeatRoachesCombatMgr(BaseCombatMgr):
         target = self.find_closest_enemy(u, enemies=self.roaches)
 
         action.action_raw.unit_command.target_world_space_pos.x = u.float_attr.pos_x + (
-                                                                                       u.float_attr.pos_x - target.float_attr.pos_x) * 0.2
+                u.float_attr.pos_x - target.float_attr.pos_x) * 0.2
         action.action_raw.unit_command.target_world_space_pos.y = u.float_attr.pos_y + (
-                                                                                       u.float_attr.pos_y - target.float_attr.pos_y) * 0.2
+                u.float_attr.pos_y - target.float_attr.pos_y) * 0.2
         action.action_raw.unit_command.unit_tags.append(u.tag)
         return action
 
@@ -109,11 +109,11 @@ class ZergCombatMgr(BaseCombatMgr):
     def __init__(self):
         super(ZergCombatMgr, self).__init__()
 
-    def update(self, obs_mgr, act_mgr):
-        super(ZergCombatMgr, self).update(obs_mgr, act_mgr)
+    def update(self, dc, am):
+        super(ZergCombatMgr, self).update(dc, am)
 
-        actions = list()
+        actions = []
 
         # TODO: impl
 
-        act_mgr.push_actions(actions)
+        am.push_actions(actions)

@@ -7,8 +7,7 @@ from __future__ import division
 from __future__ import print_function
 
 from tstarbot.build import DancingDronesMgr
-#from tstarbot.data.data_context import DataContext
-from tstarbot.data.demo_pool import DancingDrones
+from tstarbot.data.demo_dc import DancingDrones
 from tstarbot.act_mgr import ActMgr
 from pysc2.agents import base_agent
 
@@ -20,7 +19,7 @@ class DancingDronesAgent(base_agent.BaseAgent):
     def __init__(self):
         super(DancingDronesAgent, self).__init__()
         #self.dc = DataContext()
-        self.pool = DancingDrones()
+        self.dc = DancingDrones()
         self.am = ActMgr()
 
         self._mgr = DancingDronesMgr()
@@ -28,6 +27,6 @@ class DancingDronesAgent(base_agent.BaseAgent):
     def step(self, timestep):
         super(DancingDronesAgent, self).step(timestep)
         # print(timestep)
-        self.pool.update(timestep.observation)
-        self._mgr.update(self.pool, self.am)
+        self.dc.update(timestep)
+        self._mgr.update(self.dc, self.am)
         return self.am.pop_actions()

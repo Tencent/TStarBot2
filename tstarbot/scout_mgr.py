@@ -8,20 +8,19 @@ class BaseScoutMgr(object):
     def __init__(self):
         pass
 
-    def update(self, obs_mgr, act_mgr):
+    def update(self, dc, am):
         pass
 
 
 class ZergScoutMgr(BaseScoutMgr):
     def __init__(self):
         super(ZergScoutMgr, self).__init__()
-        self.marines = None
-        self.roaches = None
 
-    def update(self, obs_mgr, act_mgr):
-        super(ZergScoutMgr, self).update(obs_mgr, act_mgr)
+    def update(self, dc, am):
+        super(ZergScoutMgr, self).update(dc, am)
 
-        actions = list()
+        actions = []
+
         # TODO: impl here
 
-        act_mgr.push_actions(actions)
+        am.push_actions(actions)

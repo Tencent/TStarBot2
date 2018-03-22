@@ -1,4 +1,4 @@
-from tstarbot.data.data_base import PoolBase
+from tstarbot.data.pool.pool_base import PoolBase
 import pysc2.lib.typeenums as tp
 
 class DancingDrones(PoolBase):
@@ -9,8 +9,8 @@ class DancingDrones(PoolBase):
         self._drone_ids = []
         self._hatcherys = []
 
-    def update(self, obs):
-        units = obs['units']
+    def update(self, timestamp):
+        units = timestamp.observation['units']
         self._locate_hatcherys(units)
         self._update_drone(units)
 
@@ -46,9 +46,8 @@ class DefeatRoaches(PoolBase):
         self.marines = []  # fro self
         self.roaches = []  # for enemy
 
-    def update(self, obs):
-        units = obs['units']
-        # print(units)
+    def update(self, timestep):
+        units = timestep.observation['units']
         self.collect_marine(units)
         self.collect_roach(units)
 

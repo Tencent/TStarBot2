@@ -22,7 +22,7 @@ class ZergAgent(base_agent.BaseAgent):
         super(ZergAgent, self).__init__()
 
         self.dc = DataContext()
-        self.act_mgr = ActMgr()
+        self.am = ActMgr()
 
         self.strategy_mgr = ZergStrategyMgr()
         self.building_mgr = ZergBuildingMgr()
@@ -35,9 +35,9 @@ class ZergAgent(base_agent.BaseAgent):
         # update data context
         self.dc.update(timestep)
 
-        self.strategy_mgr.update(self.dc, self.act_mgr)
-        self.building_mgr.update(self.dc, self.act_mgr)
-        self.combat_mgr.update(self.dc, self.act_mgr)
-        self.scout_mgr.update(self.dc, self.act_mgr)
+        self.strategy_mgr.update(self.dc, self.am)
+        self.building_mgr.update(self.dc, self.am)
+        self.combat_mgr.update(self.dc, self.am)
+        self.scout_mgr.update(self.dc, self.am)
 
-        return self.act_mgr.pop_actions()
+        return self.am.pop_actions()
