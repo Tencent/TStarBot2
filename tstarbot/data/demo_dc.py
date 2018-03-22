@@ -1,9 +1,11 @@
 from tstarbot.data.pool.pool_base import PoolBase
 import pysc2.lib.typeenums as tp
 
+
 class DancingDrones(PoolBase):
     """ Let drones dance around their base.
     adopted from Zheng Yang's code."""
+
     def __init__(self):
         super(DancingDrones, self).__init__()
         self._drone_ids = []
@@ -38,10 +40,12 @@ class DancingDrones(PoolBase):
     def key(self):
         return 'dancing_drones'
 
+
 class DefeatRoaches(PoolBase):
     """ for DefeatRoaches Minimap.
     Adopted from lxhan's code
     """
+
     def __init__(self):
         self.marines = []  # fro self
         self.roaches = []  # for enemy
@@ -75,4 +79,3 @@ class DefeatRoaches(PoolBase):
 
     def key(self):
         return 'defeat_roaches'
-

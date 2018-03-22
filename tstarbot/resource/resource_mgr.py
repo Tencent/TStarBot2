@@ -5,17 +5,25 @@ from __future__ import print_function
 
 import random
 from s2clientprotocol import sc2api_pb2 as sc_pb
-from tstarbot.build import BaseBuildingMgr
 
-class DancingDronesMgr(BaseBuildingMgr):
+
+class BaseResourceMgr(object):
     def __init__(self):
-        super(DancingDronesMgr, self).__init__()
+        pass
+
+    def update(self, obs_mgr, act_mgr):
+        pass
+
+
+class DancingDronesResourceMgr(BaseResourceMgr):
+    def __init__(self):
+        super(DancingDronesResourceMgr, self).__init__()
         self._range_high = 5
         self._range_low = -5
         self._move_ability = 1
 
     def update(self, dc, am):
-        super(DancingDronesMgr, self).update()
+        super(DancingDronesResourceMgr, self).update(dc, am)
 
         drone_ids = dc.get_drones()
         pos = dc.get_hatcherys()
@@ -40,4 +48,15 @@ class DancingDronesMgr(BaseBuildingMgr):
         return actions
 
 
+class ZergResourceMgr(BaseResourceMgr):
+    def __init__(self):
+        super(ZergResourceMgr, self).__init__()
 
+    def update(self, dc, am):
+        super(ZergResourceMgr, self).update(dc, am)
+
+        actions = []
+
+        # TODO: imple here
+
+        am.push_actions(actions)

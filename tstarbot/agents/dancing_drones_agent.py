@@ -6,10 +6,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from tstarbot.build import DancingDronesMgr
+from tstarbot.building.dancing_drones_mgr import DancingDronesMgr
 from tstarbot.data.demo_dc import DancingDrones
-from tstarbot.act_mgr import ActMgr
+from tstarbot.act.act_mgr import ActMgr
 from pysc2.agents import base_agent
+
 
 class DancingDronesAgent(base_agent.BaseAgent):
     """An agent that makes drones dancing.
@@ -18,7 +19,7 @@ class DancingDronesAgent(base_agent.BaseAgent):
 
     def __init__(self):
         super(DancingDronesAgent, self).__init__()
-        #self.dc = DataContext()
+        # self.dc = DataContext()
         self.dc = DancingDrones()
         self.am = ActMgr()
 

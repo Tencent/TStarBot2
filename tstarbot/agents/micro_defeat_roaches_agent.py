@@ -9,12 +9,13 @@ from __future__ import division
 from __future__ import print_function
 
 from tstarbot.combat import DefeatRoachesCombatMgr
+from tstarbot.data.demo_dc import DefeatRoaches
+from tstarbot.act.act_mgr import ActMgr
 from pysc2.agents import base_agent
 from pysc2.lib import stopwatch
-from tstarbot.data.demo_dc import DefeatRoaches
-from tstarbot.act_mgr import ActMgr
 
 sw = stopwatch.sw
+
 
 class MicroDefeatRoachesAgent(base_agent.BaseAgent):
     """An agent for the DefeatRoaches map."""

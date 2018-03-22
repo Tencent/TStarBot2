@@ -14,12 +14,14 @@ from tstarbot.data.pool.worker_pool import WorkerPool
 from tstarbot.data.pool.combat_pool import CombatPool
 from tstarbot.data.pool.enemy_pool import EnemyPool
 
+
 class StaticData(object):
     def __init__(self):
         pass
 
     def update(self, timestep):
         pass
+
 
 class DynamicData(object):
     def __init__(self):
@@ -45,6 +47,7 @@ class DynamicData(object):
 
         # update statistic
 
+
 class DataContext:
     def __init__(self):
         self._dynamic = DynamicData()
@@ -62,4 +65,3 @@ class DataContext:
     @property
     def sd(self):
         return self._static
-

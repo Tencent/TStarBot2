@@ -21,10 +21,10 @@ class DefeatRoachesCombatMgr(BaseCombatMgr):
         self.marines = None
         self.roaches = None
 
-    def update(self, pool, am):
-        super(DefeatRoachesCombatMgr, self).update()
-        self.marines = pool.marines
-        self.roaches = pool.roaches
+    def update(self, dc, am):
+        super(DefeatRoachesCombatMgr, self).update(dc, am)
+        self.marines = dc.marines
+        self.roaches = dc.roaches
 
         actions = list()
         for m in self.marines:
