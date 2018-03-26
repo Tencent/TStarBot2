@@ -8,6 +8,10 @@ setup(
     packages=[
         'tstarbot',
         'tstarbot.bin',
+        'tstarbot.data',
+        'tstarbot.data.pool',
+        'tstarbot.data.queue',
+        'tstarbot.act',
     ],
 
     install_requires=[
