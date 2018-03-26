@@ -133,10 +133,10 @@ class WorkerPool(PoolBase):
             self._update_state_by_tag(u.tag, state)
             self._workers[u.tag] = Worker(u, state)
 
-    def _remove_worker(self, u):
-        state = self._judge_worker_status(u)
-        self._remove_state_by_tag(u.tag, state)
-        self._workers.pop(u.tag)
+    def _remove_worker(self, tag):
+        worker = self._workers[tag]
+        self._remove_state_by_tag(worker.unit.tag, worker.state)
+        self._workers.pop(worker.unit.tag)
 
     def _judge_worker_status(self, u):
         return self._analysis_orders(u)

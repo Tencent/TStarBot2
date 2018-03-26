@@ -1,26 +1,33 @@
 from tstarbot.data.pool.pool_base import PoolBase
+from tstarbot.data.pool import macro_def as tm
+
+class BaseInstance(object):
+    def __init__(self, tag, unit):
+        self._tag = tag
+        self._unit = unit
+        self._larvas = set([])
+        self._workers = set([])
+        self._mineral_remain = 0
+        self._cap = 0
+        #self._
+
 
 class BasePool(PoolBase):
     def __init__(self):
         super(PoolBase, self).__init__()
-
-    def update(self, timestep):
-        pass
-
-from tstarbot.macro_def import WorkerState, AllianceType, WORKER_UNITS, \
-BASE_UNITS, MINIERAL_UNITS, VESPENE_UNITS, VESPENE_BUILDING_UNITS, \
-WORKER_RESOURCE_ABILITY, WORKER_BUILD_ABILITY, WORKER_MOVE_ABILITY, WORKER_COMBAT_ABILITY
-
-class BasePool(object):
-    def __init__(self):
+        """{base_tag: BaseInstance, ...} """
         self._bases = {}
+        """{minieral_tag: unit, ...} """
         self._minierals = {}
+        """{vespene_tag: unit, ...} """
         self._vespenes = {}
+        """{vespene_building_tag: unit, ...} """
         self._vbs = {}
 
-    def update(self, obs):
-      units = obs['units']
-      self._update(units)
+    def update(self, timestep):
+      pass
+      #units = timestep.observation['units']
+      #self._update(units)
 
     def _update(self, units):
       tmp_base = []
@@ -89,8 +96,8 @@ class BasePool(object):
         self._vbs.pop(vbid)
 
     def _check_base(self, u):
-      if u.unit_type in BASE_UNITS and \
-        u.int_attr.alliance == AllianceType.SELF:
+      if u.unit_type in tm.BASE_UNITS and \
+        u.int_attr.alliance == tm.AllianceType.SELF:
         return True
       else:
         return False
