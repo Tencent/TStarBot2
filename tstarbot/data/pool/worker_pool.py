@@ -53,9 +53,9 @@ class WorkerPool(PoolBase):
     def find_nearest_by_pos(self, x, y):
         least_distance = 0.0
         least_worker = None
-        for worker in self._workers:
+        for worker in self._workers.values():
             distance = self._calculate_distances(x, y, 
-                    worker.unit.int_attr.x, worker.unit.int_attr.y)
+                    worker.unit.float_attr.pos_x, worker.unit.float_attr.pos_y)
             if distance < least_distance:
                 least_distance = distance
                 least_worker = worker
@@ -68,7 +68,7 @@ class WorkerPool(PoolBase):
         for tag in worker_sets:
             worker = self._workers[tag]
             distance = self._calculate_distances(x, y,
-                    worker.unit.int_attr.x, worker.unit.int_attr.y)
+                    worker.unit.float_attr.pos_x, worker.unit.float_attr.pos_y)
             if distance < least_distance:
                 least_distance = distance
                 least_worker = worker
@@ -106,17 +106,17 @@ class WorkerPool(PoolBase):
             self._add_worker(u)
 
     def _add_gas_worker(self, u):
-        self._workers[u.tag] = Worker(u, WorkerState.GAS)
-        self._update_state_by_tag(u.tag, WorkerState.GAS)
+        self._workers[u.tag] = Worker(u, tm.WorkerState.GAS)
+        self._update_state_by_tag(u.tag, tm.WorkerState.GAS)
 
     def _update_gas_worker(self, u):
         old_worker = self._workers[u.tag]
-        if old_worker.state == WorkerState.GAS:
-            self._workers[u.tag] = Worker(u, WorkerState.GAS)
+        if old_worker.state == tm.WorkerState.GAS:
+            self._workers[u.tag] = Worker(u, tm.WorkerState.GAS)
         else:
             self._remove_state_by_tag(u.tag, old_worker.state)
-            self._update_state_by_tag(u.tag, WorkerState.GAS)
-            self._workers[u.tag] = Worker(u, WorkerState.GAS)
+            self._update_state_by_tag(u.tag, tm.WorkerState.GAS)
+            self._workers[u.tag] = Worker(u, tm.WorkerState.GAS)
 
     def _add_worker(self, u):
         state = self._judge_worker_status(u)
@@ -175,15 +175,15 @@ class WorkerPool(PoolBase):
 
     def _remove_state_by_tag(self, tag, state):
         if state == tm.WorkerState.IDLE:
-            self._worker_idle.remove(u.tag)
+            self._worker_idle.remove(tag)
         elif state == tm.WorkerState.MINERALS:
-            self._worker_minieral.remove(u.tag)
+            self._worker_minieral.remove(tag)
         elif state == tm.WorkerState.GAS:
-            self._worker_gas.remove(u.tag)
+            self._worker_gas.remove(tag)
         elif state == tm.WorkerState.BUILD:
-            self._worker_build.remove(u.tag)
+            self._worker_build.remove(tag)
         else:
-            self._worker_tmpjob.remove(u.tag)
+            self._worker_tmpjob.remove(tag)
 
     def _check_worker(self, u):
         if u.unit_type in tm.WORKER_UNITS and \
@@ -200,13 +200,13 @@ class WorkerPool(PoolBase):
         return distance ** 0.5
 
     def _get_workerset_by_state(self, state):
-        if state == WorkerState.IDLE:
+        if state == tm.WorkerState.IDLE:
             return self._worker_idle
-        elif state == WorkerState.MINERALS:
+        elif state == tm.WorkerState.MINERALS:
             return self._worker_minieral
-        elif state == WorkerState.GAS:
+        elif state == tm.WorkerState.GAS:
             return self._worker_gas
-        elif state == WorkerState.BUILD:
+        elif state == tm.WorkerState.BUILD:
             return self._worker_gas
         else:
             ids = set([])
