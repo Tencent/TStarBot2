@@ -10,14 +10,81 @@ from s2clientprotocol import sc2api_pb2 as sc_pb
 from pysc2.lib.typeenums import UNIT_TYPEID, ABILITY_ID
 from pysc2.lib.features import SCREEN_FEATURES
 
+from pysc2.lib import typeenums as tp
+from pysc2.lib import TechTree as TT
 
 class BaseProductionMgr(object):
-    def __init__(self):
-        pass
+    def __init__(self, race = tp.RACE.Zerg, use_search = True):
+        self.onStart = True
+        self.race = race
+        self.use_search = use_search
 
-    def update(self, dc, am):
-        pass
+    def reset(self):
+        self.onStart = True
 
+    def update(self, obs_mgr, act_mgr):
+        ## Get build order given goal
+        if self.onStart:
+            obs_mgr.BuildOrder.setBuildOrder(self.getOpeningBuildOrder())
+            self.onStart = False
+        elif obs_mgr.BuildOrder.isEmpty():
+            goal = self.get_goal()
+            if self.use_search:
+                obs_mgr.BuildOrder.setBuildOrder(self.PerformSearch(goal))
+            else:
+                obs_mgr.BuildOrder.setBuildOrder(goal)
+
+        ## deal with the dead lock if exists (supply, uprade, tech ...)
+        if not obs_mgr.BuildOrder.isEmpty():
+            while self.DetectDeadlock(obs_mgr):
+                pass
+
+    def supply_unit(race):
+        if race == tp.RACE.Zerg:
+            return tp.UNIT_TYPRID.ZERG_OVERLORD.value
+        if race == tp.RACE.Protoss:
+            return tp.UNIT_TYPRID.PROTOSS_PYLON.value
+        if race == tp.RACE.Terran:
+            return tp.UNIT_TYPRID.TERRAN_SUPPLYDEPOT.value
+        raise Exception("Race type Error. typeenums.RACE.")
+
+    def DetectDeadLock(self,obs_mgr):
+        CurrentItem = obs_mgr.BuildOrder.CurrentItem()
+        play_info = obs_mgr.obs.observation["player"]
+        if play_info[3] + CurrentItem.supplyCost > play_info[4] and self.supply_unit(self.race) not in obs_mgr.units_in_process:  ## No enough supply and supply not in building process
+            obs_mgr.BuildOrder.queueAsHighest(self.supply_unit(self.race))
+            return True
+        builder = None
+        for unit in CurrentItem.whatBuilds:
+            if unit in obs_mgr.units_pool or unit in obs_mgr.units_in_process:
+                builder = unit
+                break
+        if builder == None:
+            obs_mgr.BuildOrder.queueAsHighest(CurrentItem.whatBuilds[0])
+            return True
+        requiredUnit = None
+        for unit in CurrentItem.requiredUnits or unit in obs_mgr.units_in_process:
+            if unit in obs_mgr.units_pool:
+                requiredUnit = unit
+                break
+        if requiredUnit == None:
+            obs_mgr.BuildOrder.queueAsHighest(CurrentItem.requiredUnits[0])
+            return True
+        ## TODO: add Tech upgrade
+        #self.set_build_base(CurrentItem, obs_mgr)
+        return False
+
+    def getOpeningBuildOrder(self):
+        raise NotImplementedError
+
+    def PerformSearch(self, goal):
+        return goal
+
+    def set_build_base(self, BuildItem, obs_mgr):
+        raise NotImplementedError
+
+    def get_goal(self):
+        return []
 
 class ZergProductionLxHanMgr(BaseProductionMgr):
     """ 3 bases + roaches + hydralisk """
@@ -331,10 +398,19 @@ class ZergProductionMgr(BaseProductionMgr):
     def __init__(self):
         super(ZergProductionMgr, self).__init__()
 
-    def update(self, dc, am):
-        super(ZergProductionMgr, self).update(dc, am)
+    def update(self, obs_mgr, act_mgr):
+        super(ZergProductionMgr, self).update(obs_mgr, act_mgr)
 
         actions = []
         # TODO: impl here
 
-        am.push_actions(actions)
+        act_mgr.push_actions(actions)
+
+    def PerformSearch(self, goal):
+        goal = [UNIT_TYPEID.ZERG_ZERGLING.value]*4
+        return goal
+
+    def getOpeningBuildOrder():
+        return [UNIT_TYPEID.ZERG_DRONE.value, UNIT_TYPEID.ZERG_DRONE.value, UNIT_TYPEID.ZERG_OVERLORD.value, UNIT_TYPEID.ZERG_SPAWNINGPOOL.value, UNIT_TYPEID.ZERG_DRONE.value] + [UNIT_TYPEID.ZERG_ZERGLING.value]*6
+
+
