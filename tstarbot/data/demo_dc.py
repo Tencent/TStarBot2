@@ -105,6 +105,8 @@ class ZergLxHanDcMgr(PoolBase):
         self.hydraliskden = []
         self.hydralisk = []
 
+        self.enemy_units = []
+
         self.base_pos = []
         self.mini_map = []
 
@@ -132,8 +134,11 @@ class ZergLxHanDcMgr(PoolBase):
         self.collect_hydraliskden(units)
         self.collect_hydralisk(units)
 
+        self.collect_enemy_units(units)
+
         if len(self.hatcheries) != 0 and len(self.base_pos) == 0:
             self.base_pos = [self.hatcheries[0].float_attr.pos_x, self.hatcheries[0].float_attr.pos_y]
+            print('base_pos: ', self.base_pos)
 
     def collect_drones(self, units):
         drones = []
@@ -219,6 +224,13 @@ class ZergLxHanDcMgr(PoolBase):
                 hydralisk.append(u)
         self.hydralisk = hydralisk
 
+    def collect_enemy_units(self, units):
+        enemy_units = []
+        for u in units:
+            if u.int_attr.owner == 2:
+                enemy_units.append(u)
+        self.enemy_units = enemy_units
+
     def get_drones(self):
         return self.drones
 
@@ -254,3 +266,6 @@ class ZergLxHanDcMgr(PoolBase):
 
     def get_hydralisk(self):
         return self.hydralisk
+
+    def get_enemy_units(self):
+        return self.enemy_units

@@ -10,33 +10,33 @@ import pysc2.lib.typeenums as tp
 
 
 class BaseCombatMgr(object):
-    def __init__(self):
-        pass
-
-    def update(self, dc, am):
-        pass
-
-    def reset(self):
-        pass
-
-
-class BasicCombatMgr(BaseCombatMgr):
     """ Basic Combat Manager
 
     Common Utilites for combat are implemented here. """
 
     def __init__(self):
-        super(BasicCombatMgr, self).__init__()
+        pass
+
+    def reset(self):
+        pass
 
     def update(self, dc, am):
-        super(BasicCombatMgr, self).update(dc, am)
+        pass
+
+    @staticmethod
+    def attack_pos(u, pos):
+        action = sc_pb.Action()
+        action.action_raw.unit_command.ability_id = tp.ABILITY_ID.ATTACK_ATTACK.value
+        action.action_raw.unit_command.target_world_space_pos.x = pos[0]
+        action.action_raw.unit_command.target_world_space_pos.y = pos[1]
+        action.action_raw.unit_command.unit_tags.append(u.tag)
+        return action
 
     def attack_closest_enemy(self, u, enemies):
         action = sc_pb.Action()
         action.action_raw.unit_command.ability_id = tp.ABILITY_ID.ATTACK_ATTACK.value
         target = self.find_closest_enemy(u, enemies=enemies)
-
-        action.action_raw.unit_command.target_unit_tag = u.tag
+        action.action_raw.unit_command.target_unit_tag = target.tag
         action.action_raw.unit_command.unit_tags.append(u.tag)
         return action
 
@@ -44,7 +44,6 @@ class BasicCombatMgr(BaseCombatMgr):
         action = sc_pb.Action()
         action.action_raw.unit_command.ability_id = tp.ABILITY_ID.ATTACK_ATTACK.value
         target = self.find_weakest_enemy(enemies=enemies)
-
         action.action_raw.unit_command.target_unit_tag = target.tag
         action.action_raw.unit_command.unit_tags.append(u.tag)
         return action
@@ -53,7 +52,6 @@ class BasicCombatMgr(BaseCombatMgr):
         action = sc_pb.Action()
         action.action_raw.unit_command.ability_id = tp.ABILITY_ID.SMART.value
         target = self.find_closest_enemy(u, enemies=enemies)
-
         action.action_raw.unit_command.target_world_space_pos.x = u.float_attr.pos_x + \
             (u.float_attr.pos_x - target.float_attr.pos_x) * 0.2
         action.action_raw.unit_command.target_world_space_pos.y = u.float_attr.pos_y + \
@@ -96,9 +94,12 @@ class ZergCombatLxHanMgr(BaseCombatMgr):
     def __init__(self):
         super(ZergCombatLxHanMgr, self).__init__()
         self.enemy_pos_cnt_max = 0
+        self.roach_attack_range = 5.0
+        self.enemy_units = []
 
     def reset(self):
         self.enemy_pos_cnt_max = 0
+        self.enemy_units = []
 
     def update(self, dc, am):
         super(ZergCombatLxHanMgr, self).update(dc, am)
@@ -107,25 +108,29 @@ class ZergCombatLxHanMgr(BaseCombatMgr):
         hydralisk = dc.get_hydralisk()
         base_pos = dc.base_pos
         minimap = dc.mini_map
+        self.enemy_units = dc.get_enemy_units()
 
         actions = list()
         pos = self.find_enemy_base_pos(base_pos, minimap)
         squad = roaches + hydralisk
-        actions.extend(self.attack_pos(squad, pos, 15))
+        if len(squad) >= 15:
+            actions.extend(self.exe_cmd(squad, pos))
 
         am.push_actions(actions)
 
-    @staticmethod
-    def attack_pos(units, pos, n):
-        actions = []
-        if len(units) >= n:
-            for u in units:
-                action = sc_pb.Action()
-                action.action_raw.unit_command.ability_id = tp.ABILITY_ID.ATTACK_ATTACK.value
-                action.action_raw.unit_command.target_world_space_pos.x = pos[0]
-                action.action_raw.unit_command.target_world_space_pos.y = pos[1]
-                action.action_raw.unit_command.unit_tags.append(u.tag)
-                actions.append(action)
+    def exe_cmd(self, squad, pos):
+        actions = list()
+        for u in squad:
+            if len(self.enemy_units) > 0:
+                closest_enemy_dist = math.sqrt(self.cal_square_dist(u, self.find_closest_enemy(u, self.enemy_units)))
+                if closest_enemy_dist < self.roach_attack_range and (u.float_attr.health / u.float_attr.health_max) < 0.3 and self.find_strongest_unit_hp(squad) > 0.9:
+                    action = self.run_away_from_closest_enemy(u, self.enemy_units)
+                    # print('micro action works.')
+                else:
+                    action = self.attack_pos(u, pos)
+            else:
+                action = self.attack_pos(u, pos)
+            actions.append(action)
 
         return actions
 
@@ -134,38 +139,34 @@ class ZergCombatLxHanMgr(BaseCombatMgr):
             return [0, 0]
 
         # [57.5, 27.5] -> mini map 1-dim [40:50] 2-dim [40:50]
-        minimap_pos1 = minimap[5][15:35][10:30]
-        minimap_pos2 = minimap[5][10:30][35:55]
-        minimap_pos3 = minimap[5][40:60][5:25]
-        minimap_pos4 = minimap[5][40:60][35:55]
+        mm = np.asarray(minimap[5])
+        minimap_pos1 = mm[15:35, 10:30]
+        minimap_pos2 = mm[10:30, 35:55]
+        minimap_pos3 = mm[40:60, 5:25]
+        minimap_pos4 = mm[40:60, 35:55]
 
-        pos_1 = [base_pos[1], base_pos[0]]
+        pos = [(27.5, 59.5), (59.5, 59.5), (27.5, 27.5), (59.5, 27.5)]
+        # pos = [(38.5, 122.5), (122.5, 122.5), (38.5, 38.5), (162.5, 18.5)]
+        enemy_cnt = list()
+        enemy_cnt.append(np.sum(minimap_pos1 == 4))
+        enemy_cnt.append(np.sum(minimap_pos2 == 4))
+        enemy_cnt.append(np.sum(minimap_pos3 == 4))
+        enemy_cnt.append(np.sum(minimap_pos4 == 4))
+        self.enemy_pos_cnt_max = max(enemy_cnt)
+        # print('enemy_count: ', enemy_cnt)
 
-        # np.set_printoptions(threshold=10000)
-        # print(minimap[5])
-        if base_pos[0] > base_pos[1]:
-            pos_2 = [59.5, 59.5]
+        if base_pos[0] > base_pos[1]:  # me at bottom-right
+            order = [4, 3, 2, 1]
+        else:  # me at top-left
+            order = [1, 2, 3, 4]
+        for each in order:
+            if enemy_cnt[each-1] > 5:
+                return pos[each-1]
 
-            pos_1_enemy_cnt = np.reshape(minimap_pos1, [1, -1])[0].tolist().count(4)
-            print('pos1', pos_1_enemy_cnt)
-            if pos_1_enemy_cnt > self.enemy_pos_cnt_max:
-                self.enemy_pos_cnt_max = pos_1_enemy_cnt
-            if pos_1_enemy_cnt < 2 and self.enemy_pos_cnt_max > 5:
-                return pos_2
-        else:
-            pos_2 = [27.5, 27.5]
-
-            pos_3_enemy_cnt = np.reshape(minimap_pos3, [1, -1])[0].tolist().count(4)
-            print('pos3', pos_3_enemy_cnt)
-            if pos_3_enemy_cnt > self.enemy_pos_cnt_max:
-                self.enemy_pos_cnt_max = pos_3_enemy_cnt
-            if pos_3_enemy_cnt < 2 and self.enemy_pos_cnt_max > 5:
-                return pos_2
-
-        return pos_1
+        return pos[order[-1]-1]
 
 
-class ZergCombatMgr(BasicCombatMgr):
+class ZergCombatMgr(BaseCombatMgr):
     """ A zvz Zerg combat manager """
 
     def __init__(self):
