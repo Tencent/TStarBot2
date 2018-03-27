@@ -1,11 +1,11 @@
 from tstarbot.data.queue.command_queue_base import CommandQueueBase
+<<<<<<< 0c0994916471ddda77afa1ed7becf3dfa8abe7e3
 from enum import Enum, unique
 
 @unique
 class BuildCommandType(Enum):
     BUILD = 0
     CANCEL = 1
-
 
 class BuildCommandQueue(CommandQueueBase):
     def __init__(self):
