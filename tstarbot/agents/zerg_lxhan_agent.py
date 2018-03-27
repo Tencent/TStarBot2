@@ -70,12 +70,16 @@ class ZergLxHanAgent(base_agent.BaseAgent):
         self.episode_step = 0
         self.is_larva_selected = 0
         self.is_base_selected = 0
+        self.is_mac_os = False
 
     def reset(self):
         self.resource_mgr.reset()
         self.combat_mgr.reset()
         self.obs_mgr.reset()
         self.episode_step = 0
+
+    def set_mac_os(self, is_mac_os):
+        self.is_mac_os = is_mac_os
 
     def step(self, timestep):
         super(ZergLxHanAgent, self).step(timestep)
@@ -85,8 +89,7 @@ class ZergLxHanAgent(base_agent.BaseAgent):
     def mystep(self, timestep):
         # There exists some bug in mac os's game core that if larvas are not selected the env will crush; here gives a
         # temporal solution that using pysc2 action to select larvas first, but the bug needs to be fixed.
-        IF_YOU_USE_MAC = False
-        if IF_YOU_USE_MAC:
+        if self.is_mac_os:
             if self.episode_step == 0:
                 self.obs_mgr.update(timestep=timestep)
                 actions = self.act_mgr.pop_actions()
