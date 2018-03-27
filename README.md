@@ -39,6 +39,18 @@ python -m tstarbot.bin.eval_agent \
     --agent_race Z \
     --bot_race Z
 ```
+```
+python -m tstarbot.bin.eval_agent \
+    --max_agent_episodes 10 \
+    --step_mul 16 \
+    --map Simple64 \
+    --difficulty 4 \
+    --agent tstarbot.agents.zerg_lxhan_agent.ZergLxHanAgent \
+    --screen_resolution 64 \
+    --agent_race Z \
+    --bot_race Z \
+    --save_replay False
+```
 See more examples [here](docs/examples_evaluate.md).
 
 ## Profiling

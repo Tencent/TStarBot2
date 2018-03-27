@@ -85,7 +85,7 @@ class ZergLxHanAgent(base_agent.BaseAgent):
     def mystep(self, timestep):
         # There exists some bug in mac os's game core that if larvas are not selected the env will crush; here gives a
         # temporal solution that using pysc2 action to select larvas first, but the bug needs to be fixed.
-        IF_YOU_USE_MAC = True
+        IF_YOU_USE_MAC = False
         if IF_YOU_USE_MAC:
             if self.episode_step == 0:
                 self.obs_mgr.update(timestep=timestep)
