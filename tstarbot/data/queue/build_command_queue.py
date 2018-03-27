@@ -21,4 +21,3 @@ if __name__ == "__main__":
     cmds = q.get(1)
     for cmd in cmds:
         print(cmd)
-

@@ -41,7 +41,7 @@ class ZergAgent(base_agent.BaseAgent):
 
         # Brain
         self.strategy_mgr.update(self.dc, self.am)
-        self.production_mgr.update(self.dc, self.am)
+        self.production_mgr.update(timestep, self.dc, self.am)
 
         # Construct
         self.building_mgr.update(self.dc, self.am)

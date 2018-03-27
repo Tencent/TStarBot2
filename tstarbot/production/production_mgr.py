@@ -11,37 +11,47 @@ from pysc2.lib.typeenums import UNIT_TYPEID, ABILITY_ID
 from pysc2.lib.features import SCREEN_FEATURES
 
 from pysc2.lib import typeenums as tp
-from pysc2.lib import TechTree as TT
+from pysc2.lib import TechTree
 import collections
+TT = TechTree()
 
 class BuildOrderQueue(object):
     def __init__(self):
         self.queue = collections.deque()
     
-    def setBuildOrder(self, UnitList):
+    def set_build_order(self, UnitList):
         for unit_id in UnitList:
-            self.queue.append(TT.getUnitData(uniti_id))
+            build_item = TT.getUnitData(unit_id)
+            build_item.unit_id = unit_id
+            self.queue.append(build_item)
 
     def size(self):
         return len(self.queue)
 
-    def isEmpty(self):
+    def is_empty(self):
         return len(self.queue) == 0
 
-    def CurrentItem(self):
+    def current_item(self):
         if len(self.queue) > 0:
             return self.queue[0]
         else:
             return None
 
-    def RemoveCurrentItem(self):
+    def remove_current_item(self):
         if len(self.queue) > 0:
             self.queue.popleft()
 
-    def queueAsHighest(self,unit_id):
-        self.queue.appendleft(TT.getUnitData(unit_id))
+    def queue_as_highest(self, unit_id):
+        build_item = TT.getUnitData(unit_id)
+        build_item.unit_id = unit_id
+        self.queue.appendleft(build_item)
 
-    def clearAll(self):
+    def queue(self, unit_id):
+        build_item = TT.getUnitData(unit_id)
+        build_item.unit_id = unit_id
+        self.queue.append(build_item)
+
+    def clear_all(self):
         self.queue.clear()
 
     def reset(self):
@@ -56,30 +66,33 @@ class BaseProductionMgr(object):
 
     def reset(self):
         self.onStart = True
-        self.build_order.clearAll()
+        self.build_order.clear_all()
 
-    def update(self, obs_mgr, act_mgr):
+    def update(self, timestep, obs_mgr, act_mgr):
         ## Get build order given goal
         if self.onStart:
-            self.build_order.setBuildOrder(self.getOpeningBuildOrder())
+            self.build_order.set_build_order(self.getOpeningBuildOrder())
             self.onStart = False
-        elif self.build_order.isEmpty():
+        elif self.build_order.is_empty():
             goal = self.get_goal()
             if self.use_search:
-                self.build_order.setBuildOrder(self.PerformSearch(goal))
+                self.build_order.set_build_order(self.PerformSearch(goal))
             else:
-                self.build_order.setBuildOrder(goal)
+                self.build_order.set_build_order(goal)
 
         if self.shouldExpandNow():
-            self.build_order.queueAsHighest(self.base_unit())
+            self.build_order.queue_as_highest(self.base_unit())
 
         ## deal with the dead lock if exists (supply, uprade, tech ...)
-        if not self.build_order.isEmpty():
-            while self.DetectDeadlock(obs_mgr):
+        if not self.build_order.is_empty():
+            while self.DetectDeadLock(timestep, obs_mgr):
                 pass
-        ## check resource requirement and determine the build base
-        if self.canBuild(CurrentItem, obs_mgr):
-            self.set_build_base(CurrentItem, obs_mgr)
+        ## check resource, larva, builder requirement and determine the build base 
+        CurrentItem = self.build_order.current_item()
+        if self.canBuild(CurrentItem, timestep):
+            #print(CurrentItem.unit_id)
+            if self.setBuildBase(CurrentItem, obs_mgr):
+                self.build_order.remove_current_item()
 
     def supply_unit(race):
         if race == tp.RACE.Zerg:
@@ -100,29 +113,37 @@ class BaseProductionMgr(object):
         raise Exception("Race type Error. typeenums.RACE.")
 
 
-    def DetectDeadLock(self,obs_mgr):
-        CurrentItem = self.build_order.CurrentItem()
-        play_info = obs_mgr.obs.observation["player"]
+    def DetectDeadLock(self, timestep, obs_mgr):
+        CurrentItem = self.build_order.current_item()
+        play_info = timestep.observation["player"]
         if play_info[3] + CurrentItem.supplyCost > play_info[4] and self.supply_unit(self.race) not in obs_mgr.units_in_process:  ## No enough supply and supply not in building process
-            self.build_order.queueAsHighest(self.supply_unit(self.race))
+            self.build_order.queue_as_highest(self.supply_unit(self.race))
             return True
         builder = None
-        for unit in CurrentItem.whatBuilds:
-            if unit in obs_mgr.units_pool or unit in obs_mgr.units_in_process:
-                builder = unit
+        for unit_id in CurrentItem.whatBuilds:
+            #if unit_id in obs_mgr.units_pool or unit in obs_mgr.units_in_process:
+            if self.hasUnit(timestep.observation["units"], unit_id):
+                builder = unit_id
                 break
         if builder == None:
-            self.build_order.queueAsHighest(CurrentItem.whatBuilds[0])
+            self.build_order.queue_as_highest(CurrentItem.whatBuilds[0])
             return True
         requiredUnit = None
-        for unit in CurrentItem.requiredUnits or unit in obs_mgr.units_in_process:
-            if unit in obs_mgr.units_pool:
-                requiredUnit = unit
+        for unit_id in CurrentItem.requiredUnits:
+            #if unit_id in obs_mgr.units_pool or unit_id in obs_mgr.units_in_process:
+            if self.hasUnit(timestep.observation["units"], unit_id):
+                requiredUnit = unit_id
                 break
-        if requiredUnit == None:
-            self.build_order.queueAsHighest(CurrentItem.requiredUnits[0])
+        if requiredUnit == None and len(CurrentItem.requiredUnits) > 0:
+            self.build_order.queue_as_highest(CurrentItem.requiredUnits[0])
             return True
         ## TODO: add Tech upgrade
+        return False
+
+    def hasUnit(self, units, unit_id):
+        for unit in units:
+            if unit.unit_type == unit_id:
+                return True
         return False
 
     def shouldExpandNow(self):
@@ -137,11 +158,11 @@ class BaseProductionMgr(object):
     def setBuildBase(self, BuildItem, obs_mgr):
         raise NotImplementedError
 
-    def canBuild(self, BuildItem, obs_mgr):  ## check resource requirement
-        raise NotImplementedError
+    def canBuild(self, BuildItem, timestep):  ## check resource requirement
+        return timestep.observation['player'][1] >= BuildItem.mineralCost and timestep.observation['player'][2] >= BuildItem.gasCost
 
     def getGoal(self):
-        return []
+        raise NotImplementedError
 
 class ZergProductionLxHanMgr(BaseProductionMgr):
     """ 3 bases + roaches + hydralisk """
@@ -455,8 +476,8 @@ class ZergProductionMgr(BaseProductionMgr):
     def __init__(self):
         super(ZergProductionMgr, self).__init__()
 
-    def update(self, obs_mgr, act_mgr):
-        super(ZergProductionMgr, self).update(obs_mgr, act_mgr)
+    def update(self, timestep, obs_mgr, act_mgr):
+        super(ZergProductionMgr, self).update(timestep, obs_mgr, act_mgr)
 
         actions = []
         # TODO: impl here
@@ -467,7 +488,11 @@ class ZergProductionMgr(BaseProductionMgr):
         goal = [UNIT_TYPEID.ZERG_ZERGLING.value]*4
         return goal
 
-    def getOpeningBuildOrder():
-        return [UNIT_TYPEID.ZERG_DRONE.value, UNIT_TYPEID.ZERG_DRONE.value, UNIT_TYPEID.ZERG_OVERLORD.value, UNIT_TYPEID.ZERG_SPAWNINGPOOL.value, UNIT_TYPEID.ZERG_DRONE.value] + [UNIT_TYPEID.ZERG_ZERGLING.value]*6
+    def getOpeningBuildOrder(self):
+        return [tp.UNIT_TYPEID.ZERG_DRONE.value, tp.UNIT_TYPEID.ZERG_DRONE.value, tp.UNIT_TYPEID.ZERG_OVERLORD.value, tp.UNIT_TYPEID.ZERG_SPAWNINGPOOL.value, tp.UNIT_TYPEID.ZERG_DRONE.value] + [tp.UNIT_TYPEID.ZERG_ZERGLING.value]*6
 
+    def shouldExpandNow(self):
+        return False
 
+    def setBuildBase(self, BuildItem, obs_mgr):
+        return True
