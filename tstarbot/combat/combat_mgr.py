@@ -9,7 +9,7 @@ from s2clientprotocol import sc2api_pb2 as sc_pb
 import pysc2.lib.typeenums as tp
 
 
-class BaseCombatMgr:
+class BaseCombatMgr(object):
     def __init__(self):
         pass
 
