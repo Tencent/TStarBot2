@@ -12,6 +12,7 @@ from tstarbot.combat import BaseCombatMgr, BasicCombatMgr
 
 ROACH_ATTACK_RANGE = 5.0
 
+
 class DefeatRoachesCombatMgr(BasicCombatMgr):
     """ Combat Manager for the DefeatRoaches minimap"""
 
