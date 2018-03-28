@@ -62,13 +62,17 @@ class BaseProductionMgr(object):
         self.race = race
         self.use_search = use_search
         self.build_order = BuildOrderQueue()
+        self.obs = None
 
     def reset(self):
         self.onStart = True
         self.build_order.clear_all()
+        self.obs= None
 
-    def update(self, obs_mgr, act_mgr):
-        ## Get build order given goal
+    def update(self, data_context, act_mgr):
+        self.obs = data_context.sd.obs
+
+        ## Get goal and search build order
         if self.onStart:
             self.build_order.set_build_order(self.getOpeningBuildOrder())
             self.onStart = False
@@ -79,18 +83,19 @@ class BaseProductionMgr(object):
             else:
                 self.build_order.set_build_order(goal)
 
-        if self.shouldExpandNow():
+        # determine whether to Expand
+        if self.shouldExpandNow(data_context):
             self.build_order.queue_as_highest(self.base_unit())
 
         ## deal with the dead lock if exists (supply, uprade, tech ...)
         if not self.build_order.is_empty():
-            while self.DetectDeadLock(timestep, obs_mgr):
+            while self.DetectDeadLock(data_context):
                 pass
+
         ## check resource, larva, builder requirement and determine the build base 
         CurrentItem = self.build_order.current_item()
-        if self.canBuild(CurrentItem, obs_mgr):
-            #print(CurrentItem.unit_id)
-            if self.setBuildBase(CurrentItem, obs_mgr):
+        if self.canBuild(CurrentItem, data_context):
+            if self.setBuildBase(CurrentItem, data_context):
                 self.build_order.remove_current_item()
 
     def supply_unit(race):
@@ -112,16 +117,17 @@ class BaseProductionMgr(object):
         raise Exception("Race type Error. typeenums.RACE.")
 
 
-    def DetectDeadLock(self, timestep, obs_mgr):
+    def DetectDeadLock(self, data_context):
         CurrentItem = self.build_order.current_item()
-        play_info = timestep.observation["player"]
-        if play_info[3] + CurrentItem.supplyCost > play_info[4] and self.supply_unit(self.race) not in obs_mgr.units_in_process:  ## No enough supply and supply not in building process
+        play_info = self.obs["player"]
+        if play_info[3] + CurrentItem.supplyCost > play_info[4]: # and self.supply_unit(self.race) not in data_context.units_in_process:  ## No enough supply and supply not in building process
             self.build_order.queue_as_highest(self.supply_unit(self.race))
             return True
         builder = None
         for unit_id in CurrentItem.whatBuilds:
-            #if unit_id in obs_mgr.units_pool or unit in obs_mgr.units_in_process:
-            if self.hasUnit(timestep.observation["units"], unit_id):
+            #if unit_id in data_contxt.units_pool or unit in data_context.units_in_process:
+            if self.hasUnit(self.obs["units"], unit_id):
+
                 builder = unit_id
                 break
         if builder == None:
@@ -129,8 +135,8 @@ class BaseProductionMgr(object):
             return True
         requiredUnit = None
         for unit_id in CurrentItem.requiredUnits:
-            #if unit_id in obs_mgr.units_pool or unit_id in obs_mgr.units_in_process:
-            if self.hasUnit(timestep.observation["units"], unit_id):
+            #if unit_id in data_context.units_pool or unit_id in data_context.units_in_process:
+            if self.hasUnit(self.obs["units"], unit_id):
                 requiredUnit = unit_id
                 break
         if requiredUnit == None and len(CurrentItem.requiredUnits) > 0:
@@ -139,19 +145,17 @@ class BaseProductionMgr(object):
         ## TODO: add Tech upgrade
         return False
 
-    def hasUnit(self, units, unit_id):
+    def hasUnit(self, units, unit_id, owner=1):
         for unit in units:
-            if unit.unit_type == unit_id:
+            if unit.unit_type == unit_id and unit.int_attr.owner == owner:
                 return True
         return False
 
-    def shouldExpandNow(self):
+    def shouldExpandNow(self, data_context):
         return False
-        #raise NotImplementedError
 
     def getOpeningBuildOrder(self):
         return []
-        #raise NotImplementedError
 
     def PerformSearch(self, goal):  ## TODO: implement search algorithm here
         return goal
@@ -159,16 +163,16 @@ class BaseProductionMgr(object):
     def get_goal(self):
         return []
 
-    def setBuildBase(self, BuildItem, obs_mgr):
+    def setBuildBase(self, BuildItem, data_context):
         pass #raise NotImplementedError
 
-    def canBuild(self, BuildItem, obs_mgr):  ## check resource requirement
+    def canBuild(self, BuildItem, data_context):  ## check resource requirement
         return False
 
     def getGoal(self):
         raise NotImplementedError
 
-class ZergProductionLxHanMgr(BaseProductionMgr):
+class ZergProductionLxHanMgr(object):
     """ 3 bases + roaches + hydralisk """
     def __init__(self):
         super(ZergProductionLxHanMgr, self).__init__()
@@ -179,7 +183,6 @@ class ZergProductionLxHanMgr(BaseProductionMgr):
         self.vespen_status = False
 
     def update(self, dc, am):
-        super(ZergProductionLxHanMgr, self).update(dc, am)
 
         screen = dc.screen
         player_info = dc.player_info
@@ -480,9 +483,8 @@ class ZergProductionMgr(BaseProductionMgr):
     def __init__(self):
         super(ZergProductionMgr, self).__init__()
 
-    def update(self, timestep, obs_mgr, act_mgr):
-        super(ZergProductionMgr, self).update(obs_mgr, act_mgr)
-        print(timestep.observation['units'])
+    def update(self, data_context, act_mgr):
+        super(ZergProductionMgr, self).update(data_context, act_mgr)
         actions = []
         # TODO: impl here
 
@@ -495,11 +497,12 @@ class ZergProductionMgr(BaseProductionMgr):
     def getOpeningBuildOrder(self):
         return [UNIT_TYPEID.ZERG_DRONE.value, UNIT_TYPEID.ZERG_DRONE.value, UNIT_TYPEID.ZERG_OVERLORD.value, UNIT_TYPEID.ZERG_SPAWNINGPOOL.value, UNIT_TYPEID.ZERG_DRONE.value] + [UNIT_TYPEID.ZERG_ZERGLING.value]*6
 
-    def shouldExpandNow(self):
+    def shouldExpandNow(self, data_contex):
         return False
 
-    def canBuild(self, BuildItem, timestep):  ## check resource requirement
-        return timestep.observation['player'][1] >= BuildItem.mineralCost and timestep.observation['player'][2] >= BuildItem.gasCost
+    def canBuild(self, BuildItem, data_context):  ## check resource requirement
+        return self.obs['player'][1] >= BuildItem.mineralCost and self.obs['player'][2] >= BuildItem.gasCost
 
-    def setBuildBase(self, BuildItem, obs_mgr):
-        return True
+    def setBuildBase(self, BuildItem, data_context):
+        hatcheries = [u for u in self.obs['units'] if u.unit_type == UNIT_TYPEID.ZERG_HATCHERY.value and u.int_attr.owner == 1]
+        data_context.dd.build_command_queue.put(hatcheries[0].tag, 0, {'unit_id':1})

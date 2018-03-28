@@ -1,5 +1,4 @@
 from tstarbot.data.queue.command_queue_base import CommandQueueBase
-<<<<<<< 0c0994916471ddda77afa1ed7becf3dfa8abe7e3
 from enum import Enum, unique
 
 @unique

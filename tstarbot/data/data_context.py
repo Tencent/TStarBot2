@@ -17,11 +17,14 @@ from tstarbot.data.pool.enemy_pool import EnemyPool
 
 class StaticData(object):
     def __init__(self):
-        pass
+        self._obs = None
 
     def update(self, timestep):
-        pass
+        self._obs = timestep.observation
 
+    @property
+    def obs(self):
+        return self._obs
 
 class DynamicData(object):
     def __init__(self):
