@@ -124,10 +124,10 @@ class BaseProductionMgr(object):
         builder = None
         for unit_id in current_item.whatBuilds:
             # if unit_id in data_contxt.units_pool or unit in data_context.units_in_process:
-            if unit_id == UNIT_TYPEID.ZERG_LARVA.value and self.has_unit(self.obs["units"], unit_id):
+            if unit_id == UNIT_TYPEID.ZERG_LARVA.value or self.has_unit(self.obs["units"], unit_id):
                 builder = unit_id
                 break
-        if builder is None:
+        if builder is None and len(current_item.whatBuilds)>0:
             self.build_order.queue_as_highest(current_item.whatBuilds[0])
             return True
         required_unit = None
