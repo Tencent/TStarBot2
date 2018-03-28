@@ -7,12 +7,11 @@ import numpy as np
 import random
 import scipy.ndimage as ndimage
 from s2clientprotocol import sc2api_pb2 as sc_pb
-from pysc2.lib.typeenums import UNIT_TYPEID, ABILITY_ID
+from pysc2.lib.typeenums import UNIT_TYPEID, ABILITY_ID, RACE
 from pysc2.lib.features import SCREEN_FEATURES
-
-from pysc2.lib import typeenums as tp
 from pysc2.lib import TechTree
 import collections
+
 TT = TechTree()
 
 class BuildOrderQueue(object):
@@ -58,7 +57,7 @@ class BuildOrderQueue(object):
         self.queue.clear()
 
 class BaseProductionMgr(object):
-    def __init__(self, race = tp.RACE.Zerg, use_search = True):
+    def __init__(self, race = RACE.Zerg, use_search = True):
         self.onStart = True
         self.race = race
         self.use_search = use_search
@@ -68,7 +67,7 @@ class BaseProductionMgr(object):
         self.onStart = True
         self.build_order.clear_all()
 
-    def update(self, timestep, obs_mgr, act_mgr):
+    def update(self, obs_mgr, act_mgr):
         ## Get build order given goal
         if self.onStart:
             self.build_order.set_build_order(self.getOpeningBuildOrder())
@@ -89,27 +88,27 @@ class BaseProductionMgr(object):
                 pass
         ## check resource, larva, builder requirement and determine the build base 
         CurrentItem = self.build_order.current_item()
-        if self.canBuild(CurrentItem, timestep):
+        if self.canBuild(CurrentItem, obs_mgr):
             #print(CurrentItem.unit_id)
             if self.setBuildBase(CurrentItem, obs_mgr):
                 self.build_order.remove_current_item()
 
     def supply_unit(race):
-        if race == tp.RACE.Zerg:
-            return tp.UNIT_TYPEID.ZERG_OVERLORD.value
-        if race == tp.RACE.Protoss:
-            return tp.UNIT_TYPEID.PROTOSS_PYLON.value
-        if race == tp.RACE.Terran:
-            return tp.UNIT_TYPEID.TERRAN_SUPPLYDEPOT.value
+        if race == RACE.Zerg:
+            return UNIT_TYPEID.ZERG_OVERLORD.value
+        if race == RACE.Protoss:
+            return UNIT_TYPEID.PROTOSS_PYLON.value
+        if race == RACE.Terran:
+            return UNIT_TYPEID.TERRAN_SUPPLYDEPOT.value
         raise Exception("Race type Error. typeenums.RACE.")
 
     def base_unit(race):
-        if race == tp.RACE.Zerg:
-            return tp.UNIT_TYPEID.ZERG_HATCHERY.value
-        if race == tp.RACE.Protoss:
-            return tp.UNIT_TYPEID.PROTOSS_NEXUS.value
-        if race == tp.RACE.Terran:
-            return tp.UNIT_TYPEID.TERRAN_COMMANDCENTER.value
+        if race == RACE.Zerg:
+            return UNIT_TYPEID.ZERG_HATCHERY.value
+        if race == RACE.Protoss:
+            return UNIT_TYPEID.PROTOSS_NEXUS.value
+        if race == RACE.Terran:
+            return UNIT_TYPEID.TERRAN_COMMANDCENTER.value
         raise Exception("Race type Error. typeenums.RACE.")
 
 
@@ -147,19 +146,24 @@ class BaseProductionMgr(object):
         return False
 
     def shouldExpandNow(self):
-        raise NotImplementedError
+        return False
+        #raise NotImplementedError
 
     def getOpeningBuildOrder(self):
-        raise NotImplementedError
+        return []
+        #raise NotImplementedError
 
     def PerformSearch(self, goal):  ## TODO: implement search algorithm here
         return goal
 
-    def setBuildBase(self, BuildItem, obs_mgr):
-        raise NotImplementedError
+    def get_goal(self):
+        return []
 
-    def canBuild(self, BuildItem, timestep):  ## check resource requirement
-        return timestep.observation['player'][1] >= BuildItem.mineralCost and timestep.observation['player'][2] >= BuildItem.gasCost
+    def setBuildBase(self, BuildItem, obs_mgr):
+        pass #raise NotImplementedError
+
+    def canBuild(self, BuildItem, obs_mgr):  ## check resource requirement
+        return False
 
     def getGoal(self):
         raise NotImplementedError
@@ -477,8 +481,8 @@ class ZergProductionMgr(BaseProductionMgr):
         super(ZergProductionMgr, self).__init__()
 
     def update(self, timestep, obs_mgr, act_mgr):
-        super(ZergProductionMgr, self).update(timestep, obs_mgr, act_mgr)
-
+        super(ZergProductionMgr, self).update(obs_mgr, act_mgr)
+        print(timestep.observation['units'])
         actions = []
         # TODO: impl here
 
@@ -489,10 +493,13 @@ class ZergProductionMgr(BaseProductionMgr):
         return goal
 
     def getOpeningBuildOrder(self):
-        return [tp.UNIT_TYPEID.ZERG_DRONE.value, tp.UNIT_TYPEID.ZERG_DRONE.value, tp.UNIT_TYPEID.ZERG_OVERLORD.value, tp.UNIT_TYPEID.ZERG_SPAWNINGPOOL.value, tp.UNIT_TYPEID.ZERG_DRONE.value] + [tp.UNIT_TYPEID.ZERG_ZERGLING.value]*6
+        return [UNIT_TYPEID.ZERG_DRONE.value, UNIT_TYPEID.ZERG_DRONE.value, UNIT_TYPEID.ZERG_OVERLORD.value, UNIT_TYPEID.ZERG_SPAWNINGPOOL.value, UNIT_TYPEID.ZERG_DRONE.value] + [UNIT_TYPEID.ZERG_ZERGLING.value]*6
 
     def shouldExpandNow(self):
         return False
+
+    def canBuild(self, BuildItem, timestep):  ## check resource requirement
+        return timestep.observation['player'][1] >= BuildItem.mineralCost and timestep.observation['player'][2] >= BuildItem.gasCost
 
     def setBuildBase(self, BuildItem, obs_mgr):
         return True
