@@ -61,6 +61,9 @@ class DataContext:
         self._dynamic.update(timestep)
         self._static.update(timestep)
 
+    def reset(self):
+        pass
+
     @property
     def dd(self):
         return self._dynamic

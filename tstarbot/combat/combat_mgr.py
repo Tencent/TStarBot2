@@ -16,6 +16,9 @@ class BaseCombatMgr(object):
     def update(self, dc, am):
         pass
 
+    def reset(self):
+        pass
+
 
 class BasicCombatMgr(BaseCombatMgr):
     """ Basic Combat Manager

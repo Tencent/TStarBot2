@@ -121,15 +121,10 @@ class BaseProductionMgr(object):
     def detect_dead_lock(self, data_context):
         current_item = self.build_order.current_item()
         play_info = self.obs["player"]
-        #  No enough supply and supply not in building process
-        if play_info[3] + current_item.supplyCost > play_info[4]:
-            # and self.supply_unit(self.race) not in data_context.units_in_process:
-            self.build_order.queue_as_highest(self.supply_unit())
-            return True
         builder = None
         for unit_id in current_item.whatBuilds:
             # if unit_id in data_contxt.units_pool or unit in data_context.units_in_process:
-            if self.has_unit(self.obs["units"], unit_id):
+            if unit_id == UNIT_TYPEID.ZERG_LARVA.value and self.has_unit(self.obs["units"], unit_id):
                 builder = unit_id
                 break
         if builder is None:
@@ -144,6 +139,11 @@ class BaseProductionMgr(object):
         if required_unit is None and len(current_item.requiredUnits) > 0:
             self.build_order.queue_as_highest(current_item.requiredUnits[0])
             return True
+        #  No enough supply and supply not in building process
+        if play_info[3] + current_item.supplyCost > play_info[4]:
+            # and self.supply_unit(self.race) not in data_context.units_in_process:
+            self.build_order.queue_as_highest(self.supply_unit())
+            return False
         # TODO: add Tech upgrade
         return False
 
@@ -507,4 +507,5 @@ class ZergProductionMgr(BaseProductionMgr):
     def set_build_base(self, build_item, data_context):
         hatcheries = [u for u in self.obs['units'] if
                       u.unit_type == UNIT_TYPEID.ZERG_HATCHERY.value and u.int_attr.owner == 1]
-        data_context.dd.build_command_queue.put(hatcheries[0].tag, 0, {'unit_id': 1})
+        if len(hatcheries) > 0:
+            data_context.dd.build_command_queue.put(hatcheries[0].tag, 0, {'unit_id': 1})

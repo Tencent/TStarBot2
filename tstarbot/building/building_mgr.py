@@ -11,6 +11,9 @@ class BaseBuildingMgr(object):
     def update(self, dc, am):
         pass
 
+    def reset(self):
+        pass
+
 
 class ZergBuildingMgr(BaseBuildingMgr):
     def __init__(self):

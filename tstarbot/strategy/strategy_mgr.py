@@ -11,6 +11,9 @@ class BaseStrategyMgr(object):
     def update(self, dc, am):
         pass
 
+    def reset(self):
+        pass
+
 
 class ZergStrategyMgr(BaseStrategyMgr):
     def __init__(self):

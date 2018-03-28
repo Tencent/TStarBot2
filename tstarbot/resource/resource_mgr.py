@@ -14,6 +14,9 @@ class BaseResourceMgr(object):
     def update(self, obs_mgr, act_mgr):
         pass
 
+    def reset(self):
+        pass
+
 
 class DancingDronesResourceMgr(BaseResourceMgr):
     def __init__(self):
