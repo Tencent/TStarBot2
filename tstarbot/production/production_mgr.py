@@ -229,7 +229,10 @@ class ZergProductionLxHanMgr(object):
             if len(drone.orders) == 0:
                 action = sc_pb.Action()
                 action.action_raw.unit_command.ability_id = ABILITY_ID.HARVEST_GATHER_DRONE.value
-                action.action_raw.unit_command.target_unit_tag = self.find_nearest_unit(hatcheries, minerals, 1).tag
+                mine = self.find_nearest_unit(hatcheries, minerals, 1)
+                if len(mine) == 0:
+                    return []
+                action.action_raw.unit_command.target_unit_tag = mine[0].tag
                 action.action_raw.unit_command.unit_tags.append(drone.tag)
                 actions.append(action)
         return actions
@@ -317,6 +320,8 @@ class ZergProductionLxHanMgr(object):
 
     def build_hatchery(self, drones, hatcheries, base_pos):
         actions = []
+        if len(drones) == 0:
+            return []
         if len(hatcheries) > 3:
             return actions
 
@@ -354,6 +359,8 @@ class ZergProductionLxHanMgr(object):
         if len(spawningpool) != 0:
             return actions
 
+        if len(hatcheries) == 0:
+            return actions
         hatchery = random.choice(hatcheries)
         base_x = hatchery.float_attr.pos_x
         base_y = hatchery.float_attr.pos_y
@@ -378,6 +385,8 @@ class ZergProductionLxHanMgr(object):
             return actions
 
         vespens = self.find_nearest_unit(hatcheries, vespens, 2)
+        if len(vespens) == 0:
+            return []
         for i in [0, 1]:
             drone = random.choice(drones)
             action = sc_pb.Action()
@@ -393,6 +402,8 @@ class ZergProductionLxHanMgr(object):
         if len(roachwarren) != 0:
             return actions
 
+        if len(hatcheries) == 0:
+            return actions
         hatchery = random.choice(hatcheries)
         base_x = hatchery.float_attr.pos_x
         base_y = hatchery.float_attr.pos_y
@@ -401,6 +412,8 @@ class ZergProductionLxHanMgr(object):
         else:
             pos = [base_x, base_y + 6]
 
+        if len(drones) == 0:
+            return []
         drone = random.choice(drones)
         action = sc_pb.Action()
         action.action_raw.unit_command.ability_id = ABILITY_ID.BUILD_ROACHWARREN.value
@@ -413,9 +426,13 @@ class ZergProductionLxHanMgr(object):
 
     def build_hydraliskden(self, drones, hatcheries, hydraliskden):
         actions = []
+        if len(drones) == 0:
+            return []
         if len(hydraliskden) != 0:
             return actions
 
+        if len(hatcheries) == 0:
+            return actions
         hatchery = random.choice(hatcheries)
         base_x = hatchery.float_attr.pos_x
         base_y = hatchery.float_attr.pos_y
@@ -461,6 +478,8 @@ class ZergProductionLxHanMgr(object):
         return random.choice(candidate_xy)
 
     def find_nearest_unit(self, hatcheries, units, N):
+        if len(hatcheries) == 0:
+            return []
         hatchery = random.choice(hatcheries)
         base_x = hatchery.float_attr.pos_x
         base_y = hatchery.float_attr.pos_y
@@ -472,8 +491,6 @@ class ZergProductionLxHanMgr(object):
             dists.append(dist)
         idx = np.argsort(dists)
         selected_units = []
-        if N == 1:
-            return units[idx[0]]
         for i in range(N):
             selected_units.append(units[idx[i]])
         return selected_units

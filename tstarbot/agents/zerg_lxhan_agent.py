@@ -12,13 +12,8 @@ from tstarbot.combat.combat_mgr import ZergCombatLxHanMgr
 from tstarbot.act.act_mgr import ActMgr
 from pysc2.agents import base_agent
 from pysc2.lib import stopwatch
-from s2clientprotocol import sc2api_pb2 as sc_pb
-from pysc2.lib.typeenums import UNIT_TYPEID, ABILITY_ID
+from pysc2.lib.typeenums import UNIT_TYPEID
 from pysc2.lib import actions as pysc2_actions
-from pysc2.lib.features import SCREEN_FEATURES
-from pysc2.lib.features import MINIMAP_FEATURES
-import numpy as np
-import random
 
 
 sw = stopwatch.sw
@@ -28,8 +23,7 @@ def micro_select_hatchery(observation, base_pos):
     # unit_type = observation["screen"][SCREEN_FEATURES.unit_type.index]
     # candidate_xy = np.transpose(np.nonzero(unit_type == UNIT_TYPEID.ZERG_HATCHERY.value)).tolist()
     # if len(candidate_xy) == 0: return None
-    # screen_xy = random.choice(candidate_xy)
-
+    # xy = random.choice(candidate_xy)
     if base_pos[0] > base_pos[1]:
         xy = [24, 30]
     else:
@@ -37,6 +31,18 @@ def micro_select_hatchery(observation, base_pos):
 
     function_id = pysc2_actions.FUNCTIONS.select_point.id
     function_args = [[0], xy[::-1]]
+    return function_id, function_args
+
+
+def micro_group_selected(observation, g_id):
+    function_id = pysc2_actions.FUNCTIONS.select_control_group.id
+    function_args = [[1], [g_id]]
+    return function_id, function_args
+
+
+def micro_recall_selected_group(observation, g_id):
+    function_id = pysc2_actions.FUNCTIONS.select_control_group.id
+    function_args = [[0], [g_id]]
     return function_id, function_args
 
 
@@ -62,21 +68,25 @@ class ZergLxHanAgent(base_agent.BaseAgent):
 
     def __init__(self):
         super(ZergLxHanAgent, self).__init__()
-        self.obs_mgr = ZergLxHanDcMgr()
-        self.resource_mgr = ZergProductionLxHanMgr()
+        self.dc_mgr = ZergLxHanDcMgr()
+        self.production_mgr = ZergProductionLxHanMgr()
         self.combat_mgr = ZergCombatLxHanMgr()
         self.act_mgr = ActMgr()
 
         self.episode_step = 0
         self.is_larva_selected = 0
         self.is_base_selected = 0
-        self.is_mac_os = False
+        self.is_base_grouped = 0
+        self.is_mac_os = True
 
     def reset(self):
-        self.resource_mgr.reset()
+        self.production_mgr.reset()
         self.combat_mgr.reset()
-        self.obs_mgr.reset()
+        self.dc_mgr.reset()
         self.episode_step = 0
+        self.is_larva_selected = 0
+        self.is_base_selected = 0
+        self.is_base_grouped = 0
 
     def set_mac_os(self, is_mac_os):
         self.is_mac_os = is_mac_os
@@ -91,16 +101,24 @@ class ZergLxHanAgent(base_agent.BaseAgent):
         # temporal solution that using pysc2 action to select larvas first, but the bug needs to be fixed.
         if self.is_mac_os:
             if self.episode_step == 0:
-                self.obs_mgr.update(timestep=timestep)
+                self.dc_mgr.update(timestep=timestep)
                 actions = self.act_mgr.pop_actions()
             else:
                 if not check_larva_selected(timestep.observation) and self.is_base_selected == 0:
                     self.is_larva_selected = 0
 
                 if self.is_larva_selected == 0:
-                    if self.is_base_selected == 0:
-                        action = micro_select_hatchery(timestep.observation, self.obs_mgr.base_pos)
-                        self.is_base_selected = 1
+                    if self.is_base_selected == 0 or self.is_base_grouped == 0:
+                        if self.is_base_grouped == 0:
+                            if self.is_base_selected == 0:
+                                action = micro_select_hatchery(timestep.observation, self.dc_mgr.base_pos)
+                                self.is_base_selected = 1
+                            else:
+                                action = micro_group_selected(timestep.observation, 1)
+                                self.is_base_grouped = 1
+                        else:
+                            action = micro_recall_selected_group(timestep.observation, 1)
+                            self.is_base_selected = 1
                     else:
                         action = micro_select_larvas(timestep.observation)
                         self.is_base_selected = 0
@@ -119,20 +137,11 @@ class ZergLxHanAgent(base_agent.BaseAgent):
 
     def procedure(self, timestep):
         with sw('obs_mgr'):
-            self.obs_mgr.update(timestep=timestep)
-        with sw('str_mgr'):
-            pass
-            # self.strategy_mgr.update(self.obs_mgr, self.act_mgr)
+            self.dc_mgr.update(timestep=timestep)
         with sw('pro_mgr'):
-            pass
-            # self.production_mgr.update(self.obs_mgr, self.act_mgr)
-        with sw('bud_mgr'):
-            # self.building_mgr.update(self.obs_mgr, self.act_mgr)
-            pass
-        with sw('res_mgr'):
-            self.resource_mgr.update(self.obs_mgr, self.act_mgr)
+            self.production_mgr.update(self.dc_mgr, self.act_mgr)
         with sw('com_mgr'):
-            self.combat_mgr.update(self.obs_mgr, self.act_mgr)
+            self.combat_mgr.update(self.dc_mgr, self.act_mgr)
         with sw('act_mgr'):
             actions = self.act_mgr.pop_actions()
 

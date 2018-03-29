@@ -1,2 +1,2 @@
-from .combat_mgr import BaseCombatMgr, BasicCombatMgr, ZergCombatMgr
+from .combat_mgr import BaseCombatMgr, ZergCombatMgr
 from .defeat_roaches_mgr import DefeatRoachesCombatMgr
