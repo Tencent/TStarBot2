@@ -17,7 +17,8 @@ class Building(object):
 
     def __str__(self):
         u = self._unit
-        return "tag {}, type {}, alliance {}".format(u.int_attr.tag, u.int_attr.unit_type, u.int_attr.alliance)
+        return "tag {}, type {}, alliance {}".format(u.int_attr.tag,
+            u.int_attr.unit_type, u.int_attr.alliance)
 
 class BuildingPool(PoolBase):
     def __init__(self):
@@ -50,10 +51,8 @@ class BuildingPool(PoolBase):
 
         # update / insert building
         for u in units:
-            # print("type {}, owner {}, alliance {}".format(u.int_attr.unit_type, u.int_attr.owner, u.int_attr.alliance))
-
-            if u.int_attr.unit_type in tm.BUILDING_UNITS and u.int_attr.alliance == tm.AllianceType.SELF.value:
-                # print("building found: tag {}, type {}".format(u.int_attr.tag, u.int_attr.unit_type))
+            if u.int_attr.unit_type in tm.BUILDING_UNITS \
+                and u.int_attr.alliance == tm.AllianceType.SELF.value:
                 tag = u.int_attr.tag
                 self._buildings[tag] = Building(u)
 
@@ -62,7 +61,6 @@ class BuildingPool(PoolBase):
         for k, b in self._buildings.items():
             if b.is_lost():
                 u = b.unit()
-                # print("found lost: tag {}, type {}".format(u.int_attr.tag, u.int_attr.unit_type))
                 del_keys.append(k)
 
         for k in del_keys:

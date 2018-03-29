@@ -54,7 +54,8 @@ class EnemyGroup(object):
             total_x += u.float_attr.pos_x
             total_y += u.float_attr.pos_y
 
-        self._central_point = {'pos_x': total_x / len(all), 'pos_y': total_y / len(all)}
+        self._central_point = {'pos_x': total_x / len(all),
+            'pos_y': total_y / len(all)}
 
     def _calc_distance(self, u1, u2):
         x = u1.float_attr.pos_x - u2.float_attr.pos_x
@@ -73,7 +74,6 @@ class EnemyPool(PoolBase):
         units = timestep.observation['units']
         for u in units:
             if u.int_attr.unit_type in tm.MINIERAL_UNITS:
-                #print('find mineral ({}, {})'.format(u.float_attr.pos_x, u.float_attr.pos_y))
                 mineral_group = self._find_enemy_group_by_mineral(u)
                 if mineral_group == None:
                     new_group = EnemyGroup()
@@ -85,7 +85,6 @@ class EnemyPool(PoolBase):
         # add enemy units
         for u in units:
             if u.int_attr.alliance == tm.AllianceType.ENEMY.value:
-                #print("found enemy unit {}".format(u.int_attr.unit_type))
                 enemy_group = self._find_enemy_group_by_unit(u)
 
                 if enemy_group == None:
