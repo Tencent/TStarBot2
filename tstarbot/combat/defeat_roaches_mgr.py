@@ -8,7 +8,7 @@ import numpy as np
 from s2clientprotocol import sc2api_pb2 as sc_pb
 import pysc2.lib.typeenums as tp
 
-from tstarbot.combat import BaseCombatMgr, BaseCombatMgr
+from tstarbot.combat import BaseCombatMgr
 
 ROACH_ATTACK_RANGE = 5.0
 
