@@ -9,6 +9,11 @@ from s2clientprotocol import sc2api_pb2 as sc_pb
 import pysc2.lib.typeenums as tp
 
 
+ATTACK_MODE = 0
+RETREAT_MODE = 1
+DEFEND_MODE = 2
+
+
 class BaseCombatMgr(object):
     """ Basic Combat Manager
 
@@ -114,11 +119,23 @@ class ZergCombatLxHanMgr(BaseCombatMgr):
         pos = self.find_enemy_base_pos(base_pos, minimap)
         squad = roaches + hydralisk
         if len(squad) >= 15:
-            actions.extend(self.exe_cmd(squad, pos))
+            actions.extend(self.exe_cmd(squad, pos, ATTACK_MODE))
 
         am.push_actions(actions)
 
-    def exe_cmd(self, squad, pos):
+    def exe_cmd(self, squad, pos, mode):
+        actions = []
+        if mode == ATTACK_MODE:
+            actions = self.exe_attack(squad, pos)
+        elif mode == RETREAT_MODE:
+            pass
+            # TODO: impl
+        elif mode == DEFEND_MODE:
+            pass
+            # TODO: impl
+        return actions
+
+    def exe_attack(self, squad, pos):
         actions = list()
         for u in squad:
             if len(self.enemy_units) > 0:
@@ -131,7 +148,6 @@ class ZergCombatLxHanMgr(BaseCombatMgr):
             else:
                 action = self.attack_pos(u, pos)
             actions.append(action)
-
         return actions
 
     def find_enemy_base_pos(self, base_pos, minimap):
