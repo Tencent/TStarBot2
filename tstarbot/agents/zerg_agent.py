@@ -52,3 +52,13 @@ class ZergAgent(base_agent.BaseAgent):
         self.scout_mgr.update(self.dc, self.am)
 
         return self.am.pop_actions()
+
+    def reset(self):
+        super(ZergAgent, self).reset()
+        self.dc.reset()
+        self.strategy_mgr.reset()
+        self.production_mgr.reset()
+        self.building_mgr.reset()
+        self.resource_mgr.reset()
+        self.combat_mgr.reset()
+        self.scout_mgr.reset()

@@ -6,7 +6,6 @@ class BuildCommandType(Enum):
     BUILD = 0
     CANCEL = 1
 
-
 class BuildCommandQueue(CommandQueueBase):
     def __init__(self):
         BUILD_CMD_ID_BASE = 100000000
@@ -21,4 +20,3 @@ if __name__ == "__main__":
     cmds = q.get(1)
     for cmd in cmds:
         print(cmd)
-

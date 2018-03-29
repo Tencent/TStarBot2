@@ -11,6 +11,9 @@ class BaseScoutMgr(object):
     def update(self, dc, am):
         pass
 
+    def reset(self):
+        pass
+
 
 class ZergScoutMgr(BaseScoutMgr):
     def __init__(self):

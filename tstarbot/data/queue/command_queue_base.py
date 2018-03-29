@@ -39,3 +39,4 @@ class CommandQueueBase(object):
 
     def clear_all(self):
         self._cmd_dict.clear()
+
