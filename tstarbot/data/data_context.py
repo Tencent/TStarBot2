@@ -32,24 +32,26 @@ class DynamicData(object):
         self.combat_command_queue = CombatCommandQueue()
         self.scout_command_queue = ScoutCommandQueue()
 
-        self.base_pool = BasePool()
         self.building_pool = BuildingPool()
         self.worker_pool = WorkerPool()
         self.combat_pool = CombatPool()
         self.enemy_pool = EnemyPool()
+        self.base_pool = BasePool(self)
 
     def update(self, timestep):
         # update command queues
 
         # update pools
-        self.base_pool.update(timestep)
         self.building_pool.update(timestep)
         self.worker_pool.update(timestep)
         self.combat_pool.update(timestep)
         self.enemy_pool.update(timestep)
+        self.base_pool.update(timestep)
 
         # update statistic
 
+    def reset(self):
+        self.base_pool.reset()
 
 class DataContext:
     def __init__(self):
@@ -62,7 +64,8 @@ class DataContext:
         self._static.update(timestep)
 
     def reset(self):
-        pass
+        print('***DataContext reset***')
+        self._dynamic.reset()
 
     @property
     def dd(self):
