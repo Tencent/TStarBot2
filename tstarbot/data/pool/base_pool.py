@@ -223,9 +223,8 @@ class BasePool(PoolBase):
         self._update_egg_unit(tmps[4])
         self._update_queen_unit(tmps[5])
         self._update_larva_unit(tmps[6])
-        #self._update_resource_for_base()
-        #self._update_worker_for_base()
-        #self._update_statistic_for_base()
+        self._update_resource_for_base()
+        self._update_worker_for_base()
 
     def _update_base(self, units):
         tmps = self._unit_dispatch(units)
@@ -236,9 +235,8 @@ class BasePool(PoolBase):
         self._update_egg_unit(tmps[4])
         self._update_queen_unit(tmps[5])
         self._update_larva_unit(tmps[6])
-        #self._update_resource_for_base()
-        #self._update_worker_for_base()
-        #self._update_statistic_for_base()
+        self._update_resource_for_base()
+        self._update_worker_for_base()
 
     def _update_base_unit(self, bases):
         bids = set([])
@@ -261,33 +259,49 @@ class BasePool(PoolBase):
         pass
 
     def _update_resource_for_base(self):
-        pass
+        for base in self._bases.values():
+            base.minieral_remain = 0
+            base.gas_remain = 0
+            for mtag in base.minieral_set:
+                unit = self.minierals[mtag]
+                base.minieral_remain += unit.int_attr.mineral_contents
+
+            for gtag in base.gas_set:
+                unit = self.vespenes[gtag]
+                base.gas_remain += unit.int_attr.vespene_contents
 
     def _update_worker_for_base(self):
+        for base in self._bases.values():
+            base.worker_set = set([])
+            base.minieral_worker_num = 0
+            base.gas_worker_num = 0
+
         wpool = self._dd.worker_pool
-        minieral_workers = wpool.get_workers_by_state(tm.WorkerState.MINIERAL_UNITS)
-        gas_workers = wpool.get_workers_by_state(tm.WorkerState.GAS)
-        idle_workers = wpool.get_workers_by_state(tm.WorkerState.IDLE)
-        for mworker in minieral_workers:
-            base = None
-            wtag = mworker.unit.tag
-            base = self.find_base_belong(mworker.unit)
+        minieral_tags = wpool.get_workers_by_state(tm.WorkerState.MINERALS)
+        gas_tags = wpool.get_workers_by_state(tm.WorkerState.GAS)
+        idle_tags = wpool.get_workers_by_state(tm.WorkerState.IDLE)
+        for wtag in minieral_tags:
+            worker = wpool.get_by_tag(wtag)
+            base = self.find_base_belong(worker.unit)
             if base is None:
                 raise Exception('minieral_worker should be in base')
             base.worker_set.add(wtag)
             base.minieral_worker_num += 1
 
-        for gworker in gas_workers:
-            base = None
-            gtag = gworker.unit.tag
-            base = self.find_base_belong(gworker.unit)
+        for wtag in gas_tags:
+            worker = wpool.get_by_tag(wtag)
+            base = self.find_base_belong(worker.unit)
             if base is None:
                 raise Exception('gas_worker should be in base')
-            base.worker_set.add(gtag)
+            base.worker_set.add(wtag)
             base.gas_worker_num += 1
 
-    def _update_statistic_for_base(self):
-        pass
+        for wtag in idle_tags:
+            worker = wpool.get_by_tag(wtag)
+            base = self.find_base_belong(worker.unit)
+            if base is None:
+                continue
+            base.worker_set.add(wtag)
 
     def _update_minieral_unit(self, minierals):
         mids = set([])
