@@ -9,6 +9,7 @@ BASE_RESOURCE_DISTANCE = 15.0
 BASE_MINIERAL_NUM = 8
 BASE_GAS_NUM = 2
 
+
 class BaseInstance(object):
     def __init__(self, unit, pool, resource_area):
         self._tag = unit.tag
@@ -17,8 +18,8 @@ class BaseInstance(object):
         ''' resource area'''
         self._resource_area = resource_area
 
-        self.minieral_set = copy.deepcopy(self._resource_area.mtags)
-        self.gas_set = copy.deepcopy(self._resource_area.gtags)
+        self.minieral_set = set([])  # resource_area.get_mineral_tags())
+        self.gas_set = set([])  # resource_area.get_gas_tags())
         self.worker_set = set([])
         self.larva_set = set([])
         self.egg_set = set([])
@@ -55,94 +56,50 @@ class BaseInstance(object):
     def update_unit(self, unit):
         self._unit = unit
 
+    def update_resource(self):
+        self.minieral_set = set(self._resource_area.get_mineral_tags())
+        self.gas_set = set(self._resource_area.get_gas_tags())
+
+
 class ResourceArea(object):
     def __init__(self, pool):
-        self._owner_mtag = set([])
-        self._owner_gtag = set([])
         self._pool = pool
-        self._owner_base_tag = None
+        self.owner_base_tag = None
+        self.fix_avg_pos = None
 
-    def is_belong_to_base(self):
-        if self._owner_base_tag is None:
-            return False
-        else:
-            return True 
+    def is_unit_in_area(self, pos_x, pos_y):
+        diff_x = abs(pos_x - self.fix_avg_pos[0])
+        diff_y = abs(pos_y - self.fix_avg_pos[1])
+        return diff_x < BASE_RESOURCE_DISTANCE and \
+               diff_y < BASE_RESOURCE_DISTANCE
 
-    def owner_base_tag(self):
-        return self._owner_base_tag
+    def get_mineral_tags(self):
+        mtags = []
+        for m in self._pool.minierals.values():
+            if self.is_unit_in_area(m.float_attr.pos_x, m.float_attr.pos_y):
+                mtags.append(m.tag)
+        return mtags
 
-    def set_owner_base(self, tag):
-        self._owner_base_tag = tag
+    def get_gas_tags(self):
+        gtags = []
+        for g in self._pool.vespenes.values():
+            if self.is_unit_in_area(g.float_attr.pos_x, g.float_attr.pos_y):
+                gtags.append(g.tag)
+        return gtags
 
-    def is_empty(self):
-        if 0 == len(self._owner_mtag) and 0 == len(self._owner_gtag):
-            #print('rc is empty')
-            return True
-        else:
-            return False
-
-    @property
-    def mtags(self):
-        return self._owner_mtag
-
-    @property
-    def gtags(self):
-        return self._owner_gtag
-
-    def add_mineral_tag(self, mtag):
-        self._owner_mtag.add(mtag)
-
-    def add_gas_tag(self, gtag):
-        self._owner_gtag.add(gtag)
-
-    def remove_minieral_tag(self, mtag):
-        self._owner_mtag.remove(mtag)
-
-    def remove_gas_tag(self, gtag):
-        self._owner_gtag.remove(gtag)
-
-    def avg_pos(self):
-        resource_posx = []
-        resource_posy = []
-        for tag in self._owner_mtag:
-            unit = self._pool.minierals[tag]
-            resource_posx.append(unit.float_attr.pos_x)
-            resource_posy.append(unit.float_attr.pos_y)
-
-        for tag in self._owner_gtag:
-            unit = self._pool.vespenes[tag]
-            resource_posx.append(unit.float_attr.pos_x)
-            resource_posy.append(unit.float_attr.pos_y)
-
-        avg_x = sum(resource_posx) / len(resource_posx)
-        avg_y = sum(resource_posy) / len(resource_posy)
-        return avg_x, avg_y
-
-    def is_unit_in_cluster(self, tag):
-        unit = None
-        if tag in self._pool.minierals:
-            unit = self._pool.minierals[tag]
-        elif tag in self._pool.vespenes:
-            unit = self._pool.vespenes[tag]
-        else:
-            return False
-
-        avg_x, avg_y = self.avg_pos()
-        diff_x = abs(avg_x - unit.float_attr.pos_x)
-        diff_y = abs(avg_y - unit.float_attr.pos_y)
-        return diff_x < BASE_RESOURCE_DISTANCE and diff_y < BASE_RESOURCE_DISTANCE
-
+    '''
     def __str__(self):
         minineral_pos = []
-        for tag in self._owner_mtag:
+        for tag in self.mtags:
             unit = self._pool.minierals[tag]
             minineral_pos.append((unit.float_attr.pos_x, unit.float_attr.pos_y))
 
         gas_pos = []
-        for tag in self._owner_gtag:
+        for tag in self.gtags:
             unit = self._pool.vespenes[tag]
             gas_pos.append((unit.float_attr.pos_x, unit.float_attr.pos_y))
         return 'minieral:{},gas:{}'.format(minineral_pos, gas_pos)
+    '''
 
 
 class BasePool(PoolBase):
@@ -150,6 +107,7 @@ class BasePool(PoolBase):
         super(PoolBase, self).__init__()
         self._dd = dd
         self._init = False
+
         """{base_tag: BaseInstance, ...} """
         self._bases = {}
         """ map unit to base """
@@ -163,7 +121,7 @@ class BasePool(PoolBase):
         self.minierals = {}
         """{vespene_tag: unit, ...} """
         self.vespenes = {}
-        """{vespene_building_tag: unit, ...} """
+        """{vespene_building_tag: unit, ...}"""
         self.vbs = {}
         self.queens = {}
         self.eggs = {}
@@ -174,7 +132,7 @@ class BasePool(PoolBase):
         return self._bases
 
     def reset(self):
-        print('base_pool reset')
+        # print('base_pool reset')
         self._dc = None
         self._init = False
         self._bases = {}
@@ -190,14 +148,14 @@ class BasePool(PoolBase):
     def update(self, timestep):
         units = timestep.observation['units']
         if not self._init:
-            #self._analysis_resource(units)
+            # self._analysis_resource(units)
             self._init_base(units)
             self._init = True
         else:
             self._update_base(units)
 
     def _init_base(self, units):
-        print('base_pool init')
+        # print('base_pool init')
         empty_base = []
         tmps = self._unit_dispatch(units)
         for unit in tmps[1]:
@@ -209,11 +167,12 @@ class BasePool(PoolBase):
         mtags = set(self.minierals.keys())
         gtags = set(self.vespenes.keys())
         while len(mtags) > 0 and len(gtags) > 0:
-            #print('mtags_num=', len(mtags), ';gtags_num=', len(gtags))
-            area = self.find_resource_area(mtags, gtags)
+            # print('mtags_num=', len(mtags), ';gtags_num=', len(gtags))
+            area = self.find_resource_area(mtags, gtags,
+                                           self.minierals, self.vespenes)
             self.resource_cluster.append(area)
 
-        #for cluster in self.resource_cluster:
+        # for cluster in self.resource_cluster:
         #    print('clusters=', str(cluster))
 
         self._update_base_unit(tmps[0])
@@ -244,10 +203,11 @@ class BasePool(PoolBase):
             if base.tag not in self._bases:
                 area = self.find_base_owner_cluster(base)
                 new_base = BaseInstance(base, self, area)
-                area.set_owner_base(base.tag)
+                area.owner_base_tag = base.tag
                 self._bases[base.tag] = new_base
             else:
                 self._bases[base.tag].update_unit(base)
+                self._bases[base.tag].update_resource()
             bids.add(base.tag)
 
         bids_curr = set(self._bases.keys())
@@ -256,7 +216,8 @@ class BasePool(PoolBase):
             self._remove_base(bid)
 
     def _remove_base(self, bid):
-        pass
+        self._bases.pop(bid)
+        print('**** remove base ****,=', len(self._bases))
 
     def _update_resource_for_base(self):
         for base in self._bases.values():
@@ -304,15 +265,17 @@ class BasePool(PoolBase):
             base.worker_set.add(wtag)
 
     def _update_minieral_unit(self, minierals):
+        '''clear current mineral record'''
+        self.minierals = {}
         mids = set([])
         for m in minierals:
-            if m.tag in self.minierals:
-                self.minierals[m.tag] = m
-            else:
-                if self._init:
-                    raise Exception('all minierals will be add after init')
-                self.minierals[m.tag] = m
             self.minierals[m.tag] = m
+            '''check tag of mineral in base not changed'''
+            if m.tag in self._unit_to_base:
+                base_tag = self._unit_to_base[m.tag]
+                base = self._bases[base_tag]
+                if m.tag not in base.minieral_set:
+                    raise Exception('minieral in base should not change')
             mids.add(m.tag)
 
         mids_curr = set(self.minierals.keys())
@@ -322,18 +285,21 @@ class BasePool(PoolBase):
             self._remove_minieral_from_base(mid)
 
     def _remove_minieral_from_base(self, tag):
-        pass
+        for base in self._bases.values():
+            if tag in base.minieral_set:
+                base.minieral_set.remove(tag)
 
     def _update_vespene_unit(self, vespenes):
+        self.vespenes = {}
         vids = set([])
         for v in vespenes:
-            if v.tag in self.vespenes:
-                '''update vespene'''
-                self.vespenes[v.tag] = v
-            else:
-                if self._init:
-                    raise Exception('no gas will be add after init')
-                self.vespenes[v.tag] = v
+            self.vespenes[v.tag] = v
+            '''check the tag of vespene in base not changed'''
+            if v.tag in self._unit_to_base:
+                base_tag = self._unit_to_base[m.tag]
+                base = self._bases[base_tag]
+                if m.tag not in base.gas_set:
+                    raise Exception('gas in base should not change')
             vids.add(v.tag)
 
         vids_curr = set(self.vespenes.keys())
@@ -343,7 +309,9 @@ class BasePool(PoolBase):
             self._remove_vespene_from_base(vid)
 
     def _remove_vespene_from_base(self, tag):
-        pass
+        for base in self._bases.values():
+            if tag in base.gas_set:
+                base.gas_set.remove(tag)
 
     def _update_vb_unit(self, vbs):
         vbids = set([])
@@ -404,15 +372,15 @@ class BasePool(PoolBase):
         self._unit_to_base.pop(tag)
 
     def _update_larva_unit(self, larvas):
-        #print('larva update')
+        # print('larva update')
         lids = set([])
         for l in larvas:
             if l.tag not in self.larvas:
-                #print('add larva:', l.tag)
+                # print('add larva:', l.tag)
                 self.larvas[l.tag] = l
                 self._add_larva_to_base(l)
             else:
-                #print('add larva:', l.tag)
+                # print('add larva:', l.tag)
                 self.larvas[l.tag] = l
             lids.add(l.tag)
 
@@ -466,15 +434,16 @@ class BasePool(PoolBase):
 
     def find_base_belong(self, unit):
         target_base = None
-        #print('base number=', len(self._bases))
+        # print('base number=', len(self._bases))
         for base in self._bases.values():
             dist = self._calculate_distances(unit.float_attr.pos_x,
-                                      unit.float_attr.pos_y,
-                                      base.unit.float_attr.pos_x,
-                                      base.unit.float_attr.pos_y)
-            #print('dist=', dist, ';range=', BASE_RANGE)
+                                             unit.float_attr.pos_y,
+                                             base.unit.float_attr.pos_x,
+                                             base.unit.float_attr.pos_y)
+            # print('dist=', dist, ';range=', BASE_RANGE)
             if dist < BASE_RANGE:
                 target_base = base
+
         return target_base
 
     def find_base_owner_cluster(self, base_unit):
@@ -483,37 +452,74 @@ class BasePool(PoolBase):
         nearest_cluster = None
         nearest_distance = 0
         for cluster in self.resource_cluster:
-            pos_x, pos_y = cluster.avg_pos()
-            tmp_distance = self._calculate_distances(base_x, base_y, pos_x, pos_y)
+            pos = cluster.fix_avg_pos
+            tmp_distance = self._calculate_distances(base_x, base_y, pos[0],
+                                                     pos[1])
             if nearest_distance == 0 or tmp_distance < nearest_distance:
                 nearest_distance = tmp_distance
                 nearest_cluster = cluster
 
-        #print('base=', (base_x, base_y), 'cluster=', nearest_cluster)
+        # print('base=', (base_x, base_y), 'cluster=', nearest_cluster)
         return nearest_cluster
 
-    def find_resource_area(self, mtags, gtags):
+    def _is_resource_in_area(self, unit, tags_in_area, all_minieral, all_gas):
+        avg_x, avg_y = self._avgs(tags_in_area, all_minieral, all_gas)
+        diff_x = abs(avg_x - unit.float_attr.pos_x)
+        diff_y = abs(avg_y - unit.float_attr.pos_y)
+        return diff_x < BASE_RESOURCE_DISTANCE and \
+               diff_y < BASE_RESOURCE_DISTANCE
+
+    def _avgs(self, tags, all_minieral, all_gas):
+        resource_posx = []
+        resource_posy = []
+        for tag in tags:
+            if tag in all_minieral:
+                unit = all_minieral[tag]
+                resource_posx.append(unit.float_attr.pos_x)
+                resource_posy.append(unit.float_attr.pos_y)
+            elif tag in all_gas:
+                unit = all_gas[tag]
+                resource_posx.append(unit.float_attr.pos_x)
+                resource_posy.append(unit.float_attr.pos_y)
+            else:
+                return None
+
+        avg_x = sum(resource_posx) / len(resource_posx)
+        avg_y = sum(resource_posy) / len(resource_posy)
+        return avg_x, avg_y
+
+    def find_resource_area(self, mtags, gtags, all_minerals, all_gas):
         area = ResourceArea(self)
+        gtags_in_area = []
+        mtags_in_area = []
+        tags_in_area = []
         for tag in mtags:
-            if area.is_empty():
-                area.add_mineral_tag(tag)
-                #print('area_m_num=', len(area.mtags))
-            elif area.is_unit_in_cluster(tag):
-                area.add_mineral_tag(tag)
-                #print('area_m_num=', len(area.mtags))
+            if 0 == len(tags_in_area):
+                mtags_in_area.append(tag)
+                tags_in_area.append(tag)
+            elif self._is_resource_in_area(all_minerals[tag],
+                                           tags_in_area,
+                                           all_minerals,
+                                           all_gas):
+                mtags_in_area.append(tag)
+                tags_in_area.append(tag)
+                # print('area_m_num=', len(area.mtags))
             else:
                 pass
 
         for tag in gtags:
-            if area.is_unit_in_cluster(tag):
-               area.add_gas_tag(tag)
-               #print('area_m_num=', len(area.gtags))
+            if self._is_resource_in_area(all_gas[tag],
+                                         tags_in_area,
+                                         all_minerals, all_gas):
+                gtags_in_area.append(tag)
+                tags_in_area.append(tag)
+                # print('area_m_num=', len(area.gtags))
 
-        for tag in area.mtags:
+        area.fix_avg_pos = self._avgs(tags_in_area, all_minerals, all_gas)
+        for tag in mtags_in_area:
             mtags.remove(tag)
-        for tag in area.gtags:
+        for tag in gtags_in_area:
             gtags.remove(tag)
-
         return area
 
     def _unit_dispatch(self, units):
@@ -542,16 +548,15 @@ class BasePool(PoolBase):
             elif self._check_larva(u):
                 tmp_larva.append(u)
             else:
-                pass # do nothing
+                pass  # do nothing
 
-        #print('unit_types=', tmp_utype)
-        return (tmp_base, tmp_minierals, tmp_vespene, 
+        # print('unit_types=', tmp_utype)
+        return (tmp_base, tmp_minierals, tmp_vespene,
                 tmp_vb, tmp_egg, tmp_queen, tmp_larva)
-
 
     def _check_base(self, u):
         if u.unit_type in tm.BASE_UNITS and \
-            u.int_attr.alliance == tm.AllianceType.SELF.value:
+                        u.int_attr.alliance == tm.AllianceType.SELF.value:
             return True
         else:
             return False
@@ -570,29 +575,30 @@ class BasePool(PoolBase):
 
     def _check_vespene_buildings(self, u):
         if u.unit_type in tm.VESPENE_BUILDING_UNITS and \
-            u.int_attr.alliance == tm.AllianceType.SELF.value:
+                        u.int_attr.alliance == tm.AllianceType.SELF.value:
             return True
         else:
             return False
 
     def _check_egg(self, u):
         if u.unit_type == UNIT_TYPEID.ZERG_EGG.value and \
-            u.int_attr.alliance == tm.AllianceType.SELF.value:
+                        u.int_attr.alliance == tm.AllianceType.SELF.value:
             return True
         else:
             return False
 
     def _check_queen(self, u):
         if u.unit_type == UNIT_TYPEID.ZERG_QUEEN.value and \
-            u.int_attr.alliance == tm.AllianceType.SELF.value:
+                        u.int_attr.alliance == tm.AllianceType.SELF.value:
             return True
         else:
             return False
 
     def _check_larva(self, u):
         if u.unit_type == UNIT_TYPEID.ZERG_LARVA.value and \
-            u.int_attr.alliance == tm.AllianceType.SELF.value:
-            #print('larva: ', (u.tag, u.unit_type, u.int_attr.alliance, tm.AllianceType.SELF.value))
+                        u.int_attr.alliance == tm.AllianceType.SELF.value:
+            # print('larva: ', (u.tag, u.unit_type, u.int_attr.alliance,
+            #      tm.AllianceType.SELF.value))
             return True
         else:
             return False
@@ -616,20 +622,19 @@ class BasePool(PoolBase):
         minieral_of_base = []
         minieral_unit_of_base = []
         for minieral in minierals:
-            dist = self._calculate_distances(base_x, base_y, 
-                                             minieral.float_attr.pos_x, 
+            dist = self._calculate_distances(base_x, base_y,
+                                             minieral.float_attr.pos_x,
                                              minieral.float_attr.pos_y)
             minieral_dist.append(dist)
-            minieral_pos.append((minieral.tag, 
-                                 minieral.float_attr.pos_x, 
+            minieral_pos.append((minieral.tag,
+                                 minieral.float_attr.pos_x,
                                  minieral.float_attr.pos_y))
 
             if dist < BASE_RESOURCE_RANGE:
-                minieral_of_base.append((minieral.tag, 
-                                        minieral.float_attr.pos_x, 
-                                        minieral.float_attr.pos_y))
+                minieral_of_base.append((minieral.tag,
+                                         minieral.float_attr.pos_x,
+                                         minieral.float_attr.pos_y))
                 minieral_unit_of_base.append(minieral)
-
 
         gas_dist = []
         gas_pos = []
@@ -640,15 +645,17 @@ class BasePool(PoolBase):
                                              gas.float_attr.pos_x,
                                              gas.float_attr.pos_y)
             gas_dist.append(dist)
-            gas_pos.append((gas.tag, gas.float_attr.pos_x, gas.float_attr.pos_y))
+            gas_pos.append(
+                (gas.tag, gas.float_attr.pos_x, gas.float_attr.pos_y))
             if dist < BASE_RESOURCE_RANGE:
-                gas_of_base.append((gas.tag, gas.float_attr.pos_x, gas.float_attr.pos_y))
+                gas_of_base.append(
+                    (gas.tag, gas.float_attr.pos_x, gas.float_attr.pos_y))
                 gas_unit_of_base.append(gas)
 
         unit_x = []
         unit_y = []
         diff_x = []
-        diff_y = [] 
+        diff_y = []
         for unit in minieral_unit_of_base:
             diff_x.append(unit.float_attr.pos_x - base_x)
             diff_y.append(unit.float_attr.pos_y - base_y)
@@ -668,9 +675,9 @@ class BasePool(PoolBase):
         diff_y.sort()
         print('base_pos=', (bases[0].tag, base_x, base_y))
         print('minieral_dist=', minieral_dist)
-        #print('minieral_pos=', minieral_pos)
+        # print('minieral_pos=', minieral_pos)
         print('gas_dist=', gas_dist)
-        #print('gas_pos=', gas_pos)
+        # print('gas_pos=', gas_pos)
         print('minieral_in_base:', minieral_of_base)
         print('gas_in_base:', gas_of_base)
         print('diff_x', diff_x)
