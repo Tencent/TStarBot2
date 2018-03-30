@@ -7,14 +7,14 @@ from tstarbot.strategy.squad import Squad
 
 class Army(object):
     def __init__(self):
-        self._squads = set()
+        self._squads = list()
         self._unsquaded_units = set()
 
     def update(self, combat_pool):
         for squad in self._squads:
             squad.update(combat_pool)
         squaded_units = set.union(
-            set(), *[squad.units for squad in self._squads])
+            set(), *[set(squad.units) for squad in self._squads])
         self._unsquaded_units = set(u for u in combat_pool.units
                                     if u not in squaded_units)
 
@@ -22,11 +22,11 @@ class Army(object):
         for u in units:
             self._unsquaded_units.remove(u)
         squad = Squad(units)
-        self._squads.add(squad)
+        self._squads.append(squad)
         return squad
 
     def delete_squad(self, squad):
-        self._unsquaded_units.union(squad.units)
+        self._unsquaded_units.union(set(squad.units))
         self._squads.remove(squad)
 
     @property

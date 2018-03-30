@@ -13,9 +13,8 @@ SquadStatus = Enum('SquadStatus', ('IDLE','MOVE', 'ATTACK', 'DEFEND'))
 class Squad(object):
 
     def __init__(self, units):
-        self._units = set(units)
+        self._units = units
         self._status = SquadStatus.IDLE
-        self._position = self._average_position(units)
 
     def __repr__(self):
         return ('Squad(Units(%d), Roaches(%d), Zerglings(%d))' %
@@ -23,12 +22,11 @@ class Squad(object):
 
     def update(self, combat_pool):
         tags = [u.tag for u in self._units]
-        self._units = set()
+        self._units.clear()
         for tag in tags:
             unit = combat_pool.get_by_tag(tag)
             if unit is not None:
-                self._units.add(unit)
-        self._position = self._average_position(self._units)
+                self._units.append(unit)
 
     @property
     def num_units(self):
@@ -48,12 +46,12 @@ class Squad(object):
 
     @property
     def roach_units(self):
-        return set(u for u in self._units
-                   if u.type == UNIT_TYPEID.ZERG_ROACH.value)
+        return [u for u in self._units
+                if u.type == UNIT_TYPEID.ZERG_ROACH.value]
     @property
     def zergling_units(self):
-        return set(u for u in self._units
-                   if u.type == UNIT_TYPEID.ZERG_ZERGLING.value)
+        return [u for u in self._units
+                if u.type == UNIT_TYPEID.ZERG_ZERGLING.value]
 
     @property
     def status(self):
@@ -64,8 +62,7 @@ class Squad(object):
         self._status = status
 
     @property
-    def position(self):
-        return self._position
-
-    def _average_position(self, units):
-        return 0, 0
+    def centroid(self):
+        x = sum(u.float_attr.pos_x for u in self._units) / len(self._units)
+        y = sum(u.float_attr.pos_x for u in self._units) / len(self._units)
+        return {'pos_x':x, 'pos_y':y}
