@@ -34,7 +34,7 @@ flags.DEFINE_enum("agent_race", None, sc2_env.races.keys(), "Agent's race.")
 flags.DEFINE_enum("bot_race", None, sc2_env.races.keys(), "Bot's race.")
 flags.DEFINE_enum("difficulty", None, sc2_env.difficulties.keys(),
                   "Bot's strength.")
-
+flags.DEFINE_bool("disable_fog", False, "Turn off the Fog of War.")
 flags.DEFINE_bool("profile", False, "Whether to turn on code profiling.")
 flags.DEFINE_bool("trace", False, "Whether to trace the code execution.")
 flags.DEFINE_integer("parallel", 2, "How many instances to run in parallel.")
@@ -105,6 +105,7 @@ def run_thread(agent_cls, map_name, visualize):
             screen_size_px=(FLAGS.screen_resolution, FLAGS.screen_resolution),
             minimap_size_px=(FLAGS.minimap_resolution, FLAGS.minimap_resolution),
             score_index=-1,  # this indicates the outcome is reward
+            disable_fog=FLAGS.disable_fog,
             visualize=visualize) as env:
         agent = agent_cls()
         run_loop([agent], env, max_episodes=FLAGS.max_agent_episodes)
