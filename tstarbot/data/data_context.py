@@ -43,10 +43,10 @@ class DynamicData(object):
 
         # update pools
         self.building_pool.update(timestep)
-        self.worker_pool.update(timestep)
+        #self.worker_pool.update(timestep)
         self.combat_pool.update(timestep)
         self.enemy_pool.update(timestep)
-        self.base_pool.update(timestep)
+        #self.base_pool.update(timestep)
 
         # update statistic
 

@@ -52,4 +52,4 @@ class ZergStrategyMgr(BaseStrategyMgr):
                                     squad=squad,
                                     position=(0, 0))
                 cmd_queue.push(cmd)
-                print(cmd)
+                # print(cmd)

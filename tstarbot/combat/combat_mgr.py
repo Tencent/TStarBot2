@@ -169,7 +169,7 @@ class ZergCombatLxHanMgr(BaseCombatMgr):
         enemy_cnt.append(np.sum(minimap_pos3 == 4))
         enemy_cnt.append(np.sum(minimap_pos4 == 4))
         self.enemy_pos_cnt_max = max(enemy_cnt)
-        print('enemy_count: ', enemy_cnt)
+        #print('enemy_count: ', enemy_cnt)
 
         if base_pos[0] > base_pos[1]:  # me at bottom-right
             order = [4, 3, 2, 1]

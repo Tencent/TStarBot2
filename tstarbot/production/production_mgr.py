@@ -18,7 +18,7 @@ TT = TechTree()
 class BuildOrderQueue(object):
     def __init__(self):
         self.queue = collections.deque()
-    
+
     def set_build_order(self, unit_list):
         for unit_id in unit_list:
             build_item = TT.getUnitData(unit_id)
@@ -124,10 +124,11 @@ class BaseProductionMgr(object):
         builder = None
         for unit_id in current_item.whatBuilds:
             # if unit_id in data_contxt.units_pool or unit in data_context.units_in_process:
-            if unit_id == UNIT_TYPEID.ZERG_LARVA.value or self.has_unit(self.obs["units"], unit_id):
+            if unit_id == UNIT_TYPEID.ZERG_LARVA.value or self.has_unit(
+                    self.obs["units"], unit_id):
                 builder = unit_id
                 break
-        if builder is None and len(current_item.whatBuilds)>0:
+        if builder is None and len(current_item.whatBuilds) > 0:
             self.build_order.queue_as_highest(current_item.whatBuilds[0])
             return True
         required_unit = None
@@ -139,7 +140,7 @@ class BaseProductionMgr(object):
         if required_unit is None and len(current_item.requiredUnits) > 0:
             self.build_order.queue_as_highest(current_item.requiredUnits[0])
             return True
-        #  No enough supply and supply not in building process
+        # No enough supply and supply not in building process
         if play_info[3] + current_item.supplyCost > play_info[4]:
             # and self.supply_unit(self.race) not in data_context.units_in_process:
             self.build_order.queue_as_highest(self.supply_unit())
@@ -152,6 +153,13 @@ class BaseProductionMgr(object):
             if unit.unit_type == unit_id and unit.int_attr.owner == owner:
                 return True
         return False
+
+    def has_building_built(self, units, unit_id_list, owner=1):
+        for unit_id in unit_id_list:
+            for unit in units:
+                if unit.unit_type == unit_id and unit.int_attr.owner == owner and unit.float_attr.build_progress == 1:
+                    return True
+        return len(unit_id_list) == 0
 
     def should_expand_now(self, data_context):
         return False
@@ -174,6 +182,7 @@ class BaseProductionMgr(object):
 
 class ZergProductionLxHanMgr(object):
     """ 3 bases + roaches + hydralisk """
+
     def __init__(self):
         super(ZergProductionLxHanMgr, self).__init__()
         self.drone_limit = 16 + 3 + 3
@@ -207,19 +216,23 @@ class ZergProductionLxHanMgr(object):
 
         actions = []
         # actions.extend(self.set_default_rally_drone(drones, hatcheries))
-        actions.extend(self.let_idle_drone_collect_mineral(drones, minerals, hatcheries))
+        actions.extend(
+            self.let_idle_drone_collect_mineral(drones, minerals, hatcheries))
         actions.extend(self.produce_drone(larvas, drones))
         actions.extend(self.produce_overlord(larvas, player_info))
-        actions.extend(self.build_spawningpool(drones, hatcheries, spawningpool))
+        actions.extend(
+            self.build_spawningpool(drones, hatcheries, spawningpool))
         actions.extend(self.build_hatchery(drones, hatcheries, base_pos))
         # actions.extend(self.produce_queen(hatcheries, queen))
-        actions.extend(self.build_extractors(drones, extractors, vespens, hatcheries))
+        actions.extend(
+            self.build_extractors(drones, extractors, vespens, hatcheries))
         actions.extend(self.let_random_drone_collect_vespen(drones, extractors))
         actions.extend(self.build_roachwarren(drones, hatcheries, roachwarren))
         actions.extend(self.produce_hydralisk(larvas, hydralisk))
         actions.extend(self.produce_roach(larvas))
         actions.extend(self.upgrade_hatchery(hatcheries, base_pos))
-        actions.extend(self.build_hydraliskden(drones, hatcheries, hydraliskden))
+        actions.extend(
+            self.build_hydraliskden(drones, hatcheries, hydraliskden))
 
         am.push_actions(actions)
 
@@ -350,7 +363,8 @@ class ZergProductionLxHanMgr(object):
 
         action.action_raw.unit_command.target_world_space_pos.x = pos[0]
         action.action_raw.unit_command.target_world_space_pos.y = pos[1]
-        action.action_raw.unit_command.unit_tags.append(random.choice(drones).tag)
+        action.action_raw.unit_command.unit_tags.append(
+            random.choice(drones).tag)
         actions.append(action)
         return actions
 
@@ -508,21 +522,59 @@ class ZergProductionMgr(BaseProductionMgr):
         act_mgr.push_actions(actions)
 
     def perform_search(self, goal):
-        goal = [UNIT_TYPEID.ZERG_ZERGLING.value]*4
+        goal = [UNIT_TYPEID.ZERG_ROACH.value] * 3 + [
+                                                        UNIT_TYPEID.ZERG_HYDRALISK.value] * 2
         return goal
 
     def get_opening_build_order(self):
-        return [UNIT_TYPEID.ZERG_DRONE.value, UNIT_TYPEID.ZERG_DRONE.value, UNIT_TYPEID.ZERG_OVERLORD.value,
-                UNIT_TYPEID.ZERG_SPAWNINGPOOL.value, UNIT_TYPEID.ZERG_DRONE.value] + [UNIT_TYPEID.ZERG_ZERGLING.value]*6
+        return [UNIT_TYPEID.ZERG_DRONE.value, UNIT_TYPEID.ZERG_DRONE.value,
+                UNIT_TYPEID.ZERG_OVERLORD.value,
+                UNIT_TYPEID.ZERG_SPAWNINGPOOL.value,
+                UNIT_TYPEID.ZERG_DRONE.value,
+                UNIT_TYPEID.ZERG_EXTRACTOR.value] + \
+               [UNIT_TYPEID.ZERG_DRONE.value] * 3 + \
+               [UNIT_TYPEID.ZERG_EXTRACTOR.value, UNIT_TYPEID.ZERG_LAIR.value] +\
+               [UNIT_TYPEID.ZERG_DRONE.value, UNIT_TYPEID.ZERG_DRONE.value,
+                UNIT_TYPEID.ZERG_ZERGLING.value,
+                UNIT_TYPEID.ZERG_HATCHERY.value] + \
+               [UNIT_TYPEID.ZERG_DRONE.value, UNIT_TYPEID.ZERG_DRONE.value,
+                UNIT_TYPEID.ZERG_ZERGLING.value,
+                UNIT_TYPEID.ZERG_ROACHWARREN.value] + \
+               [UNIT_TYPEID.ZERG_DRONE.value, UNIT_TYPEID.ZERG_DRONE.value,
+                UNIT_TYPEID.ZERG_ZERGLING.value,
+                UNIT_TYPEID.ZERG_HYDRALISKDEN.value]
 
     def should_expand_now(self, data_contex):
         return False
 
     def can_build(self, build_item, data_context):  # check resource requirement
-        return self.obs['player'][1] >= build_item.mineralCost and self.obs['player'][2] >= build_item.gasCost
+        if self.obs['player'][2] < build_item.gasCost:
+            extractors = [u for u in self.obs['units']
+                          if u.unit_type == UNIT_TYPEID.ZERG_EXTRACTOR.value
+                          and u.int_attr.owner == 1]
+            if len(extractors) == 0:
+                self.build_order.queue_as_highest(
+                    UNIT_TYPEID.ZERG_EXTRACTOR.value)
+                return False
+        if not self.has_building_built(self.obs['units'],
+                                       build_item.requiredUnits):
+            return False
+        return self.obs['player'][1] >= build_item.mineralCost \
+               and self.obs['player'][2] >= build_item.gasCost
 
     def set_build_base(self, build_item, data_context):
-        hatcheries = [u for u in self.obs['units'] if
-                      u.unit_type == UNIT_TYPEID.ZERG_HATCHERY.value and u.int_attr.owner == 1]
-        if len(hatcheries) > 0:
-            data_context.dd.build_command_queue.put(hatcheries[0].tag, 0, {'unit_id': 1})
+        hatcheries = [u for u in self.obs['units']
+                      if u.unit_type == UNIT_TYPEID.ZERG_LAIR.value
+                      and u.int_attr.owner == 1] + \
+                     [u for u in self.obs['units']
+                      if u.unit_type == UNIT_TYPEID.ZERG_HATCHERY.value
+                      and u.int_attr.owner == 1]
+
+        larvas = [u for u in self.obs['units']
+                  if u.unit_type == UNIT_TYPEID.ZERG_LARVA.value
+                  and u.int_attr.owner == 1]
+        if len(hatcheries) > 0 and len(larvas) > 0:
+            data_context.dd.build_command_queue.put(
+                hatcheries[0].tag, 0, {'unit_id': build_item.unit_id})
+            return True
+        return False
