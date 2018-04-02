@@ -18,7 +18,7 @@ class CombatCommand(object):
         assert isinstance(type, CombatCmdType)
         assert isinstance(squad, Squad)
         assert isinstance(position, dict)
-        assert 'pos_x' in position and 'pos_y' in position
+        assert 'x' in position and 'y' in position
 
         self._type = type
         self._squad = squad

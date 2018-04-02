@@ -63,6 +63,6 @@ class Squad(object):
 
     @property
     def centroid(self):
-        x = sum(u.float_attr.pos_x for u in self._units) / len(self._units)
-        y = sum(u.float_attr.pos_x for u in self._units) / len(self._units)
-        return {'pos_x':x, 'pos_y':y}
+        x = sum(u.position['x'] for u in self._units) / len(self._units)
+        y = sum(u.position['y'] for u in self._units) / len(self._units)
+        return {'x':x, 'y':y}
