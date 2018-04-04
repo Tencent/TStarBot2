@@ -9,7 +9,7 @@ from enum import Enum
 from tstarbot.strategy.squad import Squad
 
 
-CombatCmdType = Enum('CombatCmdType', ('MOVE', 'ATTACK', 'DEFEND'))
+CombatCmdType = Enum('CombatCmdType', ('MOVE', 'ATTACK', 'DEFEND', 'RALLY'))
 
 
 class CombatCommand(object):
