@@ -15,7 +15,7 @@ class WorkerState(Enum):
 
 @unique
 class WorkerSubState(Enum):
-  pass 
+  pass
 
 @unique
 class AllianceType(Enum):
@@ -26,8 +26,8 @@ class AllianceType(Enum):
 
 
 WORKER_UNITS = set([UNIT_TYPEID.ZERG_DRONE.value])
-BASE_UNITS = set([UNIT_TYPEID.ZERG_HATCHERY.value])
-MINIERAL_UNITS = set([UNIT_TYPEID.NEUTRAL_RICHMINERALFIELD.value,
+BASE_UNITS = set([UNIT_TYPEID.ZERG_HATCHERY.value, UNIT_TYPEID.ZERG_LAIR.value, UNIT_TYPEID.ZERG_HIVE.value])
+MINERAL_UNITS = set([UNIT_TYPEID.NEUTRAL_RICHMINERALFIELD.value,
                       UNIT_TYPEID.NEUTRAL_RICHMINERALFIELD750.value, 
                       UNIT_TYPEID.NEUTRAL_MINERALFIELD.value, 
                       UNIT_TYPEID.NEUTRAL_MINERALFIELD750.value,
@@ -138,7 +138,7 @@ COMBAT_UNITS = set([
 if __name__ == '__main__':
     print(WORKER_UNITS)
     print(BASE_UNITS)
-    print(MINIERAL_UNITS)
+    print(MINERAL_UNITS)
     print(VESPENE_UNITS)
     print(VESPENE_BUILDING_UNITS)
     print(WORKER_RESOURCE_ABILITY)
