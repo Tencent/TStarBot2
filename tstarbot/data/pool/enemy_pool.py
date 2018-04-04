@@ -48,7 +48,7 @@ class EnemyCluster(object):
     def centroid(self):
         x = sum(u.float_attr.pos_x for u in self._units) / len(self._units)
         y = sum(u.float_attr.pos_y for u in self._units) / len(self._units)
-        return {'x':x, 'y':y}
+        return {'x': x, 'y': y}
 
 
 class EnemyPool(PoolBase):
@@ -68,6 +68,10 @@ class EnemyPool(PoolBase):
         self._enemy_clusters.clear()
         for units in self._agglomerative_cluster(self._enemy_units):
             self.enemy_clusters.append(EnemyCluster(units))
+
+    @property
+    def units(self):
+        return self._enemy_units
 
     @property
     def num_worker_units(self):

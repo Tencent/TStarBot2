@@ -7,26 +7,26 @@ from enum import Enum
 from pysc2.lib.typeenums import UNIT_TYPEID
 
 
-SquadStatus = Enum('SquadStatus', ('IDLE','MOVE', 'ATTACK', 'DEFEND'))
+SquadStatus = Enum('SquadStatus', ('IDLE', 'MOVE', 'ATTACK', 'DEFEND'))
 
 
 class Squad(object):
 
     def __init__(self, units):
-        self._units = units
+        self._units = units  # combat_unit
         self._status = SquadStatus.IDLE
 
     def __repr__(self):
         return ('Squad(Units(%d), Roaches(%d), Zerglings(%d))' %
                 (self.num_units, self.num_roach_units, self.num_zergling_units))
 
-    def update(self, combat_pool):
+    def update(self, combat_unit_pool):
         tags = [u.tag for u in self._units]
         self._units.clear()
         for tag in tags:
-            unit = combat_pool.get_by_tag(tag)
-            if unit is not None:
-                self._units.append(unit)
+            combat_unit = combat_unit_pool.get_by_tag(tag)
+            if combat_unit is not None:
+                self._units.append(combat_unit)
 
     @property
     def num_units(self):

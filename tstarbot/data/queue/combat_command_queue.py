@@ -40,7 +40,8 @@ class CombatCommand(object):
     def position(self):
         return self._position
 
-#TODO: updtae CommandQueueBase if hope to inherit it.
+
+# TODO: update CommandQueueBase if hope to inherit it.
 class CombatCommandQueue(object):
 
     def __init__(self):
@@ -50,8 +51,8 @@ class CombatCommandQueue(object):
         assert isinstance(cmd, CombatCommand)
         self._queue.append(cmd)
 
-    def pull(self, cmd):
-        return self._pop()
+    def pull(self):
+        return [] if len(self._queue) == 0 else self._queue.pop()
 
     def clear(self):
         self._queue.clear()

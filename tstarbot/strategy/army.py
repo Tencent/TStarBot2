@@ -5,6 +5,7 @@ from __future__ import print_function
 
 from tstarbot.strategy.squad import Squad
 
+
 class Army(object):
     def __init__(self):
         self._squads = list()

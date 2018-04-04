@@ -1,4 +1,3 @@
-
 class CommandBase(object):
     def __init__(self):
         self.cmd_id = 0     # command id
@@ -8,6 +7,7 @@ class CommandBase(object):
 
     def __str__(self):
         return "id {}, type {}, idx {}, param {}".format(self.cmd_id, self.cmd_type, self.idx, self.param)
+
 
 class CommandQueueBase(object):
     def __init__(self, cmd_id_base):

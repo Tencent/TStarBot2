@@ -11,7 +11,7 @@ from tstarbot.data.queue.scout_command_queue import ScoutCommandQueue
 from tstarbot.data.pool.base_pool import BasePool
 from tstarbot.data.pool.building_pool import BuildingPool
 from tstarbot.data.pool.worker_pool import WorkerPool
-from tstarbot.data.pool.combat_pool import CombatPool
+from tstarbot.data.pool.combat_pool import CombatUnitPool
 from tstarbot.data.pool.enemy_pool import EnemyPool
 
 
@@ -34,7 +34,7 @@ class DynamicData(object):
 
         self.building_pool = BuildingPool()
         self.worker_pool = WorkerPool()
-        self.combat_pool = CombatPool()
+        self.combat_pool = CombatUnitPool()
         self.enemy_pool = EnemyPool()
         self.base_pool = BasePool(self)
 
