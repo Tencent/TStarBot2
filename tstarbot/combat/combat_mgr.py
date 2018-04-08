@@ -5,18 +5,16 @@ from __future__ import print_function
 
 import numpy as np
 import math
+
 from s2clientprotocol import sc2api_pb2 as sc_pb
 from pysc2.lib.typeenums import UNIT_TYPEID, ABILITY_ID
+from tstarbot.data.queue.combat_command_queue import CombatCmdType
+from tstarbot.data.pool.macro_def import AllianceType
 
 
-ATTACK_MODE = 0
-RETREAT_MODE = 1
-DEFEND_MODE = 2
-
-
-def collect_units(units, unit_type, owner=1):
+def collect_units(units, unit_type, alliance=1):
     return [u for u in units
-            if u.unit_type == unit_type and u.int_attr.owner == owner]
+            if u.unit_type == unit_type and u.int_attr.alliance == alliance]
 
 
 class BaseCombatMgr(object):
@@ -32,6 +30,29 @@ class BaseCombatMgr(object):
 
     def update(self, dc, am):
         pass
+
+    @staticmethod
+    def set_default_combat_rally(hatcheries, pos):
+        actions = []
+        for hatchery in hatcheries:
+            action = sc_pb.Action()
+            action.action_raw.unit_command.ability_id = ABILITY_ID.RALLY_UNITS.value
+            action.action_raw.unit_command.target_world_space_pos.x = pos[0]
+            action.action_raw.unit_command.target_world_space_pos.y = pos[1]
+            action.action_raw.unit_command.unit_tags.append(hatchery.tag)
+            actions.append(action)
+        return actions
+
+    def set_default_drone_rally(self, hatcheries, minerals):
+        actions = []
+        mine = self.find_nearest_n_units(hatcheries, minerals, 1)
+        for hatchery in hatcheries:
+            action = sc_pb.Action()
+            action.action_raw.unit_command.ability_id = ABILITY_ID.RALLY_WORKERS.value
+            action.action_raw.unit_command.target_unit_tag = mine[0].tag
+            action.action_raw.unit_command.unit_tags.append(hatchery.tag)
+            actions.append(action)
+        return actions
 
     @staticmethod
     def attack_pos(u, pos):
@@ -77,6 +98,25 @@ class BaseCombatMgr(object):
         return enemies[idx]
 
     @staticmethod
+    def find_nearest_n_units(hatcheries, units, n):
+        if len(hatcheries) == 0:
+            return []
+        hatchery = hatcheries[0]
+        base_x = hatchery.float_attr.pos_x
+        base_y = hatchery.float_attr.pos_y
+        dists = []
+        for m in units:
+            x = m.float_attr.pos_x
+            y = m.float_attr.pos_y
+            dist = abs(x - base_x) + abs(y - base_y)
+            dists.append(dist)
+        idx = np.argsort(dists)
+        selected_units = []
+        for i in range(n):
+            selected_units.append(units[idx[i]])
+        return selected_units
+
+    @staticmethod
     def find_weakest_enemy(enemies):
         hp = []
         for e in enemies:
@@ -100,98 +140,6 @@ class BaseCombatMgr(object):
                pow(u1.float_attr.pos_y - u2.float_attr.pos_y, 2)
 
 
-class ZergCombatLxHanMgr(BaseCombatMgr):
-    """ Combat module for full game """
-    def __init__(self):
-        super(ZergCombatLxHanMgr, self).__init__()
-        self.enemy_pos_cnt_max = 0
-        self.roach_attack_range = 5.0
-        self.enemy_units = []
-
-    def reset(self):
-        self.enemy_pos_cnt_max = 0
-        self.enemy_units = []
-
-    def update(self, dc, am):
-        super(ZergCombatLxHanMgr, self).update(dc, am)
-
-        roaches = dc.get_roaches()
-        hydralisk = dc.get_hydralisk()
-        base_pos = dc.base_pos
-        minimap = dc.mini_map
-        self.enemy_units = dc.get_enemy_units()
-
-        actions = list()
-        pos = self.find_enemy_base_pos(base_pos, minimap)
-        squad = roaches + hydralisk
-        if len(squad) >= 15:
-            actions.extend(self.exe_cmd(squad, pos, ATTACK_MODE))
-
-        am.push_actions(actions)
-
-    def exe_cmd(self, squad, pos, mode):
-        actions = []
-        if mode == ATTACK_MODE:
-            actions = self.exe_attack(squad, pos)
-        elif mode == RETREAT_MODE:
-            pass
-            # TODO: impl
-        elif mode == DEFEND_MODE:
-            pass
-            # TODO: impl
-        return actions
-
-    def exe_attack(self, squad, pos):
-        actions = list()
-        for u in squad:
-            if len(self.enemy_units) > 0:
-                closest_enemy_dist = math.sqrt(
-                    self.cal_square_dist(
-                        u, self.find_closest_enemy(u, self.enemy_units)))
-                if closest_enemy_dist < self.roach_attack_range and \
-                                (u.float_attr.health / u.float_attr.health_max) < 0.3 and \
-                                self.find_strongest_unit_hp(squad) > 0.9:
-                    action = self.run_away_from_closest_enemy(u, self.enemy_units)
-                    # print('micro action works.')
-                else:
-                    action = self.attack_pos(u, pos)
-            else:
-                action = self.attack_pos(u, pos)
-            actions.append(action)
-        return actions
-
-    def find_enemy_base_pos(self, base_pos, minimap):
-        if len(base_pos) == 0:
-            return [0, 0]
-
-        # [57.5, 27.5] -> mini map 1-dim [40:50] 2-dim [40:50]
-        mm = np.asarray(minimap[5])
-        minimap_pos1 = mm[15:35, 10:30]
-        minimap_pos2 = mm[10:30, 35:55]
-        minimap_pos3 = mm[40:60, 5:25]
-        minimap_pos4 = mm[40:60, 35:55]
-
-        pos = [(27.5, 59.5), (59.5, 59.5), (27.5, 27.5), (59.5, 27.5)]
-        # pos = [(38.5, 122.5), (122.5, 122.5), (38.5, 38.5), (162.5, 18.5)]
-        enemy_cnt = list()
-        enemy_cnt.append(np.sum(minimap_pos1 == 4))
-        enemy_cnt.append(np.sum(minimap_pos2 == 4))
-        enemy_cnt.append(np.sum(minimap_pos3 == 4))
-        enemy_cnt.append(np.sum(minimap_pos4 == 4))
-        self.enemy_pos_cnt_max = max(enemy_cnt)
-        #print('enemy_count: ', enemy_cnt)
-
-        if base_pos[0] > base_pos[1]:  # me at bottom-right
-            order = [4, 3, 2, 1]
-        else:  # me at top-left
-            order = [1, 2, 3, 4]
-        for each in order:
-            if enemy_cnt[each-1] > 5:
-                return pos[each-1]
-
-        return pos[order[-1]-1]
-
-
 class ZergCombatMgr(BaseCombatMgr):
     """ A zvz Zerg combat manager """
 
@@ -200,6 +148,18 @@ class ZergCombatMgr(BaseCombatMgr):
         self.enemy_pos_cnt_max = 0
         self.roach_attack_range = 5.0
         self.enemy_units = []
+        self.episode_step = 0
+        self.base_pos = [0, 0]
+        self.second_base_pos = [0, 0]
+        self.rally_set_dict = {}
+
+    def reset(self):
+        self.enemy_pos_cnt_max = 0
+        self.enemy_units = []
+        self.episode_step = 0
+        self.base_pos = [0, 0]
+        self.second_base_pos = [0, 0]
+        self.rally_set_dict = {}
 
     def update(self, dc, am):
         super(ZergCombatMgr, self).update(dc, am)
@@ -211,27 +171,36 @@ class ZergCombatMgr(BaseCombatMgr):
         self.enemy_units = dc.dd.enemy_pool.units
 
         hatcheries = collect_units(units, UNIT_TYPEID.ZERG_HATCHERY.value)
-        base_pos = [hatcheries[0].float_attr.pos_x, hatcheries[0].float_attr.pos_y] \
-            if len(hatcheries) > 0 else [0, 0]
-        pos = self.find_enemy_base_pos(base_pos, minimap)
+        if self.episode_step == 0:
+            self.base_pos = [hatcheries[0].float_attr.pos_x,
+                             hatcheries[0].float_attr.pos_y] if len(hatcheries) > 0 else [0, 0]
+            self.second_base_pos = [25.5 + 8, 23.5 + 4] if self.base_pos[0] > self.base_pos[1] else [62.5 - 8, 64.5 - 4]
+            print('self base pos: {}, self second base pos: {}'.format(self.base_pos, self.second_base_pos))
+
+        if not self.check_rally_set(hatcheries):
+            actions.extend(self.set_default_combat_rally(hatcheries, self.second_base_pos))
+            for h in hatcheries:
+                self.rally_set_dict[h.tag] = True
+
+        attack_pos = self.find_enemy_base_pos(self.base_pos, minimap)
 
         while True:
             cmds = dc.dd.combat_command_queue.pull()
             if cmds == []:
                 break
             else:
-                squad = cmds.squad
-                actions.extend(self.exe_cmd(squad, pos, ATTACK_MODE))
+                actions.extend(self.exe_cmd(cmds.squad, attack_pos, cmds.type))
 
+        self.episode_step += 1
         am.push_actions(actions)
 
     def exe_cmd(self, squad, pos, mode):
         actions = []
-        if mode == ATTACK_MODE:
+        if mode == CombatCmdType.ATTACK:
             actions = self.exe_attack(squad, pos)
-        elif mode == RETREAT_MODE:
+        elif mode == CombatCmdType.RETREAT:
             actions = self.exe_retreat(squad, pos)
-        elif mode == DEFEND_MODE:
+        elif mode == CombatCmdType.DEFEND:
             actions = self.exe_defend(squad, pos)
         return actions
 
@@ -285,6 +254,104 @@ class ZergCombatMgr(BaseCombatMgr):
         enemy_cnt.append(np.sum(minimap_pos4 == 4))
         self.enemy_pos_cnt_max = max(enemy_cnt)
         # print('enemy_count: ', enemy_cnt)
+
+        if base_pos[0] > base_pos[1]:  # me at bottom-right
+            order = [4, 3, 2, 1]
+        else:  # me at top-left
+            order = [1, 2, 3, 4]
+        for each in order:
+            if enemy_cnt[each-1] > 5:
+                return pos[each-1]
+
+        return pos[order[-1]-1]
+
+    def check_rally_set(self, hatcheries):
+        for h in hatcheries:
+            if h.tag not in self.rally_set_dict.keys() or not self.rally_set_dict[h.tag]:
+                return False
+        return True
+
+
+class ZergCombatLxHanMgr(BaseCombatMgr):
+    """ Temporal Mgr for testing Combat module for full game """
+    def __init__(self):
+        super(ZergCombatLxHanMgr, self).__init__()
+        self.enemy_pos_cnt_max = 0
+        self.roach_attack_range = 5.0
+        self.enemy_units = []
+
+    def reset(self):
+        self.enemy_pos_cnt_max = 0
+        self.enemy_units = []
+
+    def update(self, dc, am):
+        super(ZergCombatLxHanMgr, self).update(dc, am)
+
+        roaches = dc.get_roaches()
+        hydralisk = dc.get_hydralisk()
+        base_pos = dc.base_pos
+        minimap = dc.mini_map
+        self.enemy_units = dc.get_enemy_units()
+
+        actions = list()
+        pos = self.find_enemy_base_pos(base_pos, minimap)
+        squad = roaches + hydralisk
+        if len(squad) >= 15:
+            actions.extend(self.exe_cmd(squad, pos, 1))
+
+        am.push_actions(actions)
+
+    def exe_cmd(self, squad, pos, mode):
+        actions = []
+        if mode == 1:
+            actions = self.exe_attack(squad, pos)
+        elif mode == 2:
+            pass
+            # TODO: impl
+        elif mode == 3:
+            pass
+            # TODO: impl
+        return actions
+
+    def exe_attack(self, squad, pos):
+        actions = list()
+        for u in squad:
+            if len(self.enemy_units) > 0:
+                closest_enemy_dist = math.sqrt(
+                    self.cal_square_dist(
+                        u, self.find_closest_enemy(u, self.enemy_units)))
+                if closest_enemy_dist < self.roach_attack_range and \
+                                (u.float_attr.health / u.float_attr.health_max) < 0.3 and \
+                                self.find_strongest_unit_hp(squad) > 0.9:
+                    action = self.run_away_from_closest_enemy(u, self.enemy_units)
+                    # print('micro action works.')
+                else:
+                    action = self.attack_pos(u, pos)
+            else:
+                action = self.attack_pos(u, pos)
+            actions.append(action)
+        return actions
+
+    def find_enemy_base_pos(self, base_pos, minimap):
+        if len(base_pos) == 0:
+            return [0, 0]
+
+        # [57.5, 27.5] -> mini map 1-dim [40:50] 2-dim [40:50]
+        mm = np.asarray(minimap[5])
+        minimap_pos1 = mm[15:35, 10:30]
+        minimap_pos2 = mm[10:30, 35:55]
+        minimap_pos3 = mm[40:60, 5:25]
+        minimap_pos4 = mm[40:60, 35:55]
+
+        pos = [(27.5, 59.5), (59.5, 59.5), (27.5, 27.5), (59.5, 27.5)]
+        # pos = [(38.5, 122.5), (122.5, 122.5), (38.5, 38.5), (162.5, 18.5)]
+        enemy_cnt = list()
+        enemy_cnt.append(np.sum(minimap_pos1 == 4))
+        enemy_cnt.append(np.sum(minimap_pos2 == 4))
+        enemy_cnt.append(np.sum(minimap_pos3 == 4))
+        enemy_cnt.append(np.sum(minimap_pos4 == 4))
+        self.enemy_pos_cnt_max = max(enemy_cnt)
+        #print('enemy_count: ', enemy_cnt)
 
         if base_pos[0] > base_pos[1]:  # me at bottom-right
             order = [4, 3, 2, 1]

@@ -58,7 +58,7 @@ class CombatUnitPool(PoolBase):
     @staticmethod
     def _is_combat_unit(u):
         if (u.unit_type in tm.COMBAT_UNITS and
-                    u.int_attr.owner == tm.AllianceType.SELF.value):
+                    u.int_attr.alliance == tm.AllianceType.SELF.value):
             return True
         else:
             return False

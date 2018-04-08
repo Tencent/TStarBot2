@@ -35,6 +35,8 @@ class ZergStrategyMgr(BaseStrategyMgr):
         self._strategy = Strategy.UNIVERSAL
         self._army = Army()
         self._cmds = []
+        self._support = True
+        self._squad_size = 20
         if self._enable_render:
             self._renderer = StrategyRenderer(window_size=(480, 360),
                                               world_size={'x': 200, 'y': 150},
@@ -56,11 +58,13 @@ class ZergStrategyMgr(BaseStrategyMgr):
 
     def reset(self):
         self._army = Army()
+        self._support = True
+        self._squad_size = 30
         if self._enable_render:
             self._renderer.clear()
 
     def _organize_army_by_size(self):
-        self._create_fixed_size_squads(squad_size=15)
+        self._create_fixed_size_squads(self._squad_size)
 
     def _create_fixed_size_squads(self, squad_size):
         while len(self._army.unsquaded_units) >= squad_size:
@@ -105,3 +109,5 @@ class ZergStrategyMgr(BaseStrategyMgr):
                     position={'x': 0, 'y': 0})
                 cmd_queue.push(cmd)
                 self._cmds.append(cmd)
+            if self._support:
+                self._squad_size = 1 if self._army.num_units >= 5 else 20
