@@ -89,7 +89,9 @@ class EnemyPool(PoolBase):
     def weakest_cluster(self):
         if len(self._enemy_clusters) == 0:
             return None
-        return min(self._enemy_clusters, key=lambda c: c.num_combat_units)
+        return min(self._enemy_clusters,
+                   key=lambda c: c.num_combat_units if c.num_combat_units >= 3
+                                 else float('inf'))
 
     @property
     def strongest_cluster(self):

@@ -63,6 +63,8 @@ class Squad(object):
 
     @property
     def centroid(self):
-        x = sum(u.position['x'] for u in self._units) / len(self._units)
-        y = sum(u.position['y'] for u in self._units) / len(self._units)
+        x, y = 0, 0
+        if len(self._units) > 0:
+            x = sum(u.position['x'] for u in self._units) / len(self._units)
+            y = sum(u.position['y'] for u in self._units) / len(self._units)
         return {'x':x, 'y':y}

@@ -43,6 +43,15 @@ class BaseCombatMgr(object):
         return actions
 
     @staticmethod
+    def move_pos(u, pos):
+        action = sc_pb.Action()
+        action.action_raw.unit_command.ability_id = ABILITY_ID.MOVE.value
+        action.action_raw.unit_command.target_world_space_pos.x = pos['x']
+        action.action_raw.unit_command.target_world_space_pos.y = pos['y']
+        action.action_raw.unit_command.unit_tags.append(u.tag)
+        return action
+
+    @staticmethod
     def attack_pos(u, pos):
         action = sc_pb.Action()
         action.action_raw.unit_command.ability_id = ABILITY_ID.ATTACK_ATTACK.value
@@ -154,8 +163,8 @@ class ZergCombatMgr(BaseCombatMgr):
         actions = []
         if mode == CombatCmdType.ATTACK:
             actions = self.exe_attack(squad, pos)
-        elif mode == CombatCmdType.RETREAT:
-            actions = self.exe_retreat(squad, pos)
+        elif mode == CombatCmdType.MOVE:
+            actions = self.exe_move(squad, pos)
         elif mode == CombatCmdType.DEFEND:
             actions = self.exe_defend(squad, pos)
         return actions
@@ -181,9 +190,10 @@ class ZergCombatMgr(BaseCombatMgr):
             actions.append(action)
         return actions
 
-    def exe_retreat(self, squad, pos):
+    def exe_move(self, squad, pos):
         actions = []
-        # TODO: implement the retreat code here
+        for u in squad.units:
+            actions.append(self.attack_pos(u.unit, pos))
         return actions
 
     def exe_defend(self, squad, pos):
