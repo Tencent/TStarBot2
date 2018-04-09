@@ -59,13 +59,13 @@ class EnemyPool(PoolBase):
         self._enemy_clusters = list()
 
     def update(self, timestep):
-        self._enemy_units.clear()
+        self._enemy_units = list()
         units = timestep.observation['units']
         for u in units:
             if self._is_enemy_unit(u):
                 self._enemy_units.append(u)
 
-        self._enemy_clusters.clear()
+        self._enemy_clusters = list()
         for units in self._agglomerative_cluster(self._enemy_units):
             self.enemy_clusters.append(EnemyCluster(units))
 

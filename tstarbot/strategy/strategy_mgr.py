@@ -63,7 +63,7 @@ class ZergStrategyMgr(BaseStrategyMgr):
         self._onewave_triggered = False
         self._rally_pos = None
         if self._enable_render:
-            self._renderer.clear()
+            self._renderer = list()
 
     def _organize_army_by_size(self):
         self._create_fixed_size_squads(8)
@@ -74,7 +74,7 @@ class ZergStrategyMgr(BaseStrategyMgr):
                 random.sample(self._army.unsquaded_units, squad_size))
 
     def _command_army(self, cmd_queue):
-        self._cmds.clear()
+        self._cmds = list()
         if self._strategy == Strategy.RUSH:
             self._command_army_rush(cmd_queue)
         elif self._strategy == Strategy.ECONOMY_FIRST:
@@ -141,9 +141,9 @@ class ZergStrategyMgr(BaseStrategyMgr):
     def _get_rally_pos(self):
         base_pool = self._dc.dd.base_pool
         if list(base_pool.bases.values())[0].unit.float_attr.pos_x < 44:
-            return {'x': 45, 'y': 66}
+            return {'x': 50.5, 'y': 60.5}
         else:
-            return {'x': 44, 'y': 25}
+            return {'x': 37.5, 'y': 27.5}
 
     def _distance(self, pos_a, pos_b):
         return ((pos_a['x'] - pos_b['x']) ** 2 + \

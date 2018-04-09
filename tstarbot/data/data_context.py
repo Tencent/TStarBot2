@@ -4,7 +4,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from tstarbot.data.queue.build_command_queue import BuildCommandQueue
+from tstarbot.data.queue.build_command_queue import BuildCommandQueue, BuildCommandQueueV2
 from tstarbot.data.queue.combat_command_queue import CombatCommandQueue
 from tstarbot.data.queue.scout_command_queue import ScoutCommandQueue
 
@@ -26,9 +26,10 @@ class StaticData(object):
     def obs(self):
         return self._obs
 
+
 class DynamicData(object):
     def __init__(self):
-        self.build_command_queue = BuildCommandQueue()
+        self.build_command_queue = BuildCommandQueueV2()
         self.combat_command_queue = CombatCommandQueue()
         self.scout_command_queue = ScoutCommandQueue()
 
@@ -43,7 +44,7 @@ class DynamicData(object):
 
         # update pools
         self.building_pool.update(timestep)
-        #self.worker_pool.update(timestep)
+        self.worker_pool.update(timestep)
         self.combat_pool.update(timestep)
         self.enemy_pool.update(timestep)
         self.base_pool.update(timestep)
@@ -52,6 +53,7 @@ class DynamicData(object):
 
     def reset(self):
         self.base_pool.reset()
+
 
 class DataContext:
     def __init__(self):

@@ -22,7 +22,7 @@ class Squad(object):
 
     def update(self, combat_unit_pool):
         tags = [u.tag for u in self._units]
-        self._units.clear()
+        self._units = list()
         for tag in tags:
             combat_unit = combat_unit_pool.get_by_tag(tag)
             if combat_unit is not None:

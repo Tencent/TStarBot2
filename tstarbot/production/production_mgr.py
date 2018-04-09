@@ -10,14 +10,24 @@ from s2clientprotocol import sc2api_pb2 as sc_pb
 from pysc2.lib.typeenums import UNIT_TYPEID, ABILITY_ID, RACE
 from pysc2.lib.features import SCREEN_FEATURES
 from pysc2.lib import TechTree
-import collections
+from collections import deque, namedtuple
 
 TT = TechTree()
+
+BuildCmdBuilding = namedtuple('build_cmd_building', ['base_tag', 'unit_type'])
+BuildCmdUnit = namedtuple('build_cmd_unit', ['base_tag', 'unit_type'])
+BuildCmdExpand = namedtuple('build_cmd_expand', ['base_tag', 'pos'])
+BuildCmdHarvest = namedtuple('build_cmd_harvest', ['gas_first'])  # binary indictor
+
+
+def dist_to_pos(unit, pos):
+    return ((unit.float_attr.pos_x - pos[0])**2 +
+            (unit.float_attr.pos_y - pos[1])**2)**0.5
 
 
 class BuildOrderQueue(object):
     def __init__(self):
-        self.queue = collections.deque()
+        self.queue = deque()
 
     def set_build_order(self, unit_list):
         for unit_id in unit_list:
@@ -65,11 +75,15 @@ class BaseProductionMgr(object):
         self.use_search = use_search
         self.build_order = BuildOrderQueue()
         self.obs = None
+        self.supply_cap = None
+        self.supply_in_progress = False
 
     def reset(self):
         self.onStart = True
         self.build_order.clear_all()
         self.obs = None
+        self.supply_cap = None
+        self.supply_in_progress = False
 
     def update(self, data_context, act_mgr):
         self.obs = data_context.sd.obs
@@ -79,7 +93,7 @@ class BaseProductionMgr(object):
             self.build_order.set_build_order(self.get_opening_build_order())
             self.onStart = False
         elif self.build_order.is_empty():
-            goal = self.get_goal()
+            goal = self.get_goal(data_context)
             if self.use_search:
                 self.build_order.set_build_order(self.perform_search(goal))
             else:
@@ -93,6 +107,8 @@ class BaseProductionMgr(object):
         if not self.build_order.is_empty():
             while self.detect_dead_lock(data_context):
                 pass
+
+        self.check_supply()
 
         # check resource, larva, builder requirement and determine the build base
         current_item = self.build_order.current_item()
@@ -140,13 +156,21 @@ class BaseProductionMgr(object):
         if required_unit is None and len(current_item.requiredUnits) > 0:
             self.build_order.queue_as_highest(current_item.requiredUnits[0])
             return True
-        # No enough supply and supply not in building process
-        if play_info[3] + current_item.supplyCost > play_info[4]:
-            # and self.supply_unit(self.race) not in data_context.units_in_process:
-            self.build_order.queue_as_highest(self.supply_unit())
-            return False
         # TODO: add Tech upgrade
         return False
+
+    def check_supply(self):
+        play_info = self.obs["player"]
+        current_item = self.build_order.current_item()
+        if play_info[4] != self.supply_cap:
+            self.supply_in_progress = False
+            self.supply_cap = play_info[4]
+        # No enough supply and supply not in building process
+        if (play_info[3] + current_item.supplyCost >
+                    play_info[4] - min(6, max(0, (play_info[4]-30)/10))
+                and not self.supply_in_progress
+                and current_item.unit_id != self.supply_unit()):
+            self.build_order.queue_as_highest(self.supply_unit())
 
     def has_unit(self, units, unit_id, owner=1):
         for unit in units:
@@ -170,7 +194,7 @@ class BaseProductionMgr(object):
     def perform_search(self, goal):  # TODO: implement search algorithm here
         return goal
 
-    def get_goal(self):
+    def get_goal(self, dc):
         return []
 
     def set_build_base(self, build_item, data_context):
@@ -514,35 +538,58 @@ class ZergProductionMgr(BaseProductionMgr):
     def __init__(self):
         super(ZergProductionMgr, self).__init__()
 
+    def reset(self):
+        super(ZergProductionMgr, self).reset()
+
     def update(self, data_context, act_mgr):
         super(ZergProductionMgr, self).update(data_context, act_mgr)
         actions = []
         # TODO: impl here
-
         act_mgr.push_actions(actions)
 
+    def get_goal(self, dc):
+        if not self.has_building_built(self.obs['units'],
+                   [UNIT_TYPEID.ZERG_LAIR.value, UNIT_TYPEID.ZERG_HIVE.value]):
+            goal = [UNIT_TYPEID.ZERG_LAIR.value] + \
+                   [UNIT_TYPEID.ZERG_DRONE.value,
+                    UNIT_TYPEID.ZERG_ROACH.value] * 5 + \
+                   [UNIT_TYPEID.ZERG_HYDRALISKDEN.value] + \
+                   [UNIT_TYPEID.ZERG_ROACH.value,
+                    UNIT_TYPEID.ZERG_DRONE.value] * 5
+        else:
+            num_worker_needed = 0
+            bases = dc.dd.base_pool.bases
+            for base_tag in bases:
+                base = bases[base_tag].unit
+                num_worker_needed += base.int_attr.ideal_harvesters \
+                                     - base.int_attr.assigned_harvesters
+            if num_worker_needed > 0:
+                goal = [UNIT_TYPEID.ZERG_DRONE.value,
+                        UNIT_TYPEID.ZERG_ROACH.value,
+                        UNIT_TYPEID.ZERG_HYDRALISK.value] * num_worker_needed
+            else:
+                goal = [UNIT_TYPEID.ZERG_ROACH.value] * 2 + [UNIT_TYPEID.ZERG_HYDRALISK.value] * 3
+        return goal
+
     def perform_search(self, goal):
-        goal = [UNIT_TYPEID.ZERG_ROACH.value] * 3 + [
-                                                        UNIT_TYPEID.ZERG_HYDRALISK.value] * 2
         return goal
 
     def get_opening_build_order(self):
+
         return [UNIT_TYPEID.ZERG_DRONE.value, UNIT_TYPEID.ZERG_DRONE.value,
-                UNIT_TYPEID.ZERG_OVERLORD.value,
-                UNIT_TYPEID.ZERG_SPAWNINGPOOL.value,
+                UNIT_TYPEID.ZERG_OVERLORD.value, UNIT_TYPEID.ZERG_DRONE.value,
                 UNIT_TYPEID.ZERG_DRONE.value,
+                UNIT_TYPEID.ZERG_SPAWNINGPOOL.value,
                 UNIT_TYPEID.ZERG_EXTRACTOR.value] + \
-               [UNIT_TYPEID.ZERG_DRONE.value] * 3 + \
-               [UNIT_TYPEID.ZERG_EXTRACTOR.value, UNIT_TYPEID.ZERG_LAIR.value] +\
-               [UNIT_TYPEID.ZERG_DRONE.value, UNIT_TYPEID.ZERG_DRONE.value,
-                UNIT_TYPEID.ZERG_ZERGLING.value,
+               [UNIT_TYPEID.ZERG_DRONE.value] * 4 + \
+               [UNIT_TYPEID.ZERG_ZERGLING.value,
                 UNIT_TYPEID.ZERG_HATCHERY.value] + \
-               [UNIT_TYPEID.ZERG_DRONE.value, UNIT_TYPEID.ZERG_DRONE.value,
-                UNIT_TYPEID.ZERG_ZERGLING.value,
+               [UNIT_TYPEID.ZERG_ZERGLING.value,
                 UNIT_TYPEID.ZERG_ROACHWARREN.value] + \
                [UNIT_TYPEID.ZERG_DRONE.value, UNIT_TYPEID.ZERG_DRONE.value,
                 UNIT_TYPEID.ZERG_ZERGLING.value,
-                UNIT_TYPEID.ZERG_HYDRALISKDEN.value]
+                UNIT_TYPEID.ZERG_EXTRACTOR.value] + \
+               [UNIT_TYPEID.ZERG_ROACH.value] * 5
 
     def should_expand_now(self, data_contex):
         return False
@@ -559,22 +606,88 @@ class ZergProductionMgr(BaseProductionMgr):
         if not self.has_building_built(self.obs['units'],
                                        build_item.requiredUnits):
             return False
+        play_info = self.obs["player"]
+        if play_info[3] + build_item.supplyCost > play_info[4]:
+            return False
         return self.obs['player'][1] >= build_item.mineralCost \
                and self.obs['player'][2] >= build_item.gasCost
 
     def set_build_base(self, build_item, data_context):
-        hatcheries = [u for u in self.obs['units']
-                      if u.unit_type == UNIT_TYPEID.ZERG_LAIR.value
-                      and u.int_attr.owner == 1] + \
-                     [u for u in self.obs['units']
-                      if u.unit_type == UNIT_TYPEID.ZERG_HATCHERY.value
-                      and u.int_attr.owner == 1]
-
-        larvas = [u for u in self.obs['units']
-                  if u.unit_type == UNIT_TYPEID.ZERG_LARVA.value
-                  and u.int_attr.owner == 1]
-        if len(hatcheries) > 0 and len(larvas) > 0:
-            data_context.dd.build_command_queue.put(
-                hatcheries[0].tag, 0, {'unit_id': build_item.unit_id})
-            return True
+        bases = data_context.dd.base_pool.bases
+        tag = None
+        if build_item.isBuilding:  # build building
+            max_num = 0
+            for base_tag in bases:
+                worker_num = bases[base_tag].unit.int_attr.assigned_harvesters
+                if worker_num > max_num:
+                    tag = base_tag
+                    max_num = worker_num
+            if tag:
+                if build_item.unit_id == UNIT_TYPEID.ZERG_HATCHERY.value:
+                    pos = self.find_base_pos(data_context)
+                    data_context.dd.build_command_queue.put(
+                        BuildCmdExpand(base_tag=tag, pos=pos))
+                    #data_context.dd.build_command_queue.put(
+                    #    tag, 1, {'unit_id': build_item.unit_id})
+                else:
+                    data_context.dd.build_command_queue.put(
+                        BuildCmdBuilding(base_tag=tag, unit_type=build_item.unit_id))
+                    #data_context.dd.build_command_queue.put(
+                    #    tag, 0, {'unit_id': build_item.unit_id})
+                return True
+        else:  # build unit
+            if build_item.unit_id == UNIT_TYPEID.ZERG_DRONE.value:
+                max_gap = -200  # find base need worker most
+                for base_tag in bases:
+                    num_gap = (self.ideal_harvesters_all(bases[base_tag])
+                               - self.assigned_harvesters_all(bases[base_tag]))
+                    if (num_gap > max_gap and
+                                len(bases[base_tag].larva_set) > 0):
+                        tag = base_tag
+                        max_gap = num_gap
+            else:
+                larva_count = 0  # find base with most larvas
+                for base_tag in bases:
+                    num_larva = len(bases[base_tag].larva_set)
+                    if num_larva > larva_count:
+                        tag = base_tag
+                        larva_count = num_larva
+            if tag:
+                data_context.dd.build_command_queue.put(
+                    BuildCmdUnit(base_tag=tag, unit_type=build_item.unit_id))
+                #data_context.dd.build_command_queue.put(
+                #    tag, 0, {'unit_id': build_item.unit_id})
+                if build_item.unit_id == UNIT_TYPEID.ZERG_OVERLORD.value:
+                    self.supply_in_progress = True
+                return True
         return False
+
+    def find_base_pos(self, dc):
+        areas = dc.dd.base_pool.resource_cluster
+        bases = dc.dd.base_pool.bases
+        d_min = 10000
+        pos = None
+        for area in areas:
+            d = min([dist_to_pos(bases[tag].unit, area.ideal_base_pos)
+                 for tag in bases])
+            if d < d_min and d > 5:
+                pos = area.ideal_base_pos
+                d_min = d
+        return pos
+
+    def find_unit_by_tag(self, units, tag):
+        return [unit for unit in units if unit.tag==tag]
+
+    def ideal_harvesters_all(self, base_item):
+        num = base_item.unit.int_attr.ideal_harvesters
+        for vb_tag in base_item.vb_set:
+            vb = self.find_unit_by_tag(self.obs['units'], vb_tag)[0]
+            num += vb.int_attr.ideal_harvesters
+        return num
+
+    def assigned_harvesters_all(self, base_item):
+        num = base_item.unit.int_attr.assigned_harvesters
+        for vb_tag in base_item.vb_set:
+            vb = self.find_unit_by_tag(self.obs['units'], vb_tag)[0]
+            num += vb.int_attr.assigned_harvesters
+        return num
