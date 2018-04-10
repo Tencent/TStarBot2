@@ -94,6 +94,10 @@ class BaseCombatMgr(object):
         idx = np.argmin(dist)
         return enemies[idx]
 
+    def reform_squad(self, u, ally_units, enemies):
+        " Reform ally squads to defend enemies. Return action for unit u."
+        raise NotImplementedError
+
     @staticmethod
     def find_nearest_n_units(hatcheries, units, n):
         if len(hatcheries) == 0:
@@ -112,6 +116,17 @@ class BaseCombatMgr(object):
         for i in range(n):
             selected_units.append(units[idx[i]])
         return selected_units
+
+    @staticmethod
+    def find_weakest_ally_nearby(u, units, dist):
+        " Find weakest ally near unit u. If not found, return None."
+        min_a = None
+        min_hp = 10000
+        for a in units:
+            if self.cal_sqaure_dist(u, a) < dist and a.float_attr.health < min_hp:
+                min_a = a
+                min_hp = a.float_attr.health
+        return min_a
 
     @staticmethod
     def find_weakest_enemy(enemies):
@@ -198,7 +213,22 @@ class ZergCombatMgr(BaseCombatMgr):
 
     def exe_defend(self, squad, pos):
         actions = []
-        # TODO: implement the defend code here
+        squad_units = []
+        for combat_unit in squad.units:
+            squad_units.append(combat_unit.unit)
+        for u in squad_units:
+            if len(self.enemy_units) == 0:
+                action = self.attack_pos(u, pos)
+            else:
+                # micro management
+                closest_enemy_dist = math.sqrt(
+                    self.cal_square_dist(u, self.find_closest_enemy(u, self.enemy_units)))
+                if (closest_enemy_dist < self.roach_attack_range and
+                            (u.float_attr.health / u.float_attr.health_max) < 0.5):
+                    action = self.run_away_from_closest_enemy(u, self.enemy_units)
+                else:
+                    action = self.attack_pos(u, pos)
+            actions.append(action)
         return actions
 
 
