@@ -13,7 +13,7 @@ from tstarbot.data.pool.building_pool import BuildingPool
 from tstarbot.data.pool.worker_pool import WorkerPool
 from tstarbot.data.pool.combat_pool import CombatUnitPool
 from tstarbot.data.pool.enemy_pool import EnemyPool
-
+from tstarbot.data.pool.scout_pool import ScoutPool
 
 class StaticData(object):
     def __init__(self):
@@ -38,6 +38,7 @@ class DynamicData(object):
         self.combat_pool = CombatUnitPool()
         self.enemy_pool = EnemyPool()
         self.base_pool = BasePool(self)
+        self.scout_pool = ScoutPool(self)
 
     def update(self, timestep):
         # update command queues
@@ -48,11 +49,13 @@ class DynamicData(object):
         self.combat_pool.update(timestep)
         self.enemy_pool.update(timestep)
         self.base_pool.update(timestep)
+        self.scout_pool.update(timestep)
 
         # update statistic
 
     def reset(self):
         self.base_pool.reset()
+        self.scout_pool.reset()
 
 
 class DataContext:
