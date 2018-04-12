@@ -179,21 +179,27 @@ class ZergResourceMgr(BaseResourceMgr):
         self.all_extractors = None
         self.all_workers = None
         self.all_minerals = None
+        self.verbose = 0
         self.step = 0
 
     def reset(self):
+        super(ZergResourceMgr, self).reset()
+
         self.bt_mgr.reset()
         self.all_bases = None
         self.all_extractors = None
         self.all_workers = None
         self.all_minerals = None
+        self.verbose = 0
         self.step = 0
 
     def update(self, dc, am):
         super(ZergResourceMgr, self).update(dc, am)
 
-        units = dc.sd.obs['units']
+        self._update_config(dc)
 
+        # update data
+        units = dc.sd.obs['units']
         self.all_bases = collect_units(units, UNIT_TYPEID.ZERG_HATCHERY.value) \
             + collect_units(units, UNIT_TYPEID.ZERG_LAIR.value)
         self.all_extractors = collect_units(units,
@@ -202,9 +208,10 @@ class ZergResourceMgr(BaseResourceMgr):
         self.all_minerals = collect_units(
             units, UNIT_TYPEID.NEUTRAL_MINERALFIELD.value, owner=OWNER_NEUTRAL)
 
-        # print_harvester(self.all_bases, name='all_basese')
-        # print_harvester(self.all_extractors, name='all_extractors')
-        # print('len workers = ', len(self.all_workers))
+        if self.verbose > 1:
+            print_harvester(self.all_bases, name='all_basese')
+            print_harvester(self.all_extractors, name='all_extractors')
+            print('len workers = ', len(self.all_workers))
 
         actions = []
         actions += self._update_harvest_gas()
@@ -212,6 +219,13 @@ class ZergResourceMgr(BaseResourceMgr):
 
         am.push_actions(actions)
         self.step += 1
+
+    def _update_config(self, dc):
+        if hasattr(dc, 'config'):
+            if hasattr(dc.config, 'resource_verbose'):
+                self.verbose = dc.config.resource_verbose
+            if hasattr(dc.config, 'resource_gas_first'):
+                self.is_gas_first = dc.config.resource_gas_first
 
     def _update_harvest_gas(self):
         actions = []

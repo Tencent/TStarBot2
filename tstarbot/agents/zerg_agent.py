@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+import importlib
 
 from pysc2.lib import actions as pysc2_actions
 from pysc2.agents import base_agent
@@ -24,7 +25,7 @@ from tstarbot.mac_patch import check_larva_selected
 class ZergAgent(base_agent.BaseAgent):
     """A ZvZ Zerg agent for full game map."""
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         super(ZergAgent, self).__init__()
 
         self.dc = DataContext()
@@ -36,6 +37,11 @@ class ZergAgent(base_agent.BaseAgent):
         self.resource_mgr = ZergResourceMgr()
         self.combat_mgr = ZergCombatMgr()
         self.scout_mgr = ZergScoutMgr()
+
+        if kwargs.get('config_path'):  # use the config file
+            config = importlib.import_module(kwargs['config_path'])
+            # expose it in data_context for downstream modules
+            self.dc.config = config
 
     def step(self, timestep):
         super(ZergAgent, self).step(timestep)
@@ -71,8 +77,8 @@ class MacZergAgent(ZergAgent):
     """A ZvZ Zerg agent for full game map. Tailored for Mac platform to avoid
      strange bugs when using raw interface. """
 
-    def __init__(self):
-        super(MacZergAgent, self).__init__()
+    def __init__(self, **kwargs):
+        super(MacZergAgent, self).__init__(**kwargs)
 
         self.episode_step = 0
         self.is_larva_selected = 0

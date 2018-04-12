@@ -30,6 +30,9 @@ flags.DEFINE_integer("step_mul", 8, "Game steps per agent step.")
 
 flags.DEFINE_string("agent", "pysc2.agents.random_agent.RandomAgent",
                     "Which agent to run")
+flags.DEFINE_string("agent_config", "",
+                    "Agent's config in py file. Pass it as python module."
+                    "E.g., tstarbot.agents.dft_config")
 flags.DEFINE_enum("agent_race", None, sc2_env.races.keys(), "Agent's race.")
 flags.DEFINE_enum("bot_race", None, sc2_env.races.keys(), "Bot's race.")
 flags.DEFINE_enum("difficulty", None, sc2_env.difficulties.keys(),
@@ -108,7 +111,10 @@ def run_thread(agent_cls, map_name, visualize):
             score_index=-1,  # this indicates the outcome is reward
             disable_fog=FLAGS.disable_fog,
             visualize=visualize) as env:
-        agent = agent_cls()
+        agent_kwargs = {}
+        if FLAGS.agent_config:
+            agent_kwargs['config_path'] = FLAGS.agent_config
+        agent = agent_cls(**agent_kwargs)
         run_loop([agent], env, max_episodes=FLAGS.max_agent_episodes)
         if FLAGS.save_replay:
             env.save_replay(agent_cls.__name__)
