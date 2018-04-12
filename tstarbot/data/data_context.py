@@ -18,13 +18,19 @@ from tstarbot.data.pool.scout_pool import ScoutPool
 class StaticData(object):
     def __init__(self):
         self._obs = None
+        self._timestep = None
 
     def update(self, timestep):
         self._obs = timestep.observation
+        self._timestep = timestep
 
     @property
     def obs(self):
         return self._obs
+
+    @property
+    def timestep(self):
+        return self._timestep
 
 
 class DynamicData(object):

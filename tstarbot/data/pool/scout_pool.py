@@ -179,7 +179,7 @@ class ScoutPool(PoolBase):
             raise Exception('resource areas is none')
         for area in areas:
             scout_target = ScoutBaseTarget()
-            scout_target.pos = area.fix_avg_pos
+            scout_target.pos = area.ideal_base_pos
             dist = md.calculate_distance(self.home_pos[0], 
                                          self.home_pos[1], 
                                          scout_target.pos[0], 
