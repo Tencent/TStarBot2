@@ -14,7 +14,7 @@ from tstarbot.data.queue.combat_command_queue import CombatCmdType
 from tstarbot.data.queue.combat_command_queue import CombatCommand
 from tstarbot.strategy.renderer import StrategyRenderer
 
-Strategy = Enum('Strategy', ('RUSH', 'ECONOMY_FIRST', 'ONEWAVE'))
+Strategy = Enum('Strategy', ('RUSH', 'ECONOMY_FIRST', 'ONEWAVE', 'REFORM'))
 
 
 class BaseStrategyMgr(object):
@@ -34,11 +34,13 @@ class ZergStrategyMgr(BaseStrategyMgr):
     def __init__(self):
         super(ZergStrategyMgr, self).__init__()
         self._enable_render = False
-        self._strategy = Strategy.ONEWAVE
+        self._strategy = Strategy.REFORM
         self._army = Army()
         self._cmds = []
-        self._onewave_triggered = False
+        self._ready_to_go = False
+        self._ready_to_attack = False
         self._rally_pos = None
+        self._rally_pos_for_attack = None
         if self._enable_render:
             self._renderer = StrategyRenderer(window_size=(480, 360),
                                               world_size={'x': 200, 'y': 150},
@@ -48,8 +50,8 @@ class ZergStrategyMgr(BaseStrategyMgr):
         super(ZergStrategyMgr, self).update(dc, am)
         self._army.update(dc.dd.combat_pool)
         self._dc = dc
+        self._update_config(dc)
 
-        self._organize_army_by_size()
         self._command_army(dc.dd.combat_command_queue)
 
         if self._enable_render:
@@ -60,13 +62,29 @@ class ZergStrategyMgr(BaseStrategyMgr):
 
     def reset(self):
         self._army = Army()
-        self._onewave_triggered = False
+        self._ready_to_go = False
+        self._ready_to_attack = False
         self._rally_pos = None
+        self._rally_pos_for_attack = None
         if self._enable_render:
             self._renderer = list()
 
-    def _organize_army_by_size(self):
-        self._create_fixed_size_squads(8)
+    def _update_config(self, dc):
+        if hasattr(dc, 'config'):
+            if hasattr(dc.config, 'combat_strategy'):
+                if dc.config.combat_strategy == 'RUSH':
+                    self._strategy = Strategy.RUSH
+                elif dc.config.combat_strategy == 'ECONOMY_FIRST':
+                    self._strategy = Strategy.ECONOMY_FIRST
+                elif dc.config.combat_strategy == 'ONEWAVE':
+                    self._strategy = Strategy.ONEWAVE
+                elif dc.config.combat_strategy == 'REFORM':
+                    self._strategy = Strategy.REFORM
+                else:
+                    raise ValueError('Combat strategy [%s] is not supported.' % dc.config.combat_strategy)
+
+    def _organize_army_by_size(self, size):
+        self._create_fixed_size_squads(size)
 
     def _create_fixed_size_squads(self, squad_size):
         while len(self._army.unsquaded_units) >= squad_size:
@@ -76,11 +94,17 @@ class ZergStrategyMgr(BaseStrategyMgr):
     def _command_army(self, cmd_queue):
         self._cmds = list()
         if self._strategy == Strategy.RUSH:
+            self._organize_army_by_size(size=8)
             self._command_army_rush(cmd_queue)
         elif self._strategy == Strategy.ECONOMY_FIRST:
+            self._organize_army_by_size(size=8)
             self._command_army_economy_first(cmd_queue)
-        else:
+        elif self._strategy == Strategy.ONEWAVE:
+            self._organize_army_by_size(size=8)
             self._command_army_onewave(cmd_queue)
+        elif self._strategy == Strategy.REFORM:
+            self._organize_army_by_size(size=1)
+            self._command_army_reform(cmd_queue)
 
     def _command_army_rush(self, cmd_queue):
         enemy_pool = self._dc.dd.enemy_pool
@@ -124,12 +148,85 @@ class ZergStrategyMgr(BaseStrategyMgr):
         # attack
         rallied_squads = [squad for squad in self._army.squads
                           if self._distance(squad.centroid, self._rally_pos) < 8]
-        if not self._onewave_triggered and len(rallied_squads) >= 4:
-            self._onewave_triggered = True
-        if self._onewave_triggered and enemy_pool.weakest_cluster is not None:
+        if not self._ready_to_go and len(rallied_squads) >= 4:
+            self._ready_to_go = True
+        if self._ready_to_go and enemy_pool.weakest_cluster is not None:
             attacking_squads = [squad for squad in self._army.squads
                                 if squad.status == SquadStatus.ATTACK]
             for squad in rallied_squads + attacking_squads:
+                squad.status = SquadStatus.ATTACK
+                cmd = CombatCommand(
+                    type=CombatCmdType.ATTACK,
+                    squad=squad,
+                    position=enemy_pool.weakest_cluster.centroid)
+                cmd_queue.push(cmd)
+                self._cmds.append(cmd)
+
+    def _command_army_reform(self, cmd_queue):
+        enemy_pool = self._dc.dd.enemy_pool
+
+        # rally after production
+        if not self._ready_to_go:
+            if enemy_pool.closest_cluster is None:
+                return None
+            self._rally_pos = self._find_base_pos_in_danger(enemy_pool)
+            if self._rally_pos is None:
+                return None
+            for squad in self._army.squads:
+                squad.status = SquadStatus.MOVE
+                cmd = CombatCommand(
+                    type=CombatCmdType.RALLY,
+                    squad=squad,
+                    position=self._rally_pos)
+                cmd_queue.push(cmd)
+                self._cmds.append(cmd)
+
+            rallied_squads = [squad for squad in self._army.squads
+                              if self._distance(squad.centroid, self._rally_pos) < 8]
+            for squad in rallied_squads:
+                squad.status = SquadStatus.IDLE
+            if len(rallied_squads) >= 20:
+                self._ready_to_go = True
+
+        # rally before attack
+        if self._ready_to_go and not self._ready_to_attack:
+            if enemy_pool.weakest_cluster is None:
+                return None
+            temp_pos = enemy_pool.closest_cluster.centroid
+            for squad in self._army.squads:
+                if self._distance(squad.centroid,
+                                  enemy_pool.closest_cluster.centroid) < 30:  # safe dist
+                    self._rally_pos_for_attack = squad.centroid
+            for squad in self._army.squads:
+                squad.status = SquadStatus.MOVE
+                cmd = CombatCommand(
+                    type=CombatCmdType.RALLY,
+                    squad=squad,
+                    position=temp_pos if self._rally_pos_for_attack is None
+                    else self._rally_pos_for_attack)
+                cmd_queue.push(cmd)
+                self._cmds.append(cmd)
+
+            rallied_squads_for_attack = [squad for squad in self._army.squads
+                                         if self._distance(squad.centroid,
+                                                           self._rally_pos_for_attack) < 8] \
+                if (self._rally_pos_for_attack is not None) else []
+            for squad in rallied_squads_for_attack:
+                squad.status = SquadStatus.IDLE
+
+            if len(rallied_squads_for_attack) >= 15:
+                self._ready_to_attack = True
+
+        # attack
+        if self._ready_to_attack:
+            if enemy_pool.weakest_cluster is None:
+                return None
+            # print('num hydralisk: {}, num roach: {}'.format(self._army.num_hydralisk_units, self._army.num_roach_units))
+            if self._army.num_hydralisk_units + self._army.num_roach_units < 10:
+                self._ready_to_attack = False
+                self._ready_to_go = False
+                return None
+            for squad in self._army.squads:
                 squad.status = SquadStatus.ATTACK
                 cmd = CombatCommand(
                     type=CombatCmdType.ATTACK,
@@ -148,3 +245,17 @@ class ZergStrategyMgr(BaseStrategyMgr):
     def _distance(self, pos_a, pos_b):
         return ((pos_a['x'] - pos_b['x']) ** 2 + \
                 (pos_a['y'] - pos_b['y']) ** 2) ** 0.5
+
+    def _find_base_pos_in_danger(self, enemy_pool):
+        bases = self._dc.dd.base_pool.bases
+        d_min = 10000
+        pos = None
+        for tag in bases:
+            base_pos = {'x': bases[tag].unit.float_attr.pos_x,
+                        'y': bases[tag].unit.float_attr.pos_y}
+            d = self._distance(base_pos,
+                               enemy_pool.closest_cluster.centroid)
+            if d < d_min:
+                d_min = d
+                pos = base_pos
+        return pos

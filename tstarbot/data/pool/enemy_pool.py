@@ -7,6 +7,7 @@ import collections
 
 from tstarbot.data.pool.pool_base import PoolBase
 from tstarbot.data.pool import macro_def as tm
+from pysc2.lib.typeenums import UNIT_TYPEID
 
 
 class EnemyCluster(object):
@@ -57,6 +58,7 @@ class EnemyPool(PoolBase):
         super(PoolBase, self).__init__()
         self._enemy_units = list()
         self._enemy_clusters = list()
+        self._self_bases = list()
 
     def update(self, timestep):
         self._enemy_units = list()
@@ -64,6 +66,11 @@ class EnemyPool(PoolBase):
         for u in units:
             if self._is_enemy_unit(u):
                 self._enemy_units.append(u)
+            else:
+                if (u.int_attr.unit_type == UNIT_TYPEID.ZERG_HATCHERY.value or
+                    u.int_attr.unit_type == UNIT_TYPEID.ZERG_LAIR.value or
+                            u.int_attr.unit_type == UNIT_TYPEID.ZERG_HIVE):
+                    self._self_bases.append(u)
 
         self._enemy_clusters = list()
         for units in self._agglomerative_cluster(self._enemy_units):
@@ -98,6 +105,14 @@ class EnemyPool(PoolBase):
         if len(self._enemy_clusters) == 0:
             return None
         return max(self._enemy_clusters, key=lambda c: c.num_combat_units)
+
+    @property
+    def closest_cluster(self):
+        if len(self._enemy_clusters) == 0 or len(self._self_bases) == 0:
+            return None
+        my_base_pos = {'x': self._self_bases[0].float_attr.pos_x,
+                       'y': self._self_bases[0].float_attr.pos_y}
+        return min(self._enemy_clusters, key=lambda c: self._distance(c.centroid, my_base_pos))
 
     def _is_enemy_unit(self, u):
         if u.int_attr.alliance != tm.AllianceType.ENEMY.value:
@@ -147,3 +162,7 @@ class EnemyPool(PoolBase):
         cluster_map = initial_grid_cluster(units)
         while agglomerative_step(cluster_map): pass
         return list(cluster_map.values())
+
+    def _distance(self, pos_a, pos_b):
+        return ((pos_a['x'] - pos_b['x']) ** 2 + \
+                (pos_a['y'] - pos_b['y']) ** 2) ** 0.5

@@ -5,6 +5,7 @@ from __future__ import print_function
 
 from enum import Enum
 from pysc2.lib.typeenums import UNIT_TYPEID
+from tstarbot.data.pool import macro_def as tm
 
 
 SquadStatus = Enum('SquadStatus', ('IDLE', 'MOVE', 'ATTACK', 'DEFEND'))
@@ -15,6 +16,8 @@ class Squad(object):
     def __init__(self, units):
         self._units = units  # combat_unit
         self._status = SquadStatus.IDLE
+        for u in units:
+            assert u.unit.int_attr.alliance == tm.AllianceType.SELF.value
 
     def __repr__(self):
         return ('Squad(Units(%d), Roaches(%d), Zerglings(%d))' %
@@ -33,6 +36,10 @@ class Squad(object):
         return len(self._units)
 
     @property
+    def num_hydralisk_units(self):
+        return len(self.hydralisk_units)
+
+    @property
     def num_roach_units(self):
         return len(self.roach_units)
 
@@ -43,6 +50,11 @@ class Squad(object):
     @property
     def units(self):
         return self._units
+
+    @property
+    def hydralisk_units(self):
+        return [u for u in self._units
+                if u.type == UNIT_TYPEID.ZERG_HYDRALISK.value]
 
     @property
     def roach_units(self):

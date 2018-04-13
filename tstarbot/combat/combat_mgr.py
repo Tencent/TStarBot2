@@ -117,13 +117,12 @@ class BaseCombatMgr(object):
             selected_units.append(units[idx[i]])
         return selected_units
 
-    @staticmethod
-    def find_weakest_ally_nearby(u, units, dist):
+    def find_weakest_ally_nearby(self, u, units, dist):
         " Find weakest ally near unit u. If not found, return None."
         min_a = None
         min_hp = 10000
         for a in units:
-            if self.cal_sqaure_dist(u, a) < dist and a.float_attr.health < min_hp:
+            if self.cal_square_dist(u, a) < dist and a.float_attr.health < min_hp:
                 min_a = a
                 min_hp = a.float_attr.health
         return min_a
@@ -182,6 +181,8 @@ class ZergCombatMgr(BaseCombatMgr):
             actions = self.exe_move(squad, pos)
         elif mode == CombatCmdType.DEFEND:
             actions = self.exe_defend(squad, pos)
+        elif mode == CombatCmdType.RALLY:
+            actions = self.exe_rally(squad, pos)
         return actions
 
     def exe_attack(self, squad, pos):
@@ -206,6 +207,12 @@ class ZergCombatMgr(BaseCombatMgr):
         return actions
 
     def exe_move(self, squad, pos):
+        actions = []
+        for u in squad.units:
+            actions.append(self.move_pos(u.unit, pos))
+        return actions
+
+    def exe_rally(self, squad, pos):
         actions = []
         for u in squad.units:
             actions.append(self.attack_pos(u.unit, pos))
