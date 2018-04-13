@@ -9,5 +9,6 @@ var2 = value2
 Do NOT ABUSE it, do NOT define nested or complex data structure.
 """
 building_verbose = 0
-resource_verbose = 3
+resource_verbose = 0
 resource_gas_first = True
+combat_strategy = 'REFORM'

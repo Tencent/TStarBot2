@@ -43,6 +43,10 @@ class Army(object):
         return sum([squad.num_units for squad in self._squads])
 
     @property
+    def num_hydralisk_units(self):
+        return sum([squad.num_hydralisk_units for squad in self._squads])
+
+    @property
     def num_roach_units(self):
         return sum([squad.num_roach_units for squad in self._squads])
 

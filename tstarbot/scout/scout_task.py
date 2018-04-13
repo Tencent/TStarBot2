@@ -77,7 +77,7 @@ class ScoutExploreTask(ScoutTask):
                 self._target.has_enemy_base = True
                 self._target.has_army = True
                 self._target.has_scout = False
-            print('SCOUT explore_task destory; target=', str(self._target))
+            # print('SCOUT explore_task destory; target=', str(self._target))
             return None
 
     def _do_task_inner(self, view_enemys):
@@ -108,7 +108,7 @@ class ScoutExploreTask(ScoutTask):
         elif self._status == md.ScoutTaskStatus.DONE:
             return self._move_to_home()
         else:
-            print('SCOUT exec noop, scout status=', self._status)
+            # print('SCOUT exec noop, scout status=', self._status)
             return self._noop()
 
     def _detect_enemy(self, view_enemys):
@@ -141,7 +141,7 @@ class ScoutExploreTask(ScoutTask):
                     self._target.has_army = True
                 if len(buildings) > 0:
                     self._target.is_main = True
-                print('SCOUT find enemy base, job finish, target=', str(self._target))
+                # print('SCOUT find enemy base, job finish, target=', str(self._target))
                 if not done:
                     done = True
 
@@ -155,7 +155,7 @@ class ScoutExploreTask(ScoutTask):
                 self._target.has_army = True
                 if len(buildings) > 0:
                     self._target.is_main = True
-                print('SCOUT find enemy queue, job finish, target=', str(self._target))
+                # print('SCOUT find enemy queue, job finish, target=', str(self._target))
                 return True
 
         return done

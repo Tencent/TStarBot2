@@ -332,7 +332,7 @@ class BasePool(PoolBase):
 
     def _remove_base(self, bid):
         self._bases.pop(bid)
-        print('**** remove base ****,=', len(self._bases))
+        # print('**** remove base ****,=', len(self._bases))
 
     def _update_resource_for_base(self):
         for base in self._bases.values():
