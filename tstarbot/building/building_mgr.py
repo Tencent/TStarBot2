@@ -17,17 +17,17 @@ from tstarbot.data.pool.macro_def import WORKER_BUILD_ABILITY
 
 TT = TechTree()
 
-
+# return Euclidean distance ||unit1 - unit2||
 def dist(unit1, unit2):
     return ((unit1.float_attr.pos_x - unit2.float_attr.pos_x)**2 +
             (unit1.float_attr.pos_y - unit2.float_attr.pos_y)**2)**0.5
 
-
+# return Euclidean distance ||unit - [x,y]||
 def dist_to_pos(unit, x, y):
     return ((unit.float_attr.pos_x - x)**2 +
             (unit.float_attr.pos_y - y)**2)**0.5
 
-
+# find the nearest one to 'unit' within the list 'units'
 def find_nearest(units, unit):
     if not units:
         return None
@@ -37,12 +37,12 @@ def find_nearest(units, unit):
         u in units])
     return units[dd.argmin()]
 
-
+# return unit's ID in the same type
 def collect_units(units, unit_type, owner=1):
     return [u for u in units
             if u.unit_type == unit_type and u.int_attr.owner == owner]
 
-
+# 
 def is_building(unit):
     if unit.orders:
         return unit.orders[0].ability_id in WORKER_BUILD_ABILITY
