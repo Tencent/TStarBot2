@@ -188,10 +188,11 @@ class ZergBuildingMgr(BaseBuildingMgr):
         base_instance = dc.dd.base_pool.bases[cmd.base_tag]
         builder_tag = self._find_available_worker_for_building(
             dc, base_instance)
-        target_pos = self._find_nearest_ideal_base_pos(
-            base_instance.unit,
-            dc.dd.base_pool.resource_cluster
-        )
+        #target_pos = self._find_nearest_ideal_base_pos(
+        #    base_instance.unit,
+        #    dc.dd.base_pool.resource_cluster
+        #)
+        target_pos = cmd.pos
         ability_id = ABILITY_ID.BUILD_HATCHERY.value
         return act_build_building_by_pos(builder_tag, target_pos, ability_id)
 

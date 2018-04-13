@@ -24,6 +24,21 @@ class AllianceType(Enum):
   NEUTRAL = 3
   ENEMY = 4
 
+@unique
+class ScoutTaskType(Enum):
+  EXPORE = 0
+  CRUISE = 1
+  SENTINEL = 2
+  RETREAT = 3
+
+@unique
+class ScoutTaskStatus(Enum):
+  INIT = 0
+  DOING = 1
+  UNDER_ATTACK = 2
+  DONE = 3
+  SCOUT_DESTROY = 4
+
 
 WORKER_UNITS = set([UNIT_TYPEID.ZERG_DRONE.value])
 BASE_UNITS = set([UNIT_TYPEID.ZERG_HATCHERY.value, UNIT_TYPEID.ZERG_LAIR.value, UNIT_TYPEID.ZERG_HIVE.value])
@@ -134,6 +149,12 @@ COMBAT_UNITS = set([
     UNIT_TYPEID.ZERG_ZERGLING.value,
     UNIT_TYPEID.ZERG_ZERGLINGBURROWED.value
 ])
+
+def calculate_distance(pos_x1, pos_y1, pos_x2, pos_y2):
+    x = abs(pos_x1 - pos_x2)
+    y = abs(pos_y1 - pos_y2)
+    distance = x ** 2 + y ** 2
+    return distance ** 0.5
 
 if __name__ == '__main__':
     print(WORKER_UNITS)

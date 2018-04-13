@@ -7,7 +7,7 @@ from __future__ import division
 from __future__ import print_function
 
 from tstarbot.data.demo_dc import ZergLxHanDcMgr
-from tstarbot.production.production_mgr import ZergProductionLxHanMgr
+from tstarbot.production.production_mgr_lxhan import ZergProductionLxHanMgr
 from tstarbot.combat.combat_mgr import ZergCombatLxHanMgr
 from tstarbot.act.act_mgr import ActMgr
 from pysc2.agents import base_agent
