@@ -11,7 +11,7 @@ class ScoutTask(object):
         self._scout = scout
         self._home = home
         self._status = md.ScoutTaskStatus.INIT
-        self._scout_history = deque(maxlen=MAX_SCOUT_HISTORY)
+        self._last_health = None
 
     def scout(self):
         return self._scout
@@ -22,17 +22,14 @@ class ScoutTask(object):
     def status(self):
         return self._status
 
-    def do_task(self, view_enemys):
-        return self._do_task_inner(view_enemys)
+    def do_task(self, view_enemys, dc):
+        return self._do_task_inner(view_enemys, dc)
 
     def post_process(self):
         raise NotImplementedError
 
-    def _do_task_inner(self, view_enemys):
+    def _do_task_inner(self, view_enemys, dc):
         raise NotImplementedError
-
-    def _detect_attack(self):
-        return False
 
     def _move_to_target(self, pos):
         action = sc_pb.Action()
@@ -55,10 +52,26 @@ class ScoutTask(object):
         action.action_raw.unit_command.ability_id = tp.ABILITY_ID.INVALID.value
         return action
 
-    def _update_history(self, scout_unit):
-        if len(self._scout_history) == MAX_SCOUT_HISTORY:
-            self._scout_history.pop()
-        self._scout_history.appendleft(scout_unit)
+    def _detect_attack(self):
+        attack = False
+        current_health = self._scout.unit().float_attr.health
+        if self._last_health is None:
+            self._last_health = current_health
+            return attack
+
+        if self._last_health > current_health:
+            #print('scout is attack')
+            attack = True
+        #elif self._last_health < current_health:
+        #    print('scout is recovery')
+
+        self._last_health = current_health
+        return attack
+
+    def _detect_recovery(self):
+        curr_health = self._scout.unit().float_attr.health
+        max_health = self._scout.unit().float_attr.health_max
+        return curr_health == max_health
 
 class ScoutExploreTask(ScoutTask):
     def __init__(self, scout, target, home):
@@ -72,24 +85,30 @@ class ScoutExploreTask(ScoutTask):
         return self._target
 
     def post_process(self):
+        self._target.has_scout = False
+        self._scout.is_doing_task = False
         if self._status == md.ScoutTaskStatus.SCOUT_DESTROY:
             if self._check_in_target_range() and not self._judge_task_done():
                 self._target.has_enemy_base = True
                 self._target.has_army = True
-                self._target.has_scout = False
-            # print('SCOUT explore_task destory; target=', str(self._target))
-            return None
+            print('SCOUT explore_task post destory; target=', str(self._target))
+        elif self._status == md.ScoutTaskStatus.UNDER_ATTACK:
+            if self._check_in_target_range() and not self._judge_task_done():
+                self._target.has_enemy_base = True
+                self._target.has_army = True
+                print('army4,target=', str(self._target))
+            print('SCOUT explore_task post attack; target=', str(self._target))
+        else:
+            print('task post_process, status=', self._status, ';target=', str(self._target))
 
-    def _do_task_inner(self, view_enemys):
+    def _do_task_inner(self, view_enemys, dc):
         if self._check_scout_lost():
             #print('SCOUT scout is lost, no action, tag=', self._scout.unit().tag)
             self._status = md.ScoutTaskStatus.SCOUT_DESTROY
             return None
 
-        if self._detect_attack():
-            self._status = md.ScoutTaskStatus.UNDER_ATTACK
-
-        if self._detect_enemy(view_enemys):
+        self._check_attack()
+        if self._detect_enemy(view_enemys, dc):
             self._status = md.ScoutTaskStatus.DONE
             return self._move_to_home()
 
@@ -107,11 +126,13 @@ class ScoutExploreTask(ScoutTask):
             return self._move_to_target(self._target.pos)
         elif self._status == md.ScoutTaskStatus.DONE:
             return self._move_to_home()
+        elif self._status == md.ScoutTaskStatus.UNDER_ATTACK:
+            return self._move_to_home()
         else:
-            # print('SCOUT exec noop, scout status=', self._status)
+            print('SCOUT exec noop, scout status=', self._status)
             return self._noop()
 
-    def _detect_enemy(self, view_enemys):
+    def _detect_enemy(self, view_enemys, dc):
         bases = []
         queues = []
         armys = []
@@ -139,9 +160,9 @@ class ScoutExploreTask(ScoutTask):
                 self._target.enemy_unit = base
                 if len(armys) > 0:
                     self._target.has_army = True
-                if len(buildings) > 0:
+                if not dc.dd.scout_pool.has_enemy_main_base():
                     self._target.is_main = True
-                # print('SCOUT find enemy base, job finish, target=', str(self._target))
+                print('SCOUT find enemy base, job finish, target=', str(self._target))
                 if not done:
                     done = True
 
@@ -153,15 +174,27 @@ class ScoutExploreTask(ScoutTask):
             if dist < SCOUT_BASE_RANGE:
                 self._target.has_enemy_base = True
                 self._target.has_army = True
-                if len(buildings) > 0:
+                if not dc.dd.scout_pool.has_enemy_main_base():
                     self._target.is_main = True
-                # print('SCOUT find enemy queue, job finish, target=', str(self._target))
+                print('SCOUT find enemy queue, job finish, target=', str(self._target))
                 return True
 
         return done
 
     def _check_scout_lost(self):
         return self._scout.is_lost()
+
+    def _check_attack(self):
+        attack = self._detect_attack()
+        if attack:
+            if self._status == md.ScoutTaskStatus.DOING:
+                print('SCOUT task turn DOING to UNDER_ATTACK, target=', str(self._target))
+                self._status = md.ScoutTaskStatus.UNDER_ATTACK
+        else:
+            if self._status == md.ScoutTaskStatus.UNDER_ATTACK:
+                if self._detect_recovery() and not self._judge_task_done():
+                    print('SCOUT task turn UNDER_ATTACK to DOING, target=', str(self._target))
+                    self._status == md.ScoutTaskStatus.DOING
 
     def _check_in_target_range(self):
         dist = md.calculate_distance(self._scout.unit().float_attr.pos_x, 

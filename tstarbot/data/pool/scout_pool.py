@@ -19,6 +19,11 @@ class Scout(object):
     def is_lost(self):
         return self._lost
 
+    def is_health(self):
+        curr_health = self._unit.float_attr.health 
+        max_health = self._unit.float_attr.health_max
+        return curr_health == max_health
+
     def update(self, u):
         if u.int_attr.tag == self._unit.int_attr.tag:   # is the same unit
             self._unit = u
@@ -42,8 +47,9 @@ class ScoutBaseTarget(object):
         self.has_army = False
 
     def __str__(self):
-        return 'base:{} main_base:{} army:{} scout:{}'.format(
-               self.has_enemy_base, self.is_main, self.has_scout, self.has_army)
+        return 'pos:{} base:{} main_base:{} scout:{} army:{}'.format(
+               self.pos, self.has_enemy_base, 
+               self.is_main, self.has_scout, self.has_army)
 
 class ScoutPool(PoolBase):
     def __init__(self, dd):
@@ -77,6 +83,12 @@ class ScoutPool(PoolBase):
             if base.is_main:
                 return base
         return bases[0]
+
+    def has_enemy_main_base(self):
+        for base in self._scout_base_target:
+            if base.is_main:
+                return True
+        return False
 
     def update(self, timestep):
         if not self._init:
@@ -134,7 +146,7 @@ class ScoutPool(PoolBase):
 
     def select_scout(self):
         for scout in self._scouts.values():
-            if not scout.is_doing_task:
+            if not scout.is_doing_task and scout.is_health():
                 return scout
         return None
 
@@ -179,7 +191,7 @@ class ScoutPool(PoolBase):
             raise Exception('resource areas is none')
         for area in areas:
             scout_target = ScoutBaseTarget()
-            scout_target.pos = area.ideal_base_pos
+            scout_target.pos = area.fix_avg_pos
             dist = md.calculate_distance(self.home_pos[0], 
                                          self.home_pos[1], 
                                          scout_target.pos[0], 
@@ -188,3 +200,4 @@ class ScoutPool(PoolBase):
                 self._scout_base_target.append(scout_target)
         #print('SCOUT area_number=', len(areas))
         #print('SCOUT target_number=', len(self._scout_base_target))
+

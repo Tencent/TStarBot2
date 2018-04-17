@@ -44,7 +44,7 @@ class ZergScoutMgr(BaseScoutMgr):
 
         #print('SCOUT view enemy number:', len(view_enemys))
         for task in self._tasks:
-            act = task.do_task(view_enemys)
+            act = task.do_task(view_enemys, dc)
             if act is not None:
                 actions.append(act)
 
@@ -79,6 +79,8 @@ class ZergScoutMgr(BaseScoutMgr):
                 done_tasks.append(task)
             elif task.status() == md.ScoutTaskStatus.SCOUT_DESTROY:
                 done_tasks.append(task)
+            elif task.status() == md.ScoutTaskStatus.UNDER_ATTACK:
+                done_tasks.append(task)
             else:
                 keep_tasks.append(task)
 
@@ -98,3 +100,5 @@ class ZergScoutMgr(BaseScoutMgr):
         scout.is_doing_task = True
         target.has_scout = True
         self._tasks.append(task)
+
+
