@@ -2,7 +2,11 @@ from tstarbot.data.pool.pool_base import PoolBase
 from tstarbot.data.pool import macro_def as md
 from pysc2.lib.typeenums import UNIT_TYPEID
 
+import queue
+
 MAX_AREA_DISTANCE = 12
+MAX_ALARM_QUEUE = 20
+
 
 class Scout(object):
     def __init__(self, unit, team_id = 0):
@@ -45,11 +49,16 @@ class ScoutBaseTarget(object):
         self.pos = None
         self.has_scout = False
         self.has_army = False
+        self.has_cruise = False
 
     def __str__(self):
         return 'pos:{} base:{} main_base:{} scout:{} army:{}'.format(
                self.pos, self.has_enemy_base, 
                self.is_main, self.has_scout, self.has_army)
+
+class ScoutAlarm(object):
+    def __init__(self):
+        self.enmey_armys = []
 
 class ScoutPool(PoolBase):
     def __init__(self, dd):
@@ -60,6 +69,7 @@ class ScoutPool(PoolBase):
         self._dd = dd
         self._init = False
         self.home_pos = None
+        self.alarms = queue.Queue(maxsize=MAX_ALARM_QUEUE)
 
     def reset(self):
         self._scouts = {}
@@ -150,6 +160,12 @@ class ScoutPool(PoolBase):
                 return scout
         return None
 
+    def find_cruise_target(self):
+        for target in self._scout_base_target:
+            if target.has_enemy_base and not target.has_cruise:
+                return target
+        return None
+
     def find_furthest_idle_target(self):
         candidates = []
         for target in self._scout_base_target:
@@ -191,7 +207,7 @@ class ScoutPool(PoolBase):
             raise Exception('resource areas is none')
         for area in areas:
             scout_target = ScoutBaseTarget()
-            scout_target.pos = area.fix_avg_pos
+            scout_target.pos = area.ideal_base_pos
             dist = md.calculate_distance(self.home_pos[0], 
                                          self.home_pos[1], 
                                          scout_target.pos[0], 

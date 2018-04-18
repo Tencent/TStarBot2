@@ -8,6 +8,7 @@ import pysc2.lib.typeenums as tp
 import tstarbot.scout.scout_task as st
 import tstarbot.data.pool.macro_def as md
 
+
 class BaseScoutMgr(object):
     def __init__(self):
         pass
@@ -17,6 +18,7 @@ class BaseScoutMgr(object):
 
     def reset(self):
         pass
+
 
 class ZergScoutMgr(BaseScoutMgr):
     def __init__(self):
@@ -90,6 +92,10 @@ class ZergScoutMgr(BaseScoutMgr):
         self._tasks = keep_tasks
 
     def _dispatch_task(self, dc):
+        self._dispatch_cruise_task(dc)
+        self._dispatch_explore_task(dc)
+
+    def _dispatch_explore_task(self, dc):
         sp = dc.dd.scout_pool
         scout = sp.select_scout()
         target = sp.find_furthest_idle_target()
@@ -101,4 +107,15 @@ class ZergScoutMgr(BaseScoutMgr):
         target.has_scout = True
         self._tasks.append(task)
 
+    def _dispatch_cruise_task(self, dc):
+        sp = dc.dd.scout_pool
+        scout = sp.select_scout()
+        target = sp.find_cruise_target()
+        if scout is None or target is None:
+            return
+
+        task = st.ScoutCruiseTask(scout, sp.home_pos, target)
+        scout.is_doing_task = True
+        target.has_cruise = True
+        self._tasks.append(task)
 
