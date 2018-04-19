@@ -331,12 +331,11 @@ class ZergProductionMgr(BaseProductionMgr):
         for queen in queens:
             if queen.float_attr.energy > 25\
                     and len(queen.orders) == 0:
-                tag = queen.tag
                 bases = dc.dd.base_pool.bases
                 base = find_nearest([bases[tag].unit for tag in bases], queen)
                 if base is not None:
                     dc.dd.build_command_queue.put(
-                        BuildCmdSpawnLarva(queen_tag=tag, base_tag=base.tag))
+                        BuildCmdSpawnLarva(queen_tag=queen.tag, base_tag=base.tag))
 
     def building_in_progress(self, unit_type, owner=1):
         unit_data = TT.getUnitData(unit_type)
