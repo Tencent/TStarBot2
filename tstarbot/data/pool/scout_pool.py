@@ -76,6 +76,7 @@ class ScoutPool(PoolBase):
         self._scout_base_target = []
         self._init = False
         self.home_pos = None
+        self.alarms = queue.Queue(maxsize=MAX_ALARM_QUEUE)
 
     def enemy_bases(self):
         bases = []
