@@ -104,7 +104,7 @@ class ZergBuildingMgr(BaseBuildingMgr):
 
         self._update_config(dc)
 
-        if self.verbose > 0:
+        if self.verbose >= 2:
             units = dc.sd.obs['units']
             all_larva = collect_units(units, UNIT_TYPEID.ZERG_LARVA.value)
             all_queen = collect_units(units, UNIT_TYPEID.ZERG_QUEEN.value)
@@ -179,7 +179,7 @@ class ZergBuildingMgr(BaseBuildingMgr):
         # TODO: use logger
         if self.verbose >= 1:
             print(
-                "Warning: ZergBuildingMgr: "
+                "Warning: ZergBuildingMgr._build_building: "
                 "cannot handle building command {}".format(cmd)
             )
         return None
@@ -230,11 +230,19 @@ class ZergBuildingMgr(BaseBuildingMgr):
 
     def _build_base_expand(self, cmd, dc):
         base_instance = dc.dd.base_pool.bases[cmd.base_tag]
-        builder_tag = self._find_available_worker_for_building(
-            dc, base_instance)
-        target_pos = cmd.pos
-        ability_id = ABILITY_ID.BUILD_HATCHERY.value
-        return act_build_by_pos(builder_tag, target_pos, ability_id)
+        if base_instance:
+            builder_tag = self._find_available_worker_for_building(
+                dc, base_instance)
+            if builder_tag:
+                target_pos = cmd.pos
+                ability_id = ABILITY_ID.BUILD_HATCHERY.value
+                return act_build_by_pos(builder_tag, target_pos, ability_id)
+        if self.verbose >= 1:
+            print(
+                "Warning: ZergBuildingMgr._build_base_expand: "
+                "invalid base_tag in base_pool or no worker around this base"
+            )
+        return None
 
     def _find_available_worker_for_building(self, dc, base_instance):
         # find a worker, which must be not building, for the building task
