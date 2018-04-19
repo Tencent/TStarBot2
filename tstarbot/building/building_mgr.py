@@ -13,6 +13,7 @@ from pysc2.lib import TechTree
 from tstarbot.production.production_mgr import BuildCmdUnit
 from tstarbot.production.production_mgr import BuildCmdBuilding
 from tstarbot.production.production_mgr import BuildCmdExpand
+from tstarbot.production.production_mgr import BuildCmdSpawnLarva
 from tstarbot.data.pool.macro_def import WORKER_BUILD_ABILITY
 
 TT = TechTree()
@@ -61,7 +62,7 @@ def act_build_by_self(builder_tag, ability_id):
     return action
 
 
-def act_build_building_by_tag(builder_tag, target_tag, ability_id):
+def act_build_by_tag(builder_tag, target_tag, ability_id):
     action = sc_pb.Action()
     action.action_raw.unit_command.ability_id = ability_id
     action.action_raw.unit_command.target_unit_tag = target_tag
@@ -69,7 +70,7 @@ def act_build_building_by_tag(builder_tag, target_tag, ability_id):
     return action
 
 
-def act_build_building_by_pos(builder_tag, target_pos, ability_id):
+def act_build_by_pos(builder_tag, target_pos, ability_id):
     action = sc_pb.Action()
     action.action_raw.unit_command.ability_id = ability_id
     action.action_raw.unit_command.target_world_space_pos.x = target_pos[0]
@@ -92,37 +93,70 @@ class BaseBuildingMgr(object):
 class ZergBuildingMgr(BaseBuildingMgr):
     def __init__(self):
         super(ZergBuildingMgr, self).__init__()
-        self.vespen_status = False
+        self.verbose = 0
+        self._step = 0
 
     def reset(self):
-        self.vespen_status = False
+        self._step = 0
 
     def update(self, dc, am):
         super(ZergBuildingMgr, self).update(dc, am)
+
+        self._update_config(dc)
+
+        if self.verbose > 0:
+            units = dc.sd.obs['units']
+            all_larva = collect_units(units, UNIT_TYPEID.ZERG_LARVA.value)
+            all_queen = collect_units(units, UNIT_TYPEID.ZERG_QUEEN.value)
+            print('ZergBuildingMgr: step = {}'.format(self._step))
+            print('len commands = {}'.format(dc.dd.build_command_queue.size()))
+            print('len queen = {}'.format(len(all_queen)))
+            print('len larva = {}'.format(len(all_larva)))
+
+        self._step += 1
 
         if dc.dd.build_command_queue.empty():
             return
 
         actions = []
-        cmd = dc.dd.build_command_queue.get()
-        if type(cmd) == BuildCmdUnit:
-            actions.append(self._build_unit(cmd, dc))
-        elif type(cmd) == BuildCmdBuilding:
-            actions.append(self._build_building(cmd, dc))
-        elif type(cmd) == BuildCmdExpand:
-            actions.append(self._build_base_expand(cmd, dc))
-        else:
-            raise Exception('unknown cmd {}'.format(cmd))
-
+        while not dc.dd.build_command_queue.empty():
+            cmd = dc.dd.build_command_queue.get()
+            if type(cmd) == BuildCmdUnit:
+                action = self._build_unit(cmd, dc)
+            elif type(cmd) == BuildCmdBuilding:
+                action = self._build_building(cmd, dc)
+            elif type(cmd) == BuildCmdExpand:
+                action = self._build_base_expand(cmd, dc)
+            elif type(cmd) == BuildCmdSpawnLarva:
+                action = self._spawn_larva(cmd, dc)
+            else:
+                raise Exception('unknown cmd {}'.format(cmd))
+            if action:
+                actions.append(action)
         am.push_actions(actions)
+
+    def _update_config(self, dc):
+        if hasattr(dc, 'config'):
+            if hasattr(dc.config, 'building_verbose'):
+                self.verbose = dc.config.building_verbose
 
     def _build_unit(self, cmd, dc):
         base_instance = dc.dd.base_pool.bases[cmd.base_tag]
         if not base_instance:
-            return
-        larva_tag = choice(list(base_instance.larva_set))
+            if self.verbose >= 1:
+                print(
+                    "Warning: ZergBuildingMgr._build_unit: "
+                    "base_tag {} invalid in base_pool".format(cmd.base_tag)
+                )
+            return None
         ability_id = TT.getUnitData(cmd.unit_type).buildAbility
-        return act_build_by_self(builder_tag=larva_tag, ability_id=ability_id)
+        if cmd.unit_type == UNIT_TYPEID.ZERG_QUEEN.value:
+            return act_build_by_self(builder_tag=cmd.base_tag,
+                                     ability_id=ability_id)
+        else:
+            larva_tag = choice(list(base_instance.larva_set))
+            return act_build_by_self(builder_tag=larva_tag,
+                                     ability_id=ability_id)
 
     def _build_building(self, cmd, dc):
         unit_type = cmd.unit_type
@@ -134,16 +168,21 @@ class ZergBuildingMgr(BaseBuildingMgr):
 
         builder_tag, target_tag = self._can_build_by_tag(cmd, dc)
         if builder_tag and target_tag:
-            return act_build_building_by_tag(
+            return act_build_by_tag(
                 builder_tag, target_tag, ability_id)
 
         builder_tag, target_pos = self._can_build_by_pos(cmd, dc)
         if builder_tag and target_pos:
-            return act_build_building_by_pos(
+            return act_build_by_pos(
                 builder_tag, target_pos, ability_id)
 
         # TODO: use logger
-        print('ZergBuildingMgr: cannot handle building command {}'.format(cmd))
+        if self.verbose >= 1:
+            print(
+                "Warning: ZergBuildingMgr: "
+                "cannot handle building command {}".format(cmd)
+            )
+        return None
 
     def _can_build_upgrade(self, cmd, dc):
         builder_tag = None
@@ -193,24 +232,9 @@ class ZergBuildingMgr(BaseBuildingMgr):
         base_instance = dc.dd.base_pool.bases[cmd.base_tag]
         builder_tag = self._find_available_worker_for_building(
             dc, base_instance)
-        #target_pos = self._find_nearest_ideal_base_pos(
-        #    base_instance.unit,
-        #    dc.dd.base_pool.resource_cluster
-        #)
         target_pos = cmd.pos
         ability_id = ABILITY_ID.BUILD_HATCHERY.value
-        return act_build_building_by_pos(builder_tag, target_pos, ability_id)
-
-    def _find_nearest_ideal_base_pos(self, base, resource_cluster):
-        pos = None
-        d_min = 10000
-        for area in resource_cluster:
-            d = dist_to_pos(base,
-                            area.ideal_base_pos[0], area.ideal_base_pos[1])
-            if 5 < d < d_min:
-                pos = area.ideal_base_pos
-                d_min = d
-        return pos
+        return act_build_by_pos(builder_tag, target_pos, ability_id)
 
     def _find_available_worker_for_building(self, dc, base_instance):
         # find a worker, which must be not building, for the building task
@@ -235,3 +259,10 @@ class ZergBuildingMgr(BaseBuildingMgr):
             if abs(dx) > 0.5 and abs(dy) > 0.5:
                 return gas_tag
         return None
+
+    def _spawn_larva(self, cmd, dc):
+        # queen injects larva on a base
+        builder_tag = cmd.queen_tag
+        target_tag = cmd.base_tag
+        ability_id = ABILITY_ID.EFFECT_INJECTLARVA.value
+        return act_build_by_tag(builder_tag, target_tag, ability_id)

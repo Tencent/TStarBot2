@@ -72,9 +72,9 @@ def run_loop(agents, env, max_episodes=1):
             while True:
                 total_frames += 1
                 actions = [agent.step(timestep) for agent, timestep in zip(agents, timesteps)]
+                timesteps = env.step(actions)
                 if timesteps[me_id].last():
                     break
-                timesteps = env.step(actions)
 
             # update
             n_episode += 1

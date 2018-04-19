@@ -33,6 +33,9 @@ class BuildCommandQueueV2(object):
     def empty(self):
         return False if self._q else True
 
+    def size(self):
+        return len(self._q)
+
 
 if __name__ == "__main__":
     # usage of BuildCommandQueue

@@ -84,12 +84,29 @@ class ZergStrategyMgr(BaseStrategyMgr):
                     raise ValueError('Combat strategy [%s] is not supported.' % dc.config.combat_strategy)
 
     def _organize_army_by_size(self, size):
-        self._create_fixed_size_squads(size)
+        # self._create_fixed_size_squads(size)
+        # TODO(pengsun): use config for the organizing logic?
+        unit_type_blacklist = {
+            UNIT_TYPEID.ZERG_QUEEN.value
+        }
+        self._create_fixed_size_spec_type_squads(size, unit_type_blacklist)
 
     def _create_fixed_size_squads(self, squad_size):
         while len(self._army.unsquaded_units) >= squad_size:
             self._army.create_squad(
                 random.sample(self._army.unsquaded_units, squad_size))
+
+    def _create_fixed_size_spec_type_squads(self, squad_size,
+                                            unit_type_blacklist=set()):
+        allowed_unsquaded_units = [u for u in self._army.unsquaded_units if
+                                   u.unit.unit_type not in unit_type_blacklist]
+        while len(allowed_unsquaded_units) >= squad_size:
+            self._army.create_squad(
+                random.sample(allowed_unsquaded_units, squad_size))
+            allowed_unsquaded_units = [
+                u for u in self._army.unsquaded_units
+                if u.unit.unit_type not in unit_type_blacklist
+            ]
 
     def _command_army(self, cmd_queue):
         self._cmds = list()

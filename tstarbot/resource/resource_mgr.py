@@ -190,7 +190,6 @@ class ZergResourceMgr(BaseResourceMgr):
         self.all_extractors = None
         self.all_workers = None
         self.all_minerals = None
-        self.verbose = 0
         self.step = 0
 
     def update(self, dc, am):
