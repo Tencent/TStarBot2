@@ -5,6 +5,8 @@ import absl
 
 from pysc2 import maps
 from pysc2 import run_configs
+from pysc2.env import environment
+from pysc2.lib import features
 from pysc2.lib import point
 from pysc2.lib import run_parallel
 from pysc2.tests import utils
@@ -13,15 +15,15 @@ from s2clientprotocol import common_pb2 as sc_common
 from s2clientprotocol import sc2api_pb2 as sc_pb
 
 from tstarbot.agents.dancing_drones_agent import DancingDronesAgent
+from tstarbot.agents.zerg_agent import ZergAgent
 from pysc2.lib import unit_controls
 from collections import namedtuple
 
-Timestep = namedtuple('Timestep', ['observation', 'reward'])
 
 def test_multi_player():
     players = 2
-    agent1 = DancingDronesAgent()
-    agent2 = DancingDronesAgent()
+    agent1 = ZergAgent()
+    agent2 = ZergAgent()
     run_config = run_configs.get()
     parallel = run_parallel.RunParallel()
     map_inst = maps.get("Simple64")
@@ -71,24 +73,31 @@ def test_multi_player():
       parallel.run((c.join_game, join) for c in controllers)
 
       print("run")
+      game_info = controllers[0].game_info()
+      extractors = features.Features(game_info)
       for game_loop in range(1, 10000):  # steps per episode
         # Step the game
         parallel.run(c.step for c in controllers)
 
         # Observe
-        obs = []
-        timesteps = parallel.run(c.observe for c in controllers)
-        for timestep in timesteps:
-          units = []
-          for u in timestep.observation.raw_data.units:
-            units.append(unit_controls.Unit(u=u))
-          obs += [Timestep(observation = {'units':units}, reward = 0)]
+        obs = parallel.run(c.observe for c in controllers)
+        agent_obs = [extractors.transform_obs(o.observation) for o in obs]
+        game_info = [None for c in controllers]
 
+        if not any(o.player_result for o in obs):  # Episode over.
+            game_info = parallel.run(c.game_info for c in controllers)
+        timesteps = tuple(environment.TimeStep(step_type=0,
+                                      reward=0,
+                                      discount=0, observation=o,
+                                      game_info=info)
+                 for o, info in zip(agent_obs, game_info))
+        
         # Act
-        actions1 = agent1.step(obs[0])[0]
-        actions2 = agent2.step(obs[1])[0]
-        actions = [actions1, actions2]
-        parallel.run((c.act, a) for c, a in zip(controllers, actions))
+        actions1 = agent1.step(timesteps[0])
+        actions2 = agent2.step(timesteps[1])
+        actions = [[], actions2]
+        funcs_with_args = [(c.acts, a) for c, a in zip(controllers, actions)]
+        parallel.run(funcs_with_args)
 
       # Done with the game.
       print("leave")
