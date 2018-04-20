@@ -41,6 +41,7 @@ class ZergStrategyMgr(BaseStrategyMgr):
         self._ready_to_attack = False
         self._rally_pos = None
         self._rally_pos_for_attack = None
+        self._trigger_army_size = 20
         if self._enable_render:
             self._renderer = StrategyRenderer(window_size=(480, 360),
                                               world_size={'x': 200, 'y': 150},
@@ -66,6 +67,7 @@ class ZergStrategyMgr(BaseStrategyMgr):
         self._ready_to_attack = False
         self._rally_pos = None
         self._rally_pos_for_attack = None
+        self._trigger_army_size = 20
         if self._enable_render:
             self._renderer = list()
 
@@ -202,7 +204,7 @@ class ZergStrategyMgr(BaseStrategyMgr):
                               if self._distance(squad.centroid, self._rally_pos) < 8]
             for squad in rallied_squads:
                 squad.status = SquadStatus.IDLE
-            if len(rallied_squads) >= 20:
+            if len(rallied_squads) >= self._trigger_army_size:
                 self._ready_to_go = True
 
         # rally before attack
@@ -231,17 +233,17 @@ class ZergStrategyMgr(BaseStrategyMgr):
             for squad in rallied_squads_for_attack:
                 squad.status = SquadStatus.IDLE
 
-            if len(rallied_squads_for_attack) >= 15:
+            if len(rallied_squads_for_attack) >= self._trigger_army_size - 5:
                 self._ready_to_attack = True
 
         # attack
         if self._ready_to_attack:
             if enemy_pool.weakest_cluster is None:
                 return None
-            # print('num hydralisk: {}, num roach: {}'.format(self._army.num_hydralisk_units, self._army.num_roach_units))
             if self._army.num_hydralisk_units + self._army.num_roach_units < 10:
                 self._ready_to_attack = False
                 self._ready_to_go = False
+                # self._trigger_army_size = 30
                 return None
             for squad in self._army.squads:
                 squad.status = SquadStatus.ATTACK

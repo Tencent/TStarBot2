@@ -9,6 +9,7 @@ import math
 from s2clientprotocol import sc2api_pb2 as sc_pb
 from pysc2.lib.typeenums import UNIT_TYPEID, ABILITY_ID
 from tstarbot.data.queue.combat_command_queue import CombatCmdType
+from tstarbot.data.pool.macro_def import COMBAT_ATTACK_UNITS
 
 
 class BaseCombatMgr(object):
@@ -117,6 +118,19 @@ class BaseCombatMgr(object):
             selected_units.append(units[idx[i]])
         return selected_units
 
+    @staticmethod
+    def find_units_wihtin_range(u, units, r=6):
+        u_x = u.float_attr.pos_x
+        u_y = u.float_attr.pos_y
+        selected_units = []
+        for m in units:
+            x = m.float_attr.pos_x
+            y = m.float_attr.pos_y
+            dist = pow(pow(x - u_x, 2) + pow(y - u_y, 2), 0.5)
+            if dist <= r:
+                selected_units.append(m)
+        return selected_units
+
     def find_weakest_ally_nearby(self, u, units, dist):
         " Find weakest ally near unit u. If not found, return None."
         min_a = None
@@ -141,14 +155,30 @@ class BaseCombatMgr(object):
     def find_strongest_unit_hp(units):
         hp = []
         for m in units:
-            hp = m.float_attr.health / m.float_attr.health_max
+            hp.append(m.float_attr.health / m.float_attr.health_max)
         max_hp = np.max(hp)
         return max_hp
 
     @staticmethod
+    def find_enemy_combat_units(emeny_units):
+        enemy_combat_units = []
+        for u in emeny_units:
+            if u.int_attr.unit_type in COMBAT_ATTACK_UNITS:
+                enemy_combat_units.append(u)
+        return enemy_combat_units
+
+    def check_stronger_unit_front(self, u, ally_units, closest_enemy_unit):
+        u_dist = self.cal_square_dist(u, closest_enemy_unit)
+        for a in ally_units:
+            if (self.cal_square_dist(a, closest_enemy_unit) < 0.8 * u_dist and
+                            a.float_attr.health / a.float_attr.health_max > 0.95):
+                return True
+        return False
+
+    @staticmethod
     def cal_square_dist(u1, u2):
-        return pow(u1.float_attr.pos_x - u2.float_attr.pos_x, 2) + \
-               pow(u1.float_attr.pos_y - u2.float_attr.pos_y, 2)
+        return pow(pow(u1.float_attr.pos_x - u2.float_attr.pos_x, 2) +
+                   pow(u1.float_attr.pos_y - u2.float_attr.pos_y, 2), 0.5)
 
 
 class ZergCombatMgr(BaseCombatMgr):
@@ -156,15 +186,21 @@ class ZergCombatMgr(BaseCombatMgr):
     def __init__(self):
         super(ZergCombatMgr, self).__init__()
         self.roach_attack_range = 5.0
+        self.self_combat_units = []
         self.enemy_units = []
+        self.enemy_combat_units = []
 
     def reset(self):
+        self.self_combat_units = []
         self.enemy_units = []
+        self.enemy_combat_units = []
 
     def update(self, dc, am):
         super(ZergCombatMgr, self).update(dc, am)
         actions = list()
         self.enemy_units = dc.dd.enemy_pool.units
+        self.enemy_combat_units = self.find_enemy_combat_units(self.enemy_units)
+        self.self_combat_units = [u.unit for u in dc.dd.combat_pool.units]
         while True:
             cmd = dc.dd.combat_command_queue.pull()
             if cmd == []:
@@ -192,19 +228,27 @@ class ZergCombatMgr(BaseCombatMgr):
             squad_units.append(combat_unit.unit)
         for u in squad_units:
             # execute micro management
-            if len(self.enemy_units) > 0:
-                closest_enemy_dist = math.sqrt(
-                    self.cal_square_dist(u, self.find_closest_enemy(u, self.enemy_units)))
-                if (closest_enemy_dist < self.roach_attack_range and
-                            (u.float_attr.health / u.float_attr.health_max) < 0.3 and
-                            self.find_strongest_unit_hp(squad_units) > 0.9):
-                    action = self.run_away_from_closest_enemy(u, self.enemy_units)
+            if len(self.enemy_combat_units) > 0:
+                if self.is_run_away(u):
+                    action = self.run_away_from_closest_enemy(u, self.enemy_combat_units)
+                    # print("run away: {}".format(u.tag))
                 else:
                     action = self.attack_pos(u, pos)
             else:
                 action = self.attack_pos(u, pos)
             actions.append(action)
         return actions
+
+    def is_run_away(self, u):
+        closest_enemy_unit = self.find_closest_enemy(u, self.enemy_combat_units)
+        closest_enemy_dist = math.sqrt(self.cal_square_dist(u, closest_enemy_unit))
+        near_by_units = self.find_units_wihtin_range(u, self.self_combat_units, r=6)
+        if (closest_enemy_dist < self.roach_attack_range and
+            u.float_attr.health / u.float_attr.health_max < 0.3 and
+                # not self.check_stronger_unit_front(u, near_by_units, closest_enemy_unit)):
+                self.find_strongest_unit_hp(near_by_units) > 0.9):
+            return True
+        return False
 
     def exe_move(self, squad, pos):
         actions = []

@@ -150,6 +150,22 @@ COMBAT_UNITS = set([
     UNIT_TYPEID.ZERG_ZERGLINGBURROWED.value
 ])
 
+COMBAT_ATTACK_UNITS = set([
+    # Zerg
+    UNIT_TYPEID.ZERG_BANELING.value,
+    UNIT_TYPEID.ZERG_HYDRALISK.value,
+    UNIT_TYPEID.ZERG_INFESTOR.value,
+    UNIT_TYPEID.ZERG_MUTALISK.value,
+    UNIT_TYPEID.ZERG_QUEEN.value,
+    UNIT_TYPEID.ZERG_RAVAGER.value,
+    UNIT_TYPEID.ZERG_ROACH.value,
+    UNIT_TYPEID.ZERG_SPINECRAWLER.value,
+    UNIT_TYPEID.ZERG_SPORECRAWLER.value,
+    UNIT_TYPEID.ZERG_SWARMHOSTMP.value,
+    UNIT_TYPEID.ZERG_ULTRALISK.value,
+    UNIT_TYPEID.ZERG_ZERGLING.value
+])
+
 def calculate_distance(pos_x1, pos_y1, pos_x2, pos_y2):
     x = abs(pos_x1 - pos_x2)
     y = abs(pos_y1 - pos_y2)
