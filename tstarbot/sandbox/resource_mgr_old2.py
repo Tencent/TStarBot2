@@ -9,8 +9,6 @@ import numpy as np
 from s2clientprotocol import sc2api_pb2 as sc_pb
 from pysc2.lib.typeenums import UNIT_TYPEID, ABILITY_ID, RACE
 
-from tstarbot.production.production_mgr import BuildCmdHarvest
-
 OWNER_NEUTRAL = 16
 
 
@@ -121,64 +119,102 @@ class BaseResourceMgr(object):
         pass
 
 
+class DancingDronesResourceMgr(BaseResourceMgr):
+    def __init__(self):
+        super(DancingDronesResourceMgr, self).__init__()
+        self._range_high = 5
+        self._range_low = -5
+        self._move_ability = 1
+
+    def update(self, dc, am):
+        super(DancingDronesResourceMgr, self).update(dc, am)
+
+        drone_ids = dc.get_drones()
+        pos = dc.get_hatcherys()
+
+        # print('pos=', pos)
+        actions = self.move_drone_random_round_hatchery(drone_ids, pos[0])
+
+        am.push_actions(actions)
+
+    def move_drone_random_round_hatchery(self, drone_ids, pos):
+        actions = []
+        for drone in drone_ids:
+            action = sc_pb.Action()
+            action.action_raw.unit_command.ability_id = self._move_ability
+            x = pos[0] + random.randint(self._range_low, self._range_high)
+            y = pos[1] + random.randint(self._range_low, self._range_high)
+            action.action_raw.unit_command.target_world_space_pos.x = x
+            action.action_raw.unit_command.target_world_space_pos.y = y
+            action.action_raw.unit_command.unit_tags.append(drone)
+            actions.append(action)
+        return actions
+
+
+class BaseTerritoryMgr(object):
+    class Territory(object):
+        def __init__(self):
+            is_capital = False
+            nearest_mineral_tag = None
+
+    def __init__(self):
+        self.base_to_territory = {}
+        pass
+
+    def reset(self):
+        pass
+
+    def update(self, all_bases, all_minerals):
+        pass
+
+
 class ZergResourceMgr(BaseResourceMgr):
     def __init__(self):
         super(ZergResourceMgr, self).__init__()
 
         self.update_base_territory_freq = 30
 
+        self.bt_mgr = BaseTerritoryMgr()
         self.all_bases = None
         self.all_extractors = None
         self.all_workers = None
         self.all_minerals = None
-        self.is_gas_first = False
         self.verbose = 0
         self.step = 0
 
     def reset(self):
         super(ZergResourceMgr, self).reset()
 
+        self.bt_mgr.reset()
         self.all_bases = None
         self.all_extractors = None
         self.all_workers = None
         self.all_minerals = None
-        self.is_gas_first = False
         self.step = 0
 
     def update(self, dc, am):
         super(ZergResourceMgr, self).update(dc, am)
 
         self._update_config(dc)
-        self._update_data(dc)
 
-        accepted_cmds = [BuildCmdHarvest]
-        for _ in range(dc.dd.build_command_queue.size()):
-            cmd = dc.dd.build_command_queue.get()
-            if type(cmd) not in accepted_cmds:
-                # put back unknown command
-                dc.dd.build_command_queue.put(cmd)
-                continue
-            if type(cmd) == BuildCmdHarvest:
-                self.is_gas_first = cmd.gas_first
-                if self.verbose >= 2:
-                    print(
-                        "ZergResourceMgr: step={}, receive command gas_first"
-                        "= {}".format(self.step, self.is_gas_first)
-                    )
+        # update data
+        units = dc.sd.obs['units']
+        self.all_bases = collect_units(units, UNIT_TYPEID.ZERG_HATCHERY.value) \
+            + collect_units(units, UNIT_TYPEID.ZERG_LAIR.value)
+        self.all_extractors = collect_units(units,
+                                            UNIT_TYPEID.ZERG_EXTRACTOR.value)
+        self.all_workers = collect_units(units, UNIT_TYPEID.ZERG_DRONE.value)
+        self.all_minerals = collect_units(
+            units, UNIT_TYPEID.NEUTRAL_MINERALFIELD.value, owner=OWNER_NEUTRAL)
 
-        # which comes first: harvesting mineral or gas?
-        update_first, update_second = (ZergResourceMgr._update_harvest_mineral,
-                                       ZergResourceMgr._update_harvest_gas)
-        if self.is_gas_first:
-            update_first, update_second = update_second, update_first
+        if self.verbose > 1:
+            print_harvester(self.all_bases, name='all_basese')
+            print_harvester(self.all_extractors, name='all_extractors')
+            print('len workers = ', len(self.all_workers))
 
         actions = []
-        actions_first, filled_first = update_first(self)
-        actions += actions_first
-        if filled_first:
-            # the first has been fulfilled, now consider the second
-            actions_second, _ = update_second(self)
-            actions += actions_second
+        actions += self._update_harvest_gas()
+        actions += self._update_harvest_mineral()
 
         am.push_actions(actions)
         self.step += 1
@@ -190,84 +226,44 @@ class ZergResourceMgr(BaseResourceMgr):
             if hasattr(dc.config, 'resource_gas_first'):
                 self.is_gas_first = dc.config.resource_gas_first
 
-    def _update_data(self, dc):
-        self.dc = dc
-
-        units = dc.sd.obs['units']
-        self.all_bases = collect_units(units, UNIT_TYPEID.ZERG_HATCHERY.value) \
-            + collect_units(units, UNIT_TYPEID.ZERG_LAIR.value)
-        self.all_extractors = collect_units(units,
-                                            UNIT_TYPEID.ZERG_EXTRACTOR.value)
-        self.all_workers = collect_units(units, UNIT_TYPEID.ZERG_DRONE.value)
-        self.all_minerals = collect_units(
-            units, UNIT_TYPEID.NEUTRAL_MINERALFIELD.value, owner=OWNER_NEUTRAL)
-
-        if self.verbose >= 4:
-            print_harvester(self.all_bases, name='all_basese')
-            print_harvester(self.all_extractors, name='all_extractors')
-            print('len workers = ', len(self.all_workers))
-
     def _update_harvest_gas(self):
-        actions, n_unfilled = [], []
+        actions = []
         for e in self.all_extractors:
             n_remain = (e.int_attr.ideal_harvesters -
                         e.int_attr.assigned_harvesters)
-            n_unfilled.append(n_remain)
             if n_remain <= 0:
-                # balanced: do nothing
+                # TODO(pengsun): do something when gas overfilled?
                 continue
-            elif n_remain < 0:
-                # overfilled: let extra workers stop
-                workers = find_knn(self.all_workers, e, k=1)
-                for w in workers:
-                    actions += [act_stop(w.tag)]
-                continue
-            else:
-                # under-filled: grab a worker to have it
-                workers = self._find_available_workers_for_gas(n_remain)
-                for w in workers:
-                    actions += [act_worker_harvests_on_target(
-                        target_tag=e.tag, worker_tag=w.tag)]
-        return actions, all([n <= 0 for n in n_unfilled])
+            workers = self._find_available_workers_for_gas(n_remain)
+            for w in workers:
+                actions += [act_worker_harvests_on_target(target_tag=e.tag,
+                                                          worker_tag=w.tag)]
+        return actions
 
     def _update_harvest_mineral(self):
-        actions, n_unfilled = [], []
+        actions = []
         for i, b in enumerate(self.all_bases):
             n_remain = (b.int_attr.ideal_harvesters -
                         b.int_attr.assigned_harvesters)
-            n_unfilled.append(n_remain)
-            # ideal_harvesters is a smart number provided by the game core,
-            # depending on the remaining minerals and the base position. E.g.,
-            # <16 if some minerals are empty;
-            # =0 if the base is not near a mineral cluster;
+            # ideal_harvesters seems a suggested number provided by the game
+            # core, if the base is not near a mineral cluster, this number
+            # is zero! Is it true?
             if n_remain == 0:
-                # balanced: do nothing
                 continue
-            elif n_remain < 0:
-                # overfilled: let extra workers stop
+            if n_remain < 0:
+                # when overfilled, let extra workers to stop
                 workers = find_knn(self.all_workers, b, k=1)
                 for w in workers:
                     actions += [act_stop(w.tag)]
                 continue
-            else:
-                # under-filled: grab a worker to have it
-                w = self._find_available_workers_for_mineral(1)  # find only ONE
-                if w:
-                    # mineral = find_nearest(units=self.all_minerals, unit=b)
-                    mineral = self._find_available_mineral(base_unit=b)
-                    if mineral:
-                        actions += [act_worker_harvests_on_target(
-                            target_tag=mineral.tag, worker_tag=w[0].tag)]
-            if self.verbose >= 3 and n_remain != 0:
-                print(
-                    "base(pos_x={}, pos_y={}): ideal_harvesters={}, "
-                    "assigned_harvesters={}".format(
-                        b.float_attr.pos_x, b.float_attr.pos_y,
-                        b.int_attr.ideal_harvesters,
-                        b.int_attr.assigned_harvesters
-                    )
-                )
-        return actions, all([n <= 0 for n in n_unfilled])
+            # when under-filled, grab a worker to have it
+            w = self._find_available_workers_for_mineral(1)  # find only ONE
+            if w:
+                mineral = find_nearest(units=self.all_minerals, unit=w[0])
+                if mineral:
+                    actions += [act_worker_harvests_on_target(
+                        target_tag=mineral.tag, worker_tag=w[0].tag)]
+        return actions
 
     def _find_available_workers_for_gas(self, num=1):
         ww = []
@@ -287,13 +283,3 @@ class ZergResourceMgr(BaseResourceMgr):
             if not has_order(w):  # this is an idle worker
                 ww.append(w)
         return ww
-
-    def _find_available_mineral(self, base_unit):
-        # find the mineral with the largest remaining amount
-        base_instance = self.dc.dd.base_pool.bases[base_unit.tag]
-        if not base_instance:
-            return None
-        local_minerals = [self.dc.dd.base_pool.minerals[m_tag]
-                          for m_tag in base_instance.mineral_set]
-        return max(local_minerals,
-                   key=lambda u: u.int_attr.mineral_contents)

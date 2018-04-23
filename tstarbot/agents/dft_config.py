@@ -10,5 +10,5 @@ Do NOT ABUSE it, do NOT define nested or complex data structure.
 """
 building_verbose = 0
 resource_verbose = 0
-resource_gas_first = True
+resource_gas_first = False
 combat_strategy = 'REFORM'

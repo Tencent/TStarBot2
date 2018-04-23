@@ -118,9 +118,16 @@ class ZergBuildingMgr(BaseBuildingMgr):
         if dc.dd.build_command_queue.empty():
             return
 
+        accepted_cmds = [BuildCmdUnit, BuildCmdBuilding, BuildCmdExpand,
+                         BuildCmdSpawnLarva]
         actions = []
-        while not dc.dd.build_command_queue.empty():
+        for _ in range(dc.dd.build_command_queue.size()):
             cmd = dc.dd.build_command_queue.get()
+            if type(cmd) not in accepted_cmds:
+                # put back unknown command
+                dc.dd.build_command_queue.put(cmd)
+                continue
+            action = None
             if type(cmd) == BuildCmdUnit:
                 action = self._build_unit(cmd, dc)
             elif type(cmd) == BuildCmdBuilding:
@@ -129,8 +136,6 @@ class ZergBuildingMgr(BaseBuildingMgr):
                 action = self._build_base_expand(cmd, dc)
             elif type(cmd) == BuildCmdSpawnLarva:
                 action = self._spawn_larva(cmd, dc)
-            else:
-                raise Exception('unknown cmd {}'.format(cmd))
             if action:
                 actions.append(action)
         am.push_actions(actions)
@@ -154,6 +159,11 @@ class ZergBuildingMgr(BaseBuildingMgr):
             return act_build_by_self(builder_tag=cmd.base_tag,
                                      ability_id=ability_id)
         else:
+            if not base_instance.larva_set:
+                if self.verbose >= 1:
+                    print("Warning: ZergBuildingMgr._build_unit: "
+                          "empty larva set".format(cmd.base_tag))
+                return None
             larva_tag = choice(list(base_instance.larva_set))
             return act_build_by_self(builder_tag=larva_tag,
                                      ability_id=ability_id)

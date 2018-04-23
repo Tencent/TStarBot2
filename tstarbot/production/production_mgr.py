@@ -3,10 +3,15 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from pysc2.lib.typeenums import UNIT_TYPEID, ABILITY_ID, RACE
+from pysc2.lib.typeenums import UNIT_TYPEID
+from pysc2.lib.typeenums import ABILITY_ID
+from pysc2.lib.typeenums import RACE
 from pysc2.lib import TechTree
-from collections import deque, namedtuple
-from tstarbot.production.map_tool import *
+from collections import deque
+from collections import namedtuple
+from tstarbot.production.map_tool import bitmap2array
+from tstarbot.production.map_tool import compute_dist
+import numpy as np
 
 TT = TechTree()
 
@@ -104,7 +109,7 @@ class BaseProductionMgr(object):
             self.build_order.queue_as_highest(self.base_unit())
 
         # determine whether to build extractor
-        if self.need_more_gas(data_context):
+        if self.need_more_extractor(data_context):
             # print('Build Extractor!')
             self.build_order.queue_as_highest(self.gas_unit())
 
@@ -120,6 +125,14 @@ class BaseProductionMgr(object):
         if self.can_build(current_item, data_context):
             if self.set_build_base(current_item, data_context):
                 self.build_order.remove_current_item()
+
+        if self.should_gas_first(data_context):
+            data_context.dd.build_command_queue.put(
+                BuildCmdHarvest(gas_first=True))
+
+        if self.should_mineral_first(data_context):
+            data_context.dd.build_command_queue.put(
+                BuildCmdHarvest(gas_first=False))
 
     def supply_unit(self):
         if self.race == RACE.Zerg:
@@ -188,8 +201,8 @@ class BaseProductionMgr(object):
 
     def find_unit(self, unit_id, owner=1):
         return [unit for unit in self.obs["units"]
-                    if unit.unit_type == unit_id
-                    and unit.int_attr.owner == owner]
+                if unit.unit_type == unit_id
+                and unit.int_attr.owner == owner]
 
     def has_building_built(self, unit_id_list, owner=1):
         for unit_id in unit_id_list:
@@ -203,7 +216,7 @@ class BaseProductionMgr(object):
     def should_expand_now(self, data_context):
         return False
 
-    def need_more_gas(self, data_context):
+    def need_more_extractor(self, data_context):
         return False
 
     def get_opening_build_order(self):
@@ -222,6 +235,12 @@ class BaseProductionMgr(object):
         return False
 
     def supply_in_progress(self, dc):
+        return False
+
+    def should_gas_first(self, dc):
+        return True
+
+    def should_mineral_first(self, dc):
         return False
 
 
@@ -256,8 +275,8 @@ class ZergProductionMgr(BaseProductionMgr):
                 num_worker_needed += (self.ideal_harvesters(base)
                                       - self.assigned_harvesters(base))
             if num_worker_needed > 0:
-                goal = [UNIT_TYPEID.ZERG_DRONE.value] * 2+\
-                       [UNIT_TYPEID.ZERG_ROACH.value] * 2+\
+                goal = [UNIT_TYPEID.ZERG_DRONE.value] * 2 +\
+                       [UNIT_TYPEID.ZERG_ROACH.value] * 2 +\
                        [UNIT_TYPEID.ZERG_HYDRALISK.value] * 3
             else:
                 goal = [UNIT_TYPEID.ZERG_ROACH.value] * 2 + \
@@ -284,7 +303,7 @@ class ZergProductionMgr(BaseProductionMgr):
                [UNIT_TYPEID.ZERG_ROACH.value] * 5
 
     def should_expand_now(self, dc):
-        expand_worker = {0:0, 1:20, 2:35, 3:45, 4:50, 5:50, 6:50, 7:50, 8:200}
+        expand_worker = {0:0, 1:20, 2:35, 3:45, 4:50, 5:55, 6:60, 7:60, 8:200}
         current_item = self.build_order.current_item()
         if current_item.unit_id == self.base_unit():
             return False
@@ -303,7 +322,7 @@ class ZergProductionMgr(BaseProductionMgr):
             return True
         return False
 
-    def need_more_gas(self, dc):
+    def need_more_extractor(self, dc):
         current_item = self.build_order.current_item()
         if current_item.unit_id == self.gas_unit():
             return False
@@ -335,7 +354,8 @@ class ZergProductionMgr(BaseProductionMgr):
                 base = find_nearest([bases[tag].unit for tag in bases], queen)
                 if base is not None:
                     dc.dd.build_command_queue.put(
-                        BuildCmdSpawnLarva(queen_tag=queen.tag, base_tag=base.tag))
+                        BuildCmdSpawnLarva(queen_tag=queen.tag,
+                                           base_tag=base.tag))
 
     def building_in_progress(self, unit_type, owner=1):
         unit_data = TT.getUnitData(unit_type)
@@ -444,7 +464,7 @@ class ZergProductionMgr(BaseProductionMgr):
                 in_morph = order[0].ability_id not in morph_list
             num_gap = (self.ideal_harvesters(bases[base_tag])
                        - self.assigned_harvesters(bases[base_tag]))
-            if (not in_morph and num_gap > max_gap):
+            if not in_morph and num_gap > max_gap:
                 tag = base_tag
                 max_gap = num_gap
         return tag
@@ -510,3 +530,17 @@ class ZergProductionMgr(BaseProductionMgr):
             vb = self.find_unit_by_tag(vb_tag)[0]
             num += vb.int_attr.assigned_harvesters
         return num
+
+    def should_gas_first(self, dc):
+        play_info = self.obs["player"]
+        minerals, vespene = play_info[1:3]
+        if minerals > 400 and vespene < minerals/3:
+            return True
+        return False
+
+    def should_mineral_first(self, dc):
+        play_info = self.obs["player"]
+        minerals, vespene = play_info[1:3]
+        if vespene > 300 and minerals < 2 * vespene:
+            return True
+        return False
