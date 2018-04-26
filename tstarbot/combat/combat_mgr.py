@@ -7,9 +7,10 @@ import numpy as np
 import math
 
 from s2clientprotocol import sc2api_pb2 as sc_pb
-from pysc2.lib.typeenums import UNIT_TYPEID, ABILITY_ID
+from pysc2.lib.typeenums import UNIT_TYPEID, ABILITY_ID, UPGRADE_ID
 from tstarbot.data.queue.combat_command_queue import CombatCmdType
-from tstarbot.data.pool.macro_def import COMBAT_ATTACK_UNITS
+from tstarbot.data.pool.macro_def import COMBAT_ATTACK_UNITS, COMBAT_BURROWED_UNITS, COMBAT_UNITS_CAN_BURROW
+from tstarbot.combat.roach_mgr import RoachMgr
 
 
 class BaseCombatMgr(object):
@@ -77,14 +78,13 @@ class BaseCombatMgr(object):
         action.action_raw.unit_command.unit_tags.append(u.tag)
         return action
 
-    def run_away_from_closest_enemy(self, u, enemies):
+    def run_away_from_closest_enemy(self, u, closest_enemy_unit):
         action = sc_pb.Action()
         action.action_raw.unit_command.ability_id = ABILITY_ID.SMART.value
-        target = self.find_closest_enemy(u, enemies=enemies)
         action.action_raw.unit_command.target_world_space_pos.x = u.float_attr.pos_x + \
-            (u.float_attr.pos_x - target.float_attr.pos_x) * 0.2
+            (u.float_attr.pos_x - closest_enemy_unit.float_attr.pos_x) * 0.2
         action.action_raw.unit_command.target_world_space_pos.y = u.float_attr.pos_y + \
-            (u.float_attr.pos_y - target.float_attr.pos_y) * 0.2
+            (u.float_attr.pos_y - closest_enemy_unit.float_attr.pos_y) * 0.2
         action.action_raw.unit_command.unit_tags.append(u.tag)
         return action
 
@@ -185,22 +185,27 @@ class ZergCombatMgr(BaseCombatMgr):
     """ A zvz Zerg combat manager """
     def __init__(self):
         super(ZergCombatMgr, self).__init__()
+        self.dc = None
         self.roach_attack_range = 5.0
         self.self_combat_units = []
         self.enemy_units = []
         self.enemy_combat_units = []
 
     def reset(self):
+        self.dc = None
         self.self_combat_units = []
         self.enemy_units = []
         self.enemy_combat_units = []
 
     def update(self, dc, am):
         super(ZergCombatMgr, self).update(dc, am)
+        self.dc = dc
+
         actions = list()
         self.enemy_units = dc.dd.enemy_pool.units
         self.enemy_combat_units = self.find_enemy_combat_units(self.enemy_units)
         self.self_combat_units = [u.unit for u in dc.dd.combat_pool.units]
+
         while True:
             cmd = dc.dd.combat_command_queue.pull()
             if cmd == []:
@@ -228,20 +233,38 @@ class ZergCombatMgr(BaseCombatMgr):
             squad_units.append(combat_unit.unit)
         for u in squad_units:
             # execute micro management
+            closest_enemy = None
             if len(self.enemy_combat_units) > 0:
-                if self.is_run_away(u):
-                    action = self.run_away_from_closest_enemy(u, self.enemy_combat_units)
-                    # print("run away: {}".format(u.tag))
+                closest_enemy = self.find_closest_enemy(u, self.enemy_combat_units)
+                if self.is_run_away(u, closest_enemy):
+                    if (u.int_attr.unit_type == UNIT_TYPEID.ZERG_ROACH.value and
+                            UPGRADE_ID.BURROW.value in self.dc.sd.obs['raw_data'].player.upgrade_ids):
+                        action = RoachMgr().burrow_down(u)
+                    else:
+                        action = self.run_away_from_closest_enemy(u, closest_enemy)
                 else:
                     action = self.attack_pos(u, pos)
             else:
                 action = self.attack_pos(u, pos)
+
+            if (u.int_attr.unit_type in COMBAT_BURROWED_UNITS and
+                    u.float_attr.health / u.float_attr.health_max == 1):
+                action = RoachMgr().burrow_up(u)
+
+            if len(self.enemy_combat_units) > 0:
+                closest_enemy_dist = self.cal_square_dist(closest_enemy, u)
+            else:
+                closest_enemy_dist = 100000
+            if (u.int_attr.unit_type == UNIT_TYPEID.ZERG_ROACH.value and
+                    u.float_attr.health / u.float_attr.health_max < 1 and
+                    closest_enemy_dist > 1.2 * self.roach_attack_range):
+                action = RoachMgr().burrow_down(u)
+
             actions.append(action)
         return actions
 
-    def is_run_away(self, u):
-        closest_enemy_unit = self.find_closest_enemy(u, self.enemy_combat_units)
-        closest_enemy_dist = math.sqrt(self.cal_square_dist(u, closest_enemy_unit))
+    def is_run_away(self, u, closest_enemy):
+        closest_enemy_dist = math.sqrt(self.cal_square_dist(u, closest_enemy))
         near_by_units = self.find_units_wihtin_range(u, self.self_combat_units, r=6)
         if (closest_enemy_dist < self.roach_attack_range and
             u.float_attr.health / u.float_attr.health_max < 0.3 and
@@ -263,23 +286,7 @@ class ZergCombatMgr(BaseCombatMgr):
         return actions
 
     def exe_defend(self, squad, pos):
-        actions = []
-        squad_units = []
-        for combat_unit in squad.units:
-            squad_units.append(combat_unit.unit)
-        for u in squad_units:
-            if len(self.enemy_units) == 0:
-                action = self.attack_pos(u, pos)
-            else:
-                # micro management
-                closest_enemy_dist = math.sqrt(
-                    self.cal_square_dist(u, self.find_closest_enemy(u, self.enemy_units)))
-                if (closest_enemy_dist < self.roach_attack_range and
-                            (u.float_attr.health / u.float_attr.health_max) < 0.5):
-                    action = self.run_away_from_closest_enemy(u, self.enemy_units)
-                else:
-                    action = self.attack_pos(u, pos)
-            actions.append(action)
+        actions = self.exe_attack(squad, pos)
         return actions
 
 
@@ -327,8 +334,7 @@ class ZergCombatLxHanMgr(BaseCombatMgr):
         for u in squad:
             if len(self.enemy_units) > 0:
                 closest_enemy_dist = math.sqrt(
-                    self.cal_square_dist(
-                        u, self.find_closest_enemy(u, self.enemy_units)))
+                    self.cal_square_dist(u, self.find_closest_enemy(u, self.enemy_units)))
                 if closest_enemy_dist < self.roach_attack_range and \
                                 (u.float_attr.health / u.float_attr.health_max) < 0.3 and \
                                 self.find_strongest_unit_hp(squad) > 0.9:

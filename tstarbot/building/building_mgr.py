@@ -11,6 +11,7 @@ from pysc2.lib.typeenums import ABILITY_ID
 from pysc2.lib import TechTree
 
 from tstarbot.production.production_mgr import BuildCmdUnit
+from tstarbot.production.production_mgr import BuildCmdUpgrade
 from tstarbot.production.production_mgr import BuildCmdBuilding
 from tstarbot.production.production_mgr import BuildCmdExpand
 from tstarbot.production.production_mgr import BuildCmdSpawnLarva
@@ -119,7 +120,7 @@ class ZergBuildingMgr(BaseBuildingMgr):
             return
 
         accepted_cmds = [BuildCmdUnit, BuildCmdBuilding, BuildCmdExpand,
-                         BuildCmdSpawnLarva]
+                         BuildCmdUpgrade, BuildCmdSpawnLarva]
         actions = []
         for _ in range(dc.dd.build_command_queue.size()):
             cmd = dc.dd.build_command_queue.get()
@@ -130,6 +131,8 @@ class ZergBuildingMgr(BaseBuildingMgr):
             action = None
             if type(cmd) == BuildCmdUnit:
                 action = self._build_unit(cmd, dc)
+            elif type(cmd) == BuildCmdUpgrade:
+                action = self._build_upgrade_tech(cmd, dc)
             elif type(cmd) == BuildCmdBuilding:
                 action = self._build_building(cmd, dc)
             elif type(cmd) == BuildCmdExpand:
@@ -167,6 +170,11 @@ class ZergBuildingMgr(BaseBuildingMgr):
             larva_tag = choice(list(base_instance.larva_set))
             return act_build_by_self(builder_tag=larva_tag,
                                      ability_id=ability_id)
+
+    def _build_upgrade_tech(self, cmd, dc):
+        builder_tag = cmd.building_tag
+        ability_id = cmd.ability_id
+        return act_build_by_self(builder_tag, ability_id)
 
     def _build_building(self, cmd, dc):
         unit_type = cmd.unit_type
@@ -217,6 +225,7 @@ class ZergBuildingMgr(BaseBuildingMgr):
         delta_pos = {
             UNIT_TYPEID.ZERG_SPAWNINGPOOL.value: [6, 0],
             UNIT_TYPEID.ZERG_ROACHWARREN.value: [0, -6],
+            UNIT_TYPEID.ZERG_EVOLUTIONCHAMBER.value: [-3, -8],
             UNIT_TYPEID.ZERG_HYDRALISKDEN.value: [6, -3]
         }
 
@@ -274,7 +283,7 @@ class ZergBuildingMgr(BaseBuildingMgr):
                 return gas_tag
             dx = vb_unit.float_attr.pos_x - gas_unit.float_attr.pos_x
             dy = vb_unit.float_attr.pos_y - gas_unit.float_attr.pos_y
-            if abs(dx) > 0.5 and abs(dy) > 0.5:
+            if abs(dx) > 0.5 or abs(dy) > 0.5:
                 return gas_tag
         return None
 
