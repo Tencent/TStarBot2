@@ -245,20 +245,20 @@ class BaseProductionMgr(object):
                 and current_item.unit_id != self.supply_unit()):
             self.build_order.queue_as_highest(self.supply_unit())
 
-    def has_unit(self, unit_type, owner=1):
-        return any([unit.unit_type == unit_type and unit.int_attr.owner == owner
+    def has_unit(self, unit_type, alliance=1):
+        return any([unit.unit_type == unit_type and unit.int_attr.alliance == alliance
                     for unit in self.obs["units"]])
 
-    def find_unit(self, unit_type, owner=1):
+    def find_unit(self, unit_type, alliance=1):
         return [unit for unit in self.obs["units"]
                 if unit.unit_type == unit_type
-                and unit.int_attr.owner == owner]
+                and unit.int_attr.alliance == alliance]
 
-    def has_building_built(self, unit_type_list, owner=1):
+    def has_building_built(self, unit_type_list, alliance=1):
         for unit_type in unit_type_list:
             for unit in self.obs["units"]:
                 if (unit.unit_type == unit_type
-                        and unit.int_attr.owner == owner
+                        and unit.int_attr.alliance == alliance
                         and unit.float_attr.build_progress == 1):
                     return True
         return len(unit_type_list) == 0
@@ -272,7 +272,7 @@ class BaseProductionMgr(object):
         data = TT.getUpgradeData(upgrade_type)
         builders = [unit for unit in self.obs['units']
                     if unit.int_attr.unit_type in data.whatBuilds
-                    and unit.int_attr.owner == 1]
+                    and unit.int_attr.alliance == 1]
         in_progress = [len(builder.orders) > 0
                        and builder.orders[0].ability_id == data.buildAbility
                        for builder in builders]
@@ -389,7 +389,7 @@ class ZergProductionMgr(BaseProductionMgr):
                          5: 50, 6: 55, 7: 60, 8: 200}
         num = len([unit for unit in self.obs['units']
                    if unit.int_attr.unit_type == UNIT_TYPEID.ZERG_DRONE.value
-                   and unit.int_attr.owner == 1])
+                   and unit.int_attr.alliance == 1])
         bases = dc.dd.base_pool.bases
         ideal_harvesters_all = 0
         base_num = 0
@@ -407,11 +407,11 @@ class ZergProductionMgr(BaseProductionMgr):
         bases = dc.dd.base_pool.bases
         n_w = len([unit for unit in self.obs['units']
                    if unit.int_attr.unit_type == UNIT_TYPEID.ZERG_DRONE.value
-                   and unit.int_attr.owner == 1])
+                   and unit.int_attr.alliance == 1])
         n_g = len([u for u in self.obs['units']
                    if u.unit_type == UNIT_TYPEID.ZERG_EXTRACTOR.value
                    and u.int_attr.vespene_contents > 100
-                   and u.int_attr.owner == 1])  # 100 gas ~ 30s ?
+                   and u.int_attr.alliance == 1])  # 100 gas ~ 30s ?
         if self.building_in_progress(UNIT_TYPEID.ZERG_EXTRACTOR):
             return False
 
@@ -444,14 +444,14 @@ class ZergProductionMgr(BaseProductionMgr):
             return False
         n_q = len([unit for unit in self.obs['units']
                    if unit.int_attr.unit_type == UNIT_TYPEID.ZERG_QUEEN.value
-                   and unit.int_attr.owner == 1])
+                   and unit.int_attr.alliance == 1])
         bases = dc.dd.base_pool.bases
         n_base = len([tag for tag in bases
                       if bases[tag].unit.float_attr.build_progress == 1])
         n_army = len([u for u in self.obs['units']
                       if (u.unit_type == UNIT_TYPEID.ZERG_ROACH.value
                           or u.unit_type == UNIT_TYPEID.ZERG_HYDRALISK.value)
-                      and u.int_attr.owner == 1])
+                      and u.int_attr.alliance == 1])
         if n_army > 12 and n_q < n_base:
             return True
         return False
@@ -468,17 +468,17 @@ class ZergProductionMgr(BaseProductionMgr):
                         BuildCmdSpawnLarva(queen_tag=queen.tag,
                                            base_tag=base.tag))
 
-    def building_in_progress(self, unit_id, owner=1):
+    def building_in_progress(self, unit_id, alliance=1):
         unit_data = TT.getUnitData(unit_id.value)
         if not unit_data.isBuilding:
             print('building_in_progress can only be used for buildings!')
         for unit in self.obs['units']:
             if (unit.unit_type == unit_id.value
-                    and unit.int_attr.owner == owner
+                    and unit.int_attr.alliance == alliance
                     and unit.float_attr.build_progress < 1):
                 return True
             if (unit.unit_type == UNIT_TYPEID.ZERG_DRONE.value
-                    and unit.int_attr.owner == owner
+                    and unit.int_attr.alliance == alliance
                     and len(unit.orders) > 0
                     and unit.orders[0].ability_id == unit_data.buildAbility):
                 return True

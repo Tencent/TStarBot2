@@ -2,6 +2,7 @@ import os
 import portpicker
 import sys
 import absl
+import time
 
 from pysc2 import maps
 from pysc2 import run_configs
@@ -26,7 +27,7 @@ def test_multi_player():
     agent2 = ZergAgent()
     run_config = run_configs.get()
     parallel = run_parallel.RunParallel()
-    map_inst = maps.get("Simple64")
+    map_inst = maps.get("AbyssalReef")
 
     screen_size_px = point.Point(64, 64)
     minimap_size_px = point.Point(32, 32)
@@ -52,8 +53,9 @@ def test_multi_player():
                    for c in controllers)
 
       # Create the create request.
+      real_time = True
       create = sc_pb.RequestCreateGame(
-          local_map=sc_pb.LocalMap(map_path=map_path))
+          local_map=sc_pb.LocalMap(map_path=map_path), realtime=real_time)
       for _ in range(players):
         create.player_setup.add(type=sc_pb.Participant)
 
@@ -75,9 +77,13 @@ def test_multi_player():
       print("run")
       game_info = controllers[0].game_info()
       extractors = features.Features(game_info)
-      for game_loop in range(1, 10000):  # steps per episode
+      for game_loop in range(1, 100000):  # steps per episode
         # Step the game
-        parallel.run(c.step for c in controllers)
+        step_mul = 8
+        if not real_time:
+          parallel.run((c.step, step_mul) for c in controllers)
+        else:
+          time.sleep(0.2)
 
         # Observe
         obs = parallel.run(c.observe for c in controllers)
@@ -85,7 +91,7 @@ def test_multi_player():
         game_info = [None for c in controllers]
 
         if not any(o.player_result for o in obs):  # Episode over.
-            game_info = parallel.run(c.game_info for c in controllers)
+          game_info = parallel.run(c.game_info for c in controllers)
         timesteps = tuple(environment.TimeStep(step_type=0,
                                       reward=0,
                                       discount=0, observation=o,
@@ -93,7 +99,7 @@ def test_multi_player():
                  for o, info in zip(agent_obs, game_info))
         
         # Act
-        actions1 = agent1.step(timesteps[0])
+        #actions1 = agent1.step(timesteps[0])
         actions2 = agent2.step(timesteps[1])
         actions = [[], actions2]
         funcs_with_args = [(c.acts, a) for c, a in zip(controllers, actions)]

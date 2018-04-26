@@ -43,10 +43,10 @@ def find_nearest(units, unit):
     return units[dd.argmin()]
 
 
-def collect_units(units, unit_type, owner=1):
+def collect_units(units, unit_type, alliance=1):
     """ return unit's ID in the same type """
     return [u for u in units
-            if u.unit_type == unit_type and u.int_attr.owner == owner]
+            if u.unit_type == unit_type and u.int_attr.alliance == alliance]
 
 
 def is_building(unit):

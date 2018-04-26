@@ -10,13 +10,12 @@ from s2clientprotocol import sc2api_pb2 as sc_pb
 from pysc2.lib.typeenums import UNIT_TYPEID, ABILITY_ID, RACE
 
 from tstarbot.production.production_mgr import BuildCmdHarvest
+from tstarbot.data.pool.macro_def import AllianceType
 
-OWNER_NEUTRAL = 16
 
-
-def collect_units(units, unit_type, owner=1):
+def collect_units(units, unit_type, alliance=1):
     return [u for u in units
-            if u.unit_type == unit_type and u.int_attr.owner == owner]
+            if u.unit_type == unit_type and u.int_attr.alliance == alliance]
 
 
 def collect_tags(units):
@@ -200,7 +199,8 @@ class ZergResourceMgr(BaseResourceMgr):
                                             UNIT_TYPEID.ZERG_EXTRACTOR.value)
         self.all_workers = collect_units(units, UNIT_TYPEID.ZERG_DRONE.value)
         self.all_minerals = collect_units(
-            units, UNIT_TYPEID.NEUTRAL_MINERALFIELD.value, owner=OWNER_NEUTRAL)
+            units, UNIT_TYPEID.NEUTRAL_MINERALFIELD.value,
+            alliance=AllianceType.NEUTRAL.value)
 
         if self.verbose >= 4:
             print_harvester(self.all_bases, name='all_basese')
