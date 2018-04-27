@@ -13,13 +13,24 @@ from tstarbot.production.production_mgr import BuildCmdHarvest
 from tstarbot.data.pool.macro_def import AllianceType
 
 
+def dist(unit1, unit2):
+    """ return Euclidean distance ||unit1 - unit2|| """
+    return ((unit1.float_attr.pos_x - unit2.float_attr.pos_x)**2 +
+            (unit1.float_attr.pos_y - unit2.float_attr.pos_y)**2)**0.5
+
+
 def collect_units(units, unit_type, alliance=1):
     return [u for u in units
             if u.unit_type == unit_type and u.int_attr.alliance == alliance]
 
 
-def collect_tags(units):
-    return [u.tag for u in units]
+def collect_units_by_tags(units, tags):
+    uu = []
+    for tag in tags:
+        u = find_by_tag(units, tag)
+        if u:
+            uu.append(u)
+    return uu
 
 
 def find_by_tag(units, tag):
@@ -29,25 +40,17 @@ def find_by_tag(units, tag):
     return None
 
 
-def find_nearest(units, unit):
-    if not units:
-        return None
-    x, y = unit.float_attr.pos_x, unit.float_attr.pos_y
-    dd = np.asarray([
-        abs(u.float_attr.pos_x - x) + abs(u.float_attr.pos_y - y) for
-        u in units])
-    return units[dd.argmin()]
+def find_first_if(units, f=lambda x: True):
+    for u in units:
+        if f(u):
+            return u
+    return None
 
 
-def find_knn(units, unit, k=1):
-    if not units:
-        return []
-    x, y = unit.float_attr.pos_x, unit.float_attr.pos_y
-    dd = np.asarray([
-        abs(u.float_attr.pos_x - x) + abs(u.float_attr.pos_y - y) for
-        u in units])
-    idx = dd.argsort()[0:k].tolist()
-    return [units[i] for i in idx]
+def sort_units_by_distance(units, unit):
+    def my_dist(x_u):
+        return dist(x_u, unit)
+    return sorted(units, key=my_dist)
 
 
 def get_target_tag(unit, idx=0):
@@ -64,13 +67,33 @@ def is_harvesting(unit):
     return False
 
 
+def get_unfilled_workers(unit):
+    return unit.int_attr.ideal_harvesters - unit.int_attr.assigned_harvesters
+
+
 def has_order(unit):
     return len(unit.orders) > 0
 
 
-def has_rally_drone(unit):
-    return (unit.orders and
-            unit.orders[0].ability_id == ABILITY_ID.RALLY_HATCHERY_WORKERS)
+def func_is_harvesting_local_vb(base_instance):
+    def f_impl(w_unit):
+        target_tag = get_target_tag(w_unit)
+        return target_tag in base_instance.vb_set
+    return f_impl
+
+
+def func_is_harvesting_vb(extractor):
+    def f_impl(w_unit):
+        target_tag = get_target_tag(w_unit)
+        return target_tag == extractor.tag
+    return f_impl
+
+
+def func_is_harvesting_local_mineral(base_instance):
+    def f_impl(w_unit):
+        target_tag = get_target_tag(w_unit)
+        return target_tag in base_instance.mineral_set
+    return f_impl
 
 
 def print_harvester(units, name=''):
@@ -109,6 +132,13 @@ def act_stop(unit_tag):
     return action
 
 
+def append_valid_action(actions, action):
+    if action:
+        actions.append(action)
+        return True
+    return False
+
+
 class BaseResourceMgr(object):
     def __init__(self):
         pass
@@ -123,8 +153,6 @@ class BaseResourceMgr(object):
 class ZergResourceMgr(BaseResourceMgr):
     def __init__(self):
         super(ZergResourceMgr, self).__init__()
-
-        self.update_base_territory_freq = 30
 
         self.all_bases = None
         self.all_extractors = None
@@ -150,12 +178,16 @@ class ZergResourceMgr(BaseResourceMgr):
         self._update_config(dc)
         self._update_data(dc)
 
+        # parse commands
         accepted_cmds = [BuildCmdHarvest]
         for _ in range(dc.dd.build_command_queue.size()):
             cmd = dc.dd.build_command_queue.get()
             if type(cmd) not in accepted_cmds:
                 # put back unknown command
                 dc.dd.build_command_queue.put(cmd)
+                if self.verbose >= 4:
+                    print("Warning: ZergResourceMgr: unknown command {}".format(
+                        cmd))
                 continue
             if type(cmd) == BuildCmdHarvest:
                 self.is_gas_first = cmd.gas_first
@@ -165,20 +197,10 @@ class ZergResourceMgr(BaseResourceMgr):
                         "= {}".format(self.step, self.is_gas_first)
                     )
 
-        # which comes first: harvesting mineral or gas?
-        update_first, update_second = (ZergResourceMgr._update_harvest_mineral,
-                                       ZergResourceMgr._update_harvest_gas)
-        if self.is_gas_first:
-            update_first, update_second = update_second, update_first
-
+        # perform actions
         actions = []
-        actions_first, filled_first = update_first(self)
-        actions += actions_first
-        if filled_first:
-            # the first has been fulfilled, now consider the second
-            actions_second, _ = update_second(self)
-            actions += actions_second
-
+        actions += self._update_base_instance()
+        actions += self._update_idle_workers()
         am.push_actions(actions)
         self.step += 1
 
@@ -186,8 +208,6 @@ class ZergResourceMgr(BaseResourceMgr):
         if hasattr(dc, 'config'):
             if hasattr(dc.config, 'resource_verbose'):
                 self.verbose = dc.config.resource_verbose
-            if hasattr(dc.config, 'resource_gas_first'):
-                self.is_gas_first = dc.config.resource_gas_first
 
     def _update_data(self, dc):
         self.dc = dc
@@ -203,97 +223,138 @@ class ZergResourceMgr(BaseResourceMgr):
             alliance=AllianceType.NEUTRAL.value)
 
         if self.verbose >= 4:
+            print('ZergResourceMgr: step {}'.format(self.step))
             print_harvester(self.all_bases, name='all_basese')
             print_harvester(self.all_extractors, name='all_extractors')
             print('len workers = ', len(self.all_workers))
 
-    def _update_harvest_gas(self):
-        actions, n_unfilled = [], []
-        for e in self.all_extractors:
-            n_remain = (e.int_attr.ideal_harvesters -
-                        e.int_attr.assigned_harvesters)
-            n_unfilled.append(n_remain)
-            if n_remain <= 0:
-                # balanced: do nothing
-                continue
-            elif n_remain < 0:
-                # overfilled: let extra workers stop
-                workers = find_knn(self.all_workers, e, k=1)
-                for w in workers:
-                    actions += [act_stop(w.tag)]
-                continue
-            else:
-                # under-filled: grab a worker to have it
-                workers = self._find_available_workers_for_gas(n_remain)
-                for w in workers:
-                    actions += [act_worker_harvests_on_target(
-                        target_tag=e.tag, worker_tag=w.tag)]
-        return actions, all([n <= 0 for n in n_unfilled])
+    def _update_base_instance(self):
+        actions = []
+        for base_instance in self.dc.dd.base_pool.bases.values():
+            act = self._update_local_base(base_instance)
+            append_valid_action(actions, act)
+            act = self._update_local_extractors(base_instance)
+            append_valid_action(actions, act)
+        return actions
 
-    def _update_harvest_mineral(self):
-        actions, n_unfilled = [], []
-        for i, b in enumerate(self.all_bases):
-            n_remain = (b.int_attr.ideal_harvesters -
-                        b.int_attr.assigned_harvesters)
-            n_unfilled.append(n_remain)
-            # ideal_harvesters is a smart number provided by the game core,
-            # depending on the remaining minerals and the base position. E.g.,
-            # <16 if some minerals are empty;
-            # =0 if the base is not near a mineral cluster;
-            if n_remain == 0:
-                # balanced: do nothing
-                continue
-            elif n_remain < 0:
-                # overfilled: let extra workers stop
-                workers = find_knn(self.all_workers, b, k=1)
-                for w in workers:
-                    actions += [act_stop(w.tag)]
-                continue
-            else:
-                # under-filled: grab a worker to have it
-                w = self._find_available_workers_for_mineral(1)  # find only ONE
-                if w:
-                    # mineral = find_nearest(units=self.all_minerals, unit=b)
-                    mineral = self._find_available_mineral(base_unit=b)
-                    if mineral:
-                        actions += [act_worker_harvests_on_target(
-                            target_tag=mineral.tag, worker_tag=w[0].tag)]
-            if self.verbose >= 3 and n_remain != 0:
-                print(
-                    "base(pos_x={}, pos_y={}): ideal_harvesters={}, "
-                    "assigned_harvesters={}".format(
-                        b.float_attr.pos_x, b.float_attr.pos_y,
-                        b.int_attr.ideal_harvesters,
-                        b.int_attr.assigned_harvesters
-                    )
-                )
-        return actions, all([n <= 0 for n in n_unfilled])
-
-    def _find_available_workers_for_gas(self, num=1):
-        ww = []
-        for w in self.all_workers:
-            if len(ww) >= num:
-                break
-            if not has_order(w) or is_harvesting(w):
-                # this worker has no order or is harvesting (preferably mineral)
-                ww.append(w)
-        return ww
-
-    def _find_available_workers_for_mineral(self, num=1):
-        ww = []
-        for w in self.all_workers:
-            if len(ww) >= num:
-                break
-            if not has_order(w):  # this is an idle worker
-                ww.append(w)
-        return ww
-
-    def _find_available_mineral(self, base_unit):
-        # find the mineral with the largest remaining amount
-        base_instance = self.dc.dd.base_pool.bases[base_unit.tag]
-        if not base_instance:
+    def _update_local_base(self, base_instance):
+        base = base_instance.unit  # it must have only ONE base
+        n_unfilled = get_unfilled_workers(base)
+        if n_unfilled == 0:  # do nothing when balanced
             return None
-        local_minerals = [self.dc.dd.base_pool.minerals[m_tag]
-                          for m_tag in base_instance.mineral_set]
-        return max(local_minerals,
-                   key=lambda u: u.int_attr.mineral_contents)
+
+        local_workers = collect_units_by_tags(self.all_workers,
+                                              base_instance.worker_set)
+
+        # only add a worker when mineral-first is True
+        if not self.is_gas_first:
+            if n_unfilled > 0:
+                # under-filled: grab a worker harvesting gas,
+                # and have the worker harvest mineral
+                worker = find_first_if(
+                    units=local_workers,
+                    f=func_is_harvesting_local_vb(base_instance)
+                )
+                if worker:
+                    return self._harvest_on_base(worker, base)
+
+        if n_unfilled < 0:
+            # over-filled: stop a worker harvesting on mineral
+            worker = find_first_if(
+                units=local_workers,
+                f=func_is_harvesting_local_mineral(base_instance)
+            )
+            if worker:
+                return act_stop(worker.tag)
+
+        return None
+
+    def _update_local_extractors(self, base_instance):
+        local_workers = []
+        local_extractors = collect_units_by_tags(self.all_extractors,
+                                                 base_instance.vb_set)
+        for e in local_extractors:
+            n_unfilled = get_unfilled_workers(e)
+            if n_unfilled == 0:  # do nothing when balanced
+                continue
+
+            if not local_workers:
+                local_workers = collect_units_by_tags(
+                    self.all_workers, base_instance.worker_set)
+
+            # only add a worker when gas-first is True
+            if self.is_gas_first:
+                if n_unfilled > 0:
+                    # under-filled: grab a worker harvesting  and have it work
+                    worker = find_first_if(
+                        units=local_workers,
+                        f=func_is_harvesting_local_mineral(base_instance)
+                    )
+                    if worker:
+                        return self._harvest_on_extractor(worker, e)
+
+            if n_unfilled < 0:
+                # over-filled: stop a worker
+                worker = find_first_if(
+                    units=local_workers,
+                    f=func_is_harvesting_vb(e)
+                )
+                if worker:
+                    return act_stop(worker.tag)
+
+    def _update_idle_workers(self):
+        actions = []
+        idle_workers = [w for w in self.all_workers if not has_order(w)]
+        for w in idle_workers:
+            bases_sorted = sort_units_by_distance(self.all_bases, w)
+            extractors_sorted = sort_units_by_distance(self.all_extractors, w)
+            if not self.is_gas_first:  # mineral first
+                act = self._harvest_on_first_unfilled_base(w, bases_sorted)
+                if append_valid_action(actions, act):
+                    continue
+                act = self._harvest_on_first_unfilled_extractor(
+                    w, extractors_sorted)
+                if append_valid_action(actions, act):
+                    continue
+            else:  # gas first
+                act = self._harvest_on_first_unfilled_extractor(
+                    w, extractors_sorted)
+                if append_valid_action(actions, act):
+                    continue
+                act = self._harvest_on_first_unfilled_base(w, bases_sorted)
+                if append_valid_action(actions, act):
+                    continue
+        return actions
+
+    def _harvest_on_first_unfilled_base(self, worker, bases):
+        for b in bases:
+            if get_unfilled_workers(b) > 0:
+                action = self._harvest_on_base(worker, b)
+                if action:
+                    return action
+        return None
+
+    def _harvest_on_first_unfilled_extractor(self, worker, extractors):
+        for e in extractors:
+            if get_unfilled_workers(e) > 0:
+                action = self._harvest_on_extractor(worker, e)
+                if action:
+                    return action
+        return None
+
+    def _harvest_on_base(self, worker, base):
+        # for the local minerals in base's neighborhood,
+        # find the one with largest remaining content
+        base_instance = self.dc.dd.base_pool.bases[base.tag]
+        local_minerals = collect_units_by_tags(self.all_minerals,
+                                               base_instance.mineral_set)
+        if local_minerals:
+            mineral = max(local_minerals,
+                          key=lambda u: u.int_attr.mineral_contents)
+            return act_worker_harvests_on_target(mineral.tag, worker.tag)
+        return None
+
+    def _harvest_on_extractor(self, worker, extractor):
+        if worker and extractor:
+            return act_worker_harvests_on_target(extractor.tag, worker.tag)
+        return None
