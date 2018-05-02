@@ -231,19 +231,21 @@ class ZergBuildingMgr(BaseBuildingMgr):
 
     def _can_build_by_pos(self, cmd, dc):
         # use pre defined relative position
-        delta_pos = {
+        self.delta_pos = {
             UNIT_TYPEID.ZERG_SPAWNINGPOOL.value: [6, 0],
             UNIT_TYPEID.ZERG_ROACHWARREN.value: [0, -6],
             UNIT_TYPEID.ZERG_EVOLUTIONCHAMBER.value: [-3, -8],
             UNIT_TYPEID.ZERG_HYDRALISKDEN.value: [6, -3],
             UNIT_TYPEID.ZERG_SPIRE.value: [3, -6],
             UNIT_TYPEID.ZERG_LURKERDENMP.value: [7, -7],
-            UNIT_TYPEID.ZERG_INFESTATIONPIT.value: [1, -9]
+            UNIT_TYPEID.ZERG_INFESTATIONPIT.value: [1, -9],
+            UNIT_TYPEID.ZERG_ULTRALISKCAVERN.value: [7, 7],
+            UNIT_TYPEID.ZERG_SPINECRAWLER.value: [30, -12]
         }
 
         builder_tag, target_pos = None, ()
         unit_type = cmd.unit_type
-        if hasattr(cmd, 'base_tag') and unit_type in delta_pos:
+        if hasattr(cmd, 'base_tag') and unit_type in self.delta_pos:
             if self.verbose >= 1:
                 print('building {}'.format(unit_type))
                 if unit_type == UNIT_TYPEID.ZERG_LURKERDENMP.value:
@@ -257,11 +259,13 @@ class ZergBuildingMgr(BaseBuildingMgr):
             base_x = base_instance.unit.float_attr.pos_x
             base_y = base_instance.unit.float_attr.pos_y
             if base_x < base_y:
-                target_pos = [base_x + delta_pos[unit_type][0],
-                              base_y + delta_pos[unit_type][1]]
+                target_pos = [base_x + self.delta_pos[unit_type][0],
+                              base_y + self.delta_pos[unit_type][1]]
             else:
-                target_pos = [base_x - delta_pos[unit_type][0],
-                              base_y - delta_pos[unit_type][1]]
+                target_pos = [base_x - self.delta_pos[unit_type][0],
+                              base_y - self.delta_pos[unit_type][1]]
+            if unit_type == UNIT_TYPEID.ZERG_SPINECRAWLER.value:
+                self.delta_pos[unit_type][1] -= 2
         return builder_tag, target_pos
 
     def _build_base_expand(self, cmd, dc):

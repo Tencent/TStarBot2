@@ -19,10 +19,12 @@ class Army(object):
         self._unsquaded_units = set(u for u in combat_pool.units
                                     if u not in squaded_units)
 
-    def create_squad(self, units):
+    def create_squad(self, units, uniform=None):
         for u in units:
             self._unsquaded_units.remove(u)
         squad = Squad(units)
+        if uniform is not None:
+            squad._uniform = uniform
         self._squads.append(squad)
         return squad
 
@@ -51,5 +53,5 @@ class Army(object):
         return sum([squad.num_roach_units for squad in self._squads])
 
     @property
-    def num_zerglings_units(self):
-        return sum([squad.num_zerglings_units for squad in self._squads])
+    def num_zergling_units(self):
+        return sum([squad.num_zergling_units for squad in self._squads])

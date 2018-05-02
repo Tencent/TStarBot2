@@ -9,6 +9,7 @@ from tstarbot.data.pool import macro_def as tm
 
 
 SquadStatus = Enum('SquadStatus', ('IDLE', 'MOVE', 'ATTACK', 'DEFEND'))
+MutaliskSquadStatus = Enum('SquadStatus', ('IDLE', 'PHASE1', 'PHASE2'))
 
 
 class Squad(object):
@@ -16,6 +17,8 @@ class Squad(object):
     def __init__(self, units):
         self._units = units  # combat_unit
         self._status = SquadStatus.IDLE
+        self.combat_status = MutaliskSquadStatus.IDLE
+        self._uniform = None
         for u in units:
             assert u.unit.int_attr.alliance == tm.AllianceType.SELF.value
 
@@ -64,6 +67,10 @@ class Squad(object):
     def zergling_units(self):
         return [u for u in self._units
                 if u.type == UNIT_TYPEID.ZERG_ZERGLING.value]
+
+    @property
+    def uniform(self):
+        return self._uniform
 
     @property
     def status(self):

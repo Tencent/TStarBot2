@@ -3,17 +3,12 @@ from __future__ import division
 from __future__ import print_function
 
 import math
-import random
-import numpy as np
-from s2clientprotocol import sc2api_pb2 as sc_pb
-import pysc2.lib.typeenums as tp
-
-from tstarbot.combat import BaseCombatMgr
+from tstarbot.combat.micro.micro_mgr import MicroBase
 
 ROACH_ATTACK_RANGE = 5.0
 
 
-class DefeatRoachesCombatMgr(BaseCombatMgr):
+class DefeatRoachesCombatMgr(MicroBase):
     """ Combat Manager for the DefeatRoaches minimap"""
 
     def __init__(self, dc):

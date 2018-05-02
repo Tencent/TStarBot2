@@ -8,8 +8,8 @@ var2 = value2
 
 Do NOT ABUSE it, do NOT define nested or complex data structure.
 """
-building_verbose = 0
+building_verbose = 1
 resource_verbose = 0
-combat_strategy = 'REFORM'
-game_version = '3.16.1'
 scout_explore_version = 0
+combat_strategy = 'HARASS'
+game_version = '4.0'
