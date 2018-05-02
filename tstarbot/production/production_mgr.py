@@ -17,6 +17,8 @@ BuildCmdBuilding = namedtuple('build_cmd_building', ['base_tag', 'unit_type'])
 BuildCmdUnit = namedtuple('build_cmd_unit', ['base_tag', 'unit_type'])
 BuildCmdUpgrade = namedtuple('build_cmd_upgrade', ['building_tag',
                                                    'ability_id'])
+BuildCmdMorph = namedtuple('build_cmd_morph', ['unit_tag',
+                                               'ability_id'])
 BuildCmdExpand = namedtuple('build_cmd_expand', ['base_tag', 'pos'])
 BuildCmdHarvest = namedtuple('build_cmd_harvest', ['gas_first'])
 BuildCmdSpawnLarva = namedtuple('build_cmd_spawn_larva',
@@ -34,6 +36,14 @@ def find_nearest(units, unit):
         return None
     x, y = unit.float_attr.pos_x, unit.float_attr.pos_y
     dd = np.asarray([dist_to_pos(u, [x, y]) for u in units])
+    return units[dd.argmin()]
+
+
+def find_nearest_to_pos(units, pos):
+    """ find the nearest one to pos within the list 'units' """
+    if not units:
+        return None
+    dd = np.asarray([dist_to_pos(u, pos) for u in units])
     return units[dd.argmin()]
 
 
@@ -105,12 +115,16 @@ class BaseProductionMgr(object):
         self.build_order = BuildOrderQueue(self.TT)
         self.obs = None
         self.cut_in_item = []
+        self.born_pos = None
+        self.verbose = 0
 
     def reset(self):
         self.onStart = True
         self.build_order.clear_all()
         self.obs = None
         self.cut_in_item = []
+        self.born_pos = None
+        self.verbose = 0
 
     def update(self, data_context, act_mgr):
         self.obs = data_context.sd.obs
@@ -118,6 +132,10 @@ class BaseProductionMgr(object):
         # Get goal and search build order
         if self.onStart:
             self.build_order.set_build_order(self.get_opening_build_order())
+            bases = data_context.dd.base_pool.bases
+            self.born_pos = [[bases[tag].unit.float_attr.pos_x,
+                              bases[tag].unit.float_attr.pos_y]
+                             for tag in bases][0]
             self.onStart = False
         elif self.build_order.is_empty():
             goal = self.get_goal(data_context)
@@ -131,12 +149,16 @@ class BaseProductionMgr(object):
                 and self.should_expand_now(data_context)):
             self.build_order.queue_as_highest(self.base_unit())
             self.cut_in_item.append(self.base_unit())
+            if self.verbose > 0:
+                print('Cut in: {}'.format(self.base_unit()))
 
         # determine whether to build extractor
         if (self.gas_unit() not in self.cut_in_item
                 and self.need_more_extractor(data_context)):
             self.build_order.queue_as_highest(self.gas_unit())
             self.cut_in_item.append(self.gas_unit())
+            if self.verbose > 0:
+                print('Cut in: {}'.format(self.gas_unit()))
 
         self.add_upgrade(data_context)
 
@@ -157,11 +179,15 @@ class BaseProductionMgr(object):
                     self.build_order.remove_current_item()
                     if current_item.unit_id in self.cut_in_item:
                         self.cut_in_item.remove(current_item.unit_id)
+                    if self.verbose > 0:
+                        print('Produce: {}'.format(current_item.unit_id))
             else:  # Upgrade
                 if self.upgrade(current_item, data_context):
                     self.build_order.remove_current_item()
                     if current_item.unit_id in self.cut_in_item:
                         self.cut_in_item.remove(current_item.unit_id)
+                    if self.verbose > 0:
+                        print('Upgrade: {}'.format(current_item.unit_id))
 
         if self.should_gas_first(data_context):
             data_context.dd.build_command_queue.put(
@@ -202,24 +228,30 @@ class BaseProductionMgr(object):
         current_item = self.build_order.current_item()
         builder = None
         for unit_type in current_item.whatBuilds:
-            if (self.has_unit(unit_type) or
-                    unit_type == UNIT_TYPEID.ZERG_LARVA.value):
+            if (self.has_unit(unit_type)
+                    or self.unit_in_progress(unit_type)
+                    or unit_type == UNIT_TYPEID.ZERG_LARVA.value):
                 builder = unit_type
                 break
         if builder is None and len(current_item.whatBuilds) > 0:
             builder_id = [unit_id for unit_id in UNIT_TYPEID
                           if unit_id.value == current_item.whatBuilds[0]]
             self.build_order.queue_as_highest(builder_id[0])
+            if self.verbose > 0:
+                print('Cut in: {}'.format(builder_id[0]))
             return True
         required_unit = None
         for unit_type in current_item.requiredUnits:
-            if self.has_unit(unit_type):
+            if (self.has_unit(unit_type)
+                    or self.unit_in_progress(unit_type)):
                 required_unit = unit_type
                 break
         if required_unit is None and len(current_item.requiredUnits) > 0:
             required_id = [unit_id for unit_id in UNIT_TYPEID
                            if unit_id.value == current_item.requiredUnits[0]]
             self.build_order.queue_as_highest(required_id[0])
+            if self.verbose > 0:
+                print('Cut in: {}'.format(required_id[0]))
             return True
         required_upgrade = None
         for upgrade_type in current_item.requiredUpgrades:
@@ -231,6 +263,8 @@ class BaseProductionMgr(object):
             required_id = [up_id for up_id in UPGRADE_ID
                            if up_id.value == required_upgrade]
             self.build_order.queue_as_highest(required_id[0])
+            if self.verbose > 0:
+                print('Cut in: {}'.format(required_id[0]))
         return False
 
     def check_supply(self, dc):
@@ -240,12 +274,14 @@ class BaseProductionMgr(object):
         if (play_info[3] + current_item.supplyCost
                 > play_info[4] - min(8, max(0, (play_info[4]-30)/5))
                 and current_item.supplyCost > 0
-                and not self.supply_in_progress(dc)
+                and not self.supply_in_progress()
                 and current_item.unit_id != self.supply_unit()):
             self.build_order.queue_as_highest(self.supply_unit())
+            if self.verbose > 0:
+                print('Cut in: {}'.format(self.supply_unit()))
 
     def has_unit(self, unit_type, alliance=1):
-        return any([unit.unit_type == unit_type and unit.int_attr.alliance == alliance
+        return any([(unit.unit_type == unit_type and unit.int_attr.alliance == alliance)
                     for unit in self.obs["units"]])
 
     def find_unit(self, unit_type, alliance=1):
@@ -267,15 +303,32 @@ class BaseProductionMgr(object):
                      for up_type in upgrade_type_list])
                 or len(upgrade_type_list) == 0)
 
-    def upgrade_in_progress(self, upgrade_type):
+    def upgrade_in_progress(self, upgrade_type, alliance=1):
         data = self.TT.getUpgradeData(upgrade_type)
         builders = [unit for unit in self.obs['units']
-                    if unit.int_attr.unit_type in data.whatBuilds
-                    and unit.int_attr.alliance == 1]
+                    if unit.unit_type in data.whatBuilds
+                    and unit.int_attr.alliance == alliance]
         in_progress = [len(builder.orders) > 0
                        and builder.orders[0].ability_id == data.buildAbility
                        for builder in builders]
         return any(in_progress)
+
+    def unit_in_progress(self, unit_type, alliance=1):
+        data = self.TT.getUnitData(unit_type)
+        order_unit = data.whatBuilds
+        if UNIT_TYPEID.ZERG_LARVA.value in order_unit:
+            order_unit = [UNIT_TYPEID.ZERG_EGG.value]
+        for unit in self.obs['units']:
+            if (unit.unit_type == unit_type
+                    and unit.int_attr.alliance == alliance
+                    and unit.float_attr.build_progress < 1):
+                return True
+            if (unit.unit_type in order_unit
+                    and unit.int_attr.alliance == alliance
+                    and len(unit.orders) > 0
+                    and unit.orders[0].ability_id == data.buildAbility):
+                return True
+        return False
 
     def should_expand_now(self, data_context):
         return False
@@ -307,8 +360,8 @@ class BaseProductionMgr(object):
     def can_build(self, build_item, data_context):  # check resource requirement
         return False
 
-    def supply_in_progress(self, dc):
-        return False
+    def supply_in_progress(self):
+        return self.unit_in_progress(self.supply_unit().value)
 
     def should_gas_first(self, dc):
         return True
@@ -354,13 +407,42 @@ class ZergProductionMgr(BaseProductionMgr):
                 num_worker += self.assigned_harvesters(base)
                 num_worker_needed += self.ideal_harvesters(base)
             num_worker_needed -= num_worker
-            if num_worker_needed > 0 and num_worker < 66:
-                goal = [UNIT_TYPEID.ZERG_DRONE] * 2 +\
-                       [UNIT_TYPEID.ZERG_ROACH] * 3 +\
-                       [UNIT_TYPEID.ZERG_HYDRALISK] * 2
-            else:
+            game_loop = self.obs['game_loop'][0]
+            if game_loop < 6 * 60 * 16:  # 8 min
                 goal = [UNIT_TYPEID.ZERG_ROACH] * 3 + \
                        [UNIT_TYPEID.ZERG_HYDRALISK] * 2
+            elif game_loop < 8 * 60 * 16: # 8 min
+                goal = [UNIT_TYPEID.ZERG_ROACH] * 2 + \
+                       [UNIT_TYPEID.ZERG_HYDRALISK] * 2
+                if (not self.unit_in_progress(UNIT_TYPEID.ZERG_LURKERDENMP.value)
+                        and not self.has_unit(UNIT_TYPEID.ZERG_LURKERDENMP.value)):
+                    goal += [UNIT_TYPEID.ZERG_LURKERDENMP]
+                elif (not self.unit_in_progress(UNIT_TYPEID.ZERG_SPIRE.value)
+                        and not self.has_unit(UNIT_TYPEID.ZERG_SPIRE.value)):
+                    goal += [UNIT_TYPEID.ZERG_SPIRE]
+            else:
+                goal = [UNIT_TYPEID.ZERG_ROACH] * 1 + \
+                       [UNIT_TYPEID.ZERG_HYDRALISK] * 2
+                if (not self.unit_in_progress(UNIT_TYPEID.ZERG_INFESTATIONPIT.value)
+                        and not self.has_unit(UNIT_TYPEID.ZERG_INFESTATIONPIT.value)):
+                    goal += [UNIT_TYPEID.ZERG_INFESTATIONPIT]
+                if self.has_building_built([UNIT_TYPEID.ZERG_LURKERDENMP.value]):
+                    goal += [UNIT_TYPEID.ZERG_LURKERMP]
+                if (self.has_building_built([UNIT_TYPEID.ZERG_SPIRE.value])
+                        or self.has_building_built([UNIT_TYPEID.ZERG_GREATERSPIRE.value])):
+                    goal += [UNIT_TYPEID.ZERG_CORRUPTOR]
+                if (self.has_building_built([UNIT_TYPEID.ZERG_INFESTATIONPIT.value])
+                        and not self.unit_in_progress(UNIT_TYPEID.ZERG_HIVE.value)
+                        and not self.has_unit(UNIT_TYPEID.ZERG_HIVE.value)):
+                    goal += [UNIT_TYPEID.ZERG_HIVE]
+                if (self.has_building_built([UNIT_TYPEID.ZERG_HIVE.value])
+                        and not self.unit_in_progress(UNIT_TYPEID.ZERG_GREATERSPIRE.value)
+                        and not self.has_unit(UNIT_TYPEID.ZERG_GREATERSPIRE.value)):
+                    goal += [UNIT_TYPEID.ZERG_GREATERSPIRE]
+                if self.has_building_built([UNIT_TYPEID.ZERG_GREATERSPIRE.value]):
+                    goal += [UNIT_TYPEID.ZERG_BROODLORD]
+            if num_worker_needed > 0 and num_worker < 66:
+                goal = [UNIT_TYPEID.ZERG_DRONE] * 5 + goal
         return goal
 
     def perform_search(self, goal):
@@ -397,7 +479,7 @@ class ZergProductionMgr(BaseProductionMgr):
             if bases[base_tag].unit.float_attr.build_progress == 1:
                 ideal_harvesters_all += self.ideal_harvesters(bases[base_tag])
         if (num > min(ideal_harvesters_all, expand_worker[base_num])
-                and not self.building_in_progress(self.base_unit())):
+                and not self.unit_in_progress(self.base_unit().value)):
             return True
         return False
 
@@ -411,7 +493,7 @@ class ZergProductionMgr(BaseProductionMgr):
                    if u.unit_type == UNIT_TYPEID.ZERG_EXTRACTOR.value
                    and u.int_attr.vespene_contents > 100
                    and u.int_attr.alliance == 1])  # 100 gas ~ 30s ?
-        if self.building_in_progress(UNIT_TYPEID.ZERG_EXTRACTOR):
+        if self.unit_in_progress(UNIT_TYPEID.ZERG_EXTRACTOR.value):
             return False
 
         gas_num = 0
@@ -437,9 +519,11 @@ class ZergProductionMgr(BaseProductionMgr):
             # print('need more queens!')
             self.build_order.queue_as_highest(UNIT_TYPEID.ZERG_QUEEN)
             self.cut_in_item.append(UNIT_TYPEID.ZERG_QUEEN)
+            if self.verbose > 0:
+                print('Cut in: {}'.format(UNIT_TYPEID.ZERG_QUEEN))
 
     def need_more_queen(self, dc):
-        if self.queen_in_progress(dc):
+        if self.unit_in_progress(UNIT_TYPEID.ZERG_QUEEN.value):
             return False
         n_q = len([unit for unit in self.obs['units']
                    if unit.int_attr.unit_type == UNIT_TYPEID.ZERG_QUEEN.value
@@ -493,7 +577,8 @@ class ZergProductionMgr(BaseProductionMgr):
         return False
 
     def can_build(self, build_item, dc):  # check resource requirement
-        if not (self.has_building_built(build_item.requiredUnits)
+        if not (self.has_building_built(build_item.whatBuilds)
+                and self.has_building_built(build_item.requiredUnits)
                 and self.has_upgrade(dc, build_item.requiredUpgrades)):
             return False
         play_info = self.obs["player"]
@@ -505,7 +590,16 @@ class ZergProductionMgr(BaseProductionMgr):
 
     def set_build_base(self, build_item, data_context):
         bases = data_context.dd.base_pool.bases
+        builders = build_item.whatBuilds
         if build_item.isBuilding:  # build building
+            if UNIT_TYPEID.ZERG_DRONE.value not in builders: # morph building
+                build_units = [u for u in self.obs['units']
+                              if u.unit_type in builders]
+                build_unit = find_nearest_to_pos(build_units, self.born_pos)
+                data_context.dd.build_command_queue.put(
+                    BuildCmdMorph(unit_tag=build_unit.tag,
+                                  ability_id=build_item.buildAbility))
+                return True
             if build_item.unit_id == UNIT_TYPEID.ZERG_EXTRACTOR:
                 tag = self.find_base_to_build_extractor(bases)
             else:
@@ -522,6 +616,15 @@ class ZergProductionMgr(BaseProductionMgr):
                                          unit_type=build_item.unit_id.value))
                 return True
         else:  # build unit
+            if (UNIT_TYPEID.ZERG_LARVA.value not in builders
+                    and UNIT_TYPEID.ZERG_HATCHERY.value not in builders):
+                build_units = [u for u in self.obs['units']
+                              if u.unit_type in builders]
+                build_unit = find_nearest_to_pos(build_units, self.born_pos)
+                data_context.dd.build_command_queue.put(
+                    BuildCmdMorph(unit_tag=build_unit.tag,
+                                  ability_id=build_item.buildAbility))
+                return True
             if build_item.unit_id == UNIT_TYPEID.ZERG_DRONE:
                 tag = self.find_base_to_produce_drone(bases)
             elif build_item.unit_id == UNIT_TYPEID.ZERG_QUEEN:
@@ -547,7 +650,7 @@ class ZergProductionMgr(BaseProductionMgr):
                 max_num = worker_num
         return tag
 
-    def find_base_to_build(self, bases):
+    def find_base_with_most_workers(self, bases):
         max_num = 0  # find base with most workers
         tag = None
         for base_tag in bases:
@@ -557,6 +660,19 @@ class ZergProductionMgr(BaseProductionMgr):
             if worker_num > max_num:
                 tag = base_tag
                 max_num = worker_num
+        return tag
+
+    def find_base_to_build(self, bases):
+        d_min = 1000  # find base closed to born position
+        tag = None
+        for base_tag in bases:
+            if bases[base_tag].unit.float_attr.build_progress < 1:
+                continue
+            worker_num = self.assigned_harvesters(bases[base_tag])
+            d = dist_to_pos(bases[base_tag].unit, self.born_pos)
+            if worker_num > 0 and d < d_min:
+                tag = base_tag
+                d_min = d
         return tag
 
     def find_base_to_produce_drone(self, bases):
@@ -633,10 +749,6 @@ class ZergProductionMgr(BaseProductionMgr):
                 d_min = d
         return pos
 
-    def supply_in_progress(self, dc):
-        return any([egg.orders[0].ability_id == ABILITY_ID.TRAIN_OVERLORD.value
-                    for egg in dc.dd.base_pool.eggs.values()])
-
     def find_unit_by_tag(self, tag):
         return [unit for unit in self.obs['units'] if unit.tag == tag]
 
@@ -685,6 +797,8 @@ class ZergProductionMgr(BaseProductionMgr):
                 if upgrade_id not in self.cut_in_item:
                     self.build_order.queue_as_highest(upgrade_id)
                     self.cut_in_item.append(upgrade_id)
+                    if self.verbose > 0:
+                        print('Cut in: {}'.format(upgrade_id))
                 break
 
     def upgrade(self, build_item, dc):

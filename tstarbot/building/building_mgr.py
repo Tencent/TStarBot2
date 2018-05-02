@@ -11,6 +11,7 @@ from pysc2.lib.typeenums import ABILITY_ID
 
 from tstarbot.production.production_mgr import BuildCmdUnit
 from tstarbot.production.production_mgr import BuildCmdUpgrade
+from tstarbot.production.production_mgr import BuildCmdMorph
 from tstarbot.production.production_mgr import BuildCmdBuilding
 from tstarbot.production.production_mgr import BuildCmdExpand
 from tstarbot.production.production_mgr import BuildCmdSpawnLarva
@@ -116,8 +117,14 @@ class ZergBuildingMgr(BaseBuildingMgr):
         if dc.dd.build_command_queue.empty():
             return
 
-        accepted_cmds = [BuildCmdUnit, BuildCmdBuilding, BuildCmdExpand,
-                         BuildCmdUpgrade, BuildCmdSpawnLarva]
+        accepted_cmds = [
+            BuildCmdUnit,
+            BuildCmdUpgrade,
+            BuildCmdMorph,
+            BuildCmdBuilding,
+            BuildCmdExpand,
+            BuildCmdSpawnLarva
+        ]
         actions = []
         for _ in range(dc.dd.build_command_queue.size()):
             cmd = dc.dd.build_command_queue.get()
@@ -130,6 +137,8 @@ class ZergBuildingMgr(BaseBuildingMgr):
                 action = self._build_unit(cmd, dc)
             elif type(cmd) == BuildCmdUpgrade:
                 action = self._build_upgrade_tech(cmd, dc)
+            elif type(cmd) == BuildCmdMorph:
+                action = self._build_morph(cmd, dc)
             elif type(cmd) == BuildCmdBuilding:
                 action = self._build_building(cmd, dc)
             elif type(cmd) == BuildCmdExpand:
@@ -173,13 +182,23 @@ class ZergBuildingMgr(BaseBuildingMgr):
         ability_id = cmd.ability_id
         return act_build_by_self(builder_tag, ability_id)
 
+    def _build_morph(self, cmd, dc):
+        builder_tag = cmd.unit_tag
+        ability_id = cmd.ability_id
+        if self.verbose >= 1:
+            if ability_id == ABILITY_ID.MORPH_LURKERDEN.value:
+                print('building MORPH_LURKERDEN')
+            if ability_id == ABILITY_ID.MORPH_LURKER.value:
+                print('morphing lurker')
+            if ability_id == ABILITY_ID.MORPH_GREATERSPIRE.value:
+                print('morphing greater spire')
+            if ability_id == ABILITY_ID.MORPH_BROODLORD.value:
+                print('morphing broodlord')
+        return act_build_by_self(builder_tag, ability_id)
+
     def _build_building(self, cmd, dc):
         unit_type = cmd.unit_type
         ability_id = self.TT.getUnitData(unit_type).buildAbility
-
-        builder_tag = self._can_build_upgrade(cmd, dc)
-        if builder_tag:
-            return act_build_by_self(builder_tag, ability_id)
 
         builder_tag, target_tag = self._can_build_by_tag(cmd, dc)
         if builder_tag and target_tag:
@@ -199,13 +218,6 @@ class ZergBuildingMgr(BaseBuildingMgr):
             )
         return None
 
-    def _can_build_upgrade(self, cmd, dc):
-        builder_tag = None
-        unit_type = cmd.unit_type
-        if unit_type == UNIT_TYPEID.ZERG_LAIR.value:
-            builder_tag = cmd.base_tag
-        return builder_tag
-
     def _can_build_by_tag(self, cmd, dc):
         builder_tag, target_tag = None, None
         unit_type = cmd.unit_type
@@ -223,12 +235,20 @@ class ZergBuildingMgr(BaseBuildingMgr):
             UNIT_TYPEID.ZERG_SPAWNINGPOOL.value: [6, 0],
             UNIT_TYPEID.ZERG_ROACHWARREN.value: [0, -6],
             UNIT_TYPEID.ZERG_EVOLUTIONCHAMBER.value: [-3, -8],
-            UNIT_TYPEID.ZERG_HYDRALISKDEN.value: [6, -3]
+            UNIT_TYPEID.ZERG_HYDRALISKDEN.value: [6, -3],
+            UNIT_TYPEID.ZERG_SPIRE.value: [3, -6],
+            UNIT_TYPEID.ZERG_LURKERDENMP.value: [7, -7],
+            UNIT_TYPEID.ZERG_INFESTATIONPIT.value: [1, -9]
         }
 
         builder_tag, target_pos = None, ()
         unit_type = cmd.unit_type
         if hasattr(cmd, 'base_tag') and unit_type in delta_pos:
+            if self.verbose >= 1:
+                print('building {}'.format(unit_type))
+                if unit_type == UNIT_TYPEID.ZERG_LURKERDENMP.value:
+                    print('building LURKERDENMP')
+
             base_instance = dc.dd.base_pool.bases[cmd.base_tag]
 
             builder_tag = self._find_available_worker_for_building(
