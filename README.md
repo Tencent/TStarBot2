@@ -11,7 +11,9 @@ pip install -e .
 ## Dependencies
 ```
 pysc2 (Zheng Yang's fork)
+pillow (for optional image saving)
 ```
+All the dependencies will be automatically installed with the `pip install` command.
 
 ## How to Run
 Run the agent using `pysc2.bin.agent`. Example:
