@@ -23,7 +23,7 @@ class DancingDronesAgent(base_agent.BaseAgent):
         self.dc = DancingDrones()
         self.am = ActMgr()
 
-        self._mgr = DancingDronesMgr()
+        self._mgr = DancingDronesMgr(self.dc)
 
     def step(self, timestep):
         super(DancingDronesAgent, self).step(timestep)

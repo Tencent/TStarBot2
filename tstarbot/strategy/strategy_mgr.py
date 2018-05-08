@@ -22,7 +22,7 @@ Strategy = Enum('Strategy', ('RUSH', 'ECONOMY_FIRST', 'ONEWAVE', 'REFORM'))
 
 class BaseStrategyMgr(object):
 
-    def __init__(self):
+    def __init__(self, dc):
         self.rally_set_dict = {}
 
     def reset(self):
@@ -34,8 +34,8 @@ class BaseStrategyMgr(object):
 
 class ZergStrategyMgr(BaseStrategyMgr):
 
-    def __init__(self):
-        super(ZergStrategyMgr, self).__init__()
+    def __init__(self, dc):
+        super(ZergStrategyMgr, self).__init__(dc)
         self._enable_render = False
         self._strategy = Strategy.REFORM
         self._army = Army()
@@ -49,12 +49,12 @@ class ZergStrategyMgr(BaseStrategyMgr):
             self._renderer = StrategyRenderer(window_size=(480, 360),
                                               world_size={'x': 200, 'y': 150},
                                               caption='SC2: Strategy Viewer')
+        self._init_config(dc)
 
     def update(self, dc, am):
         super(ZergStrategyMgr, self).update(dc, am)
         self._army.update(dc.dd.combat_pool)
         self._dc = dc
-        self._update_config(dc)
 
         self._command_army(dc.dd.combat_command_queue)
 
@@ -74,7 +74,7 @@ class ZergStrategyMgr(BaseStrategyMgr):
         if self._enable_render:
             self._renderer = list()
 
-    def _update_config(self, dc):
+    def _init_config(self, dc):
         if hasattr(dc, 'config'):
             if hasattr(dc.config, 'combat_strategy'):
                 if dc.config.combat_strategy == 'RUSH':

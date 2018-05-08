@@ -11,3 +11,4 @@ Do NOT ABUSE it, do NOT define nested or complex data structure.
 building_verbose = 0
 resource_verbose = 0
 combat_strategy = 'REFORM'
+game_version = '3.16.1'

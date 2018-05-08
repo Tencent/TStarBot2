@@ -7,14 +7,11 @@ from pysc2.lib.typeenums import UNIT_TYPEID
 from pysc2.lib.typeenums import ABILITY_ID
 from pysc2.lib.typeenums import UPGRADE_ID
 from pysc2.lib.typeenums import RACE
-from pysc2.lib import TechTree
 from collections import deque
 from collections import namedtuple
 from tstarbot.production.map_tool import bitmap2array
 from tstarbot.production.map_tool import compute_dist
 import numpy as np
-
-TT = TechTree()
 
 BuildCmdBuilding = namedtuple('build_cmd_building', ['base_tag', 'unit_type'])
 BuildCmdUnit = namedtuple('build_cmd_unit', ['base_tag', 'unit_type'])
@@ -41,15 +38,16 @@ def find_nearest(units, unit):
 
 
 class BuildOrderQueue(object):
-    def __init__(self):
+    def __init__(self, TT):
         self.queue = deque()
+        self.TT = TT
 
     def set_build_order(self, unit_list):
         for unit_id in unit_list:
             if type(unit_id) == UNIT_TYPEID:
-                build_item = TT.getUnitData(unit_id.value)
+                build_item = self.TT.getUnitData(unit_id.value)
             elif type(unit_id) == UPGRADE_ID:
-                build_item = TT.getUpgradeData(unit_id.value)
+                build_item = self.TT.getUpgradeData(unit_id.value)
             else:
                 raise Exception('Unknown unit_id {}'.format(unit_id))
             build_item.unit_id = unit_id
@@ -73,9 +71,9 @@ class BuildOrderQueue(object):
 
     def queue_as_highest(self, unit_id):
         if type(unit_id) == UNIT_TYPEID:
-            build_item = TT.getUnitData(unit_id.value)
+            build_item = self.TT.getUnitData(unit_id.value)
         elif type(unit_id) == UPGRADE_ID:
-            build_item = TT.getUpgradeData(unit_id.value)
+            build_item = self.TT.getUpgradeData(unit_id.value)
         else:
             raise Exception('Unknown unit_id {}'.format(unit_id))
         build_item.unit_id = unit_id
@@ -83,9 +81,9 @@ class BuildOrderQueue(object):
 
     def queue(self, unit_id):
         if type(unit_id) == UNIT_TYPEID:
-            build_item = TT.getUnitData(unit_id.value)
+            build_item = self.TT.getUnitData(unit_id.value)
         elif type(unit_id) == UPGRADE_ID:
-            build_item = TT.getUpgradeData(unit_id.value)
+            build_item = self.TT.getUpgradeData(unit_id.value)
         else:
             raise Exception('Unknown unit_id {}'.format(unit_id))
         build_item.unit_id = unit_id
@@ -99,11 +97,12 @@ class BuildOrderQueue(object):
 
 
 class BaseProductionMgr(object):
-    def __init__(self, race=RACE.Zerg, use_search=True):
+    def __init__(self, dc, race=RACE.Zerg, use_search=True):
         self.onStart = True
         self.race = race
         self.use_search = use_search
-        self.build_order = BuildOrderQueue()
+        self.TT = dc.sd.TT
+        self.build_order = BuildOrderQueue(self.TT)
         self.obs = None
         self.cut_in_item = []
 
@@ -269,7 +268,7 @@ class BaseProductionMgr(object):
                 or len(upgrade_type_list) == 0)
 
     def upgrade_in_progress(self, upgrade_type):
-        data = TT.getUpgradeData(upgrade_type)
+        data = self.TT.getUpgradeData(upgrade_type)
         builders = [unit for unit in self.obs['units']
                     if unit.int_attr.unit_type in data.whatBuilds
                     and unit.int_attr.alliance == 1]
@@ -319,8 +318,8 @@ class BaseProductionMgr(object):
 
 
 class ZergProductionMgr(BaseProductionMgr):
-    def __init__(self):
-        super(ZergProductionMgr, self).__init__()
+    def __init__(self, dc):
+        super(ZergProductionMgr, self).__init__(dc)
 
     def reset(self):
         super(ZergProductionMgr, self).reset()
@@ -469,7 +468,7 @@ class ZergProductionMgr(BaseProductionMgr):
                                            base_tag=base.tag))
 
     def building_in_progress(self, unit_id, alliance=1):
-        unit_data = TT.getUnitData(unit_id.value)
+        unit_data = self.TT.getUnitData(unit_id.value)
         if not unit_data.isBuilding:
             print('building_in_progress can only be used for buildings!')
         for unit in self.obs['units']:
@@ -485,7 +484,7 @@ class ZergProductionMgr(BaseProductionMgr):
         return False
 
     def queen_in_progress(self, dc):
-        data = TT.getUnitData(UNIT_TYPEID.ZERG_QUEEN.value)
+        data = self.TT.getUnitData(UNIT_TYPEID.ZERG_QUEEN.value)
         bases = dc.dd.base_pool.bases
         for tag in bases:
             if any([order.ability_id == data.buildAbility
@@ -675,7 +674,7 @@ class ZergProductionMgr(BaseProductionMgr):
                         UPGRADE_ID.ZERGGROUNDARMORSLEVEL2,
                         UPGRADE_ID.ZERGMISSILEWEAPONSLEVEL2]
         for upgrade_id in upgrade_list:
-            build_item = TT.getUpgradeData(upgrade_id.value)
+            build_item = self.TT.getUpgradeData(upgrade_id.value)
             if not self.has_building_built(build_item.whatBuilds):
                 break
             if self.upgrade_in_progress(upgrade_id.value):

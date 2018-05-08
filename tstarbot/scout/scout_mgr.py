@@ -21,7 +21,7 @@ class BaseScoutMgr(object):
 
 
 class ZergScoutMgr(BaseScoutMgr):
-    def __init__(self):
+    def __init__(self, dc):
         super(ZergScoutMgr, self).__init__()
         self._scouts = {} # tagid -> unit
         self._tasks = []

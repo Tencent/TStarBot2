@@ -18,7 +18,7 @@ class BaseCombatMgr(object):
 
     Common Utilites for combat are implemented here. """
 
-    def __init__(self):
+    def __init__(self, dc):
         pass
 
     def reset(self):
@@ -183,16 +183,14 @@ class BaseCombatMgr(object):
 
 class ZergCombatMgr(BaseCombatMgr):
     """ A zvz Zerg combat manager """
-    def __init__(self):
-        super(ZergCombatMgr, self).__init__()
-        self.dc = None
+    def __init__(self, dc):
+        super(ZergCombatMgr, self).__init__(dc)
         self.roach_attack_range = 5.0
         self.self_combat_units = []
         self.enemy_units = []
         self.enemy_combat_units = []
 
     def reset(self):
-        self.dc = None
         self.self_combat_units = []
         self.enemy_units = []
         self.enemy_combat_units = []
@@ -292,8 +290,8 @@ class ZergCombatMgr(BaseCombatMgr):
 
 class ZergCombatLxHanMgr(BaseCombatMgr):
     """ A temporal Mgr for testing Combat module for full game """
-    def __init__(self):
-        super(ZergCombatLxHanMgr, self).__init__()
+    def __init__(self, dc):
+        super(ZergCombatLxHanMgr, self).__init__(dc)
         self.enemy_pos_cnt_max = 0
         self.roach_attack_range = 5.0
         self.enemy_units = []

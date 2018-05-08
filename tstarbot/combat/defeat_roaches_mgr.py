@@ -16,8 +16,8 @@ ROACH_ATTACK_RANGE = 5.0
 class DefeatRoachesCombatMgr(BaseCombatMgr):
     """ Combat Manager for the DefeatRoaches minimap"""
 
-    def __init__(self):
-        super(DefeatRoachesCombatMgr, self).__init__()
+    def __init__(self, dc):
+        super(DefeatRoachesCombatMgr, self).__init__(dc)
         self.marines = None
         self.roaches = None
 

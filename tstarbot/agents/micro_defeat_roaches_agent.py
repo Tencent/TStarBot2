@@ -24,7 +24,7 @@ class MicroDefeatRoachesAgent(base_agent.BaseAgent):
         super(MicroDefeatRoachesAgent, self).__init__()
         self.dc = DefeatRoaches()
         self.am = ActMgr()
-        self._mgr = DefeatRoachesCombatMgr()
+        self._mgr = DefeatRoachesCombatMgr(self.dc)
 
     def step(self, timestep):
         super(MicroDefeatRoachesAgent, self).step(timestep)

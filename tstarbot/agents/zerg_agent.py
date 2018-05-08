@@ -28,20 +28,19 @@ class ZergAgent(base_agent.BaseAgent):
     def __init__(self, **kwargs):
         super(ZergAgent, self).__init__()
 
-        self.dc = DataContext()
-        self.am = ActMgr()
-
-        self.strategy_mgr = ZergStrategyMgr()
-        self.production_mgr = ZergProductionMgr()
-        self.building_mgr = ZergBuildingMgr()
-        self.resource_mgr = ZergResourceMgr()
-        self.combat_mgr = ZergCombatMgr()
-        self.scout_mgr = ZergScoutMgr()
-
+        config = None
         if kwargs.get('config_path'):  # use the config file
             config = importlib.import_module(kwargs['config_path'])
-            # expose it in data_context for downstream modules
-            self.dc.config = config
+
+        self.dc = DataContext(config)
+        self.am = ActMgr()
+
+        self.strategy_mgr = ZergStrategyMgr(self.dc)
+        self.production_mgr = ZergProductionMgr(self.dc)
+        self.building_mgr = ZergBuildingMgr(self.dc)
+        self.resource_mgr = ZergResourceMgr(self.dc)
+        self.combat_mgr = ZergCombatMgr(self.dc)
+        self.scout_mgr = ZergScoutMgr(self.dc)
 
     def step(self, timestep):
         super(ZergAgent, self).step(timestep)

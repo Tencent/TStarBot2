@@ -69,8 +69,8 @@ class ZergLxHanAgent(base_agent.BaseAgent):
     def __init__(self):
         super(ZergLxHanAgent, self).__init__()
         self.dc_mgr = ZergLxHanDcMgr()
-        self.production_mgr = ZergProductionLxHanMgr()
-        self.combat_mgr = ZergCombatLxHanMgr()
+        self.production_mgr = ZergProductionLxHanMgr(self.dc_mgr)
+        self.combat_mgr = ZergCombatLxHanMgr(self.dc_mgr)
         self.act_mgr = ActMgr()
 
         self.episode_step = 0

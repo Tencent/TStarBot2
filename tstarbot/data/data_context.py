@@ -15,10 +15,18 @@ from tstarbot.data.pool.combat_pool import CombatUnitPool
 from tstarbot.data.pool.enemy_pool import EnemyPool
 from tstarbot.data.pool.scout_pool import ScoutPool
 
+from pysc2.lib import TechTree
+
+
 class StaticData(object):
-    def __init__(self):
+    def __init__(self, config):
         self._obs = None
         self._timestep = None
+        game_version = '3.16.1'
+        if hasattr(config, game_version):
+            game_version = config.game_version
+        self.TT = TechTree()
+        self.TT.update_version(game_version)
 
     def update(self, timestep):
         self._obs = timestep.observation
@@ -34,7 +42,7 @@ class StaticData(object):
 
 
 class DynamicData(object):
-    def __init__(self):
+    def __init__(self, config):
         self.build_command_queue = BuildCommandQueueV2()
         self.combat_command_queue = CombatCommandQueue()
         self.scout_command_queue = ScoutCommandQueue()
@@ -65,9 +73,10 @@ class DynamicData(object):
 
 
 class DataContext:
-    def __init__(self):
-        self._dynamic = DynamicData()
-        self._static = StaticData()
+    def __init__(self, config):
+        self.config = config
+        self._dynamic = DynamicData(config)
+        self._static = StaticData(config)
 
     def update(self, timestep):
         # self._obs = timestep.observation

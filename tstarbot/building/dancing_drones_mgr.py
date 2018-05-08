@@ -9,8 +9,8 @@ from tstarbot.building import BaseBuildingMgr
 
 
 class DancingDronesMgr(BaseBuildingMgr):
-    def __init__(self):
-        super(DancingDronesMgr, self).__init__()
+    def __init__(self, dc):
+        super(DancingDronesMgr, self).__init__(dc)
         self._range_high = 5
         self._range_low = -5
         self._move_ability = 1

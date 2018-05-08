@@ -10,10 +10,11 @@ from s2clientprotocol import sc2api_pb2 as sc_pb
 from pysc2.lib.typeenums import UNIT_TYPEID, ABILITY_ID, RACE
 from pysc2.lib.features import SCREEN_FEATURES
 
+
 class ZergProductionLxHanMgr(object):
     """ 3 bases + roaches + hydralisk """
 
-    def __init__(self):
+    def __init__(self, dc):
         super(ZergProductionLxHanMgr, self).__init__()
         self.drone_limit = 16 + 3 + 3
         self.vespen_status = False

@@ -8,7 +8,6 @@ import numpy as np
 from s2clientprotocol import sc2api_pb2 as sc_pb
 from pysc2.lib.typeenums import UNIT_TYPEID
 from pysc2.lib.typeenums import ABILITY_ID
-from pysc2.lib import TechTree
 
 from tstarbot.production.production_mgr import BuildCmdUnit
 from tstarbot.production.production_mgr import BuildCmdUpgrade
@@ -16,8 +15,6 @@ from tstarbot.production.production_mgr import BuildCmdBuilding
 from tstarbot.production.production_mgr import BuildCmdExpand
 from tstarbot.production.production_mgr import BuildCmdSpawnLarva
 from tstarbot.data.pool.macro_def import WORKER_BUILD_ABILITY
-
-TT = TechTree()
 
 
 def dist(unit1, unit2):
@@ -81,7 +78,7 @@ def act_build_by_pos(builder_tag, target_pos, ability_id):
 
 
 class BaseBuildingMgr(object):
-    def __init__(self):
+    def __init__(self, dc):
         pass
 
     def update(self, dc, am):
@@ -92,18 +89,18 @@ class BaseBuildingMgr(object):
 
 
 class ZergBuildingMgr(BaseBuildingMgr):
-    def __init__(self):
-        super(ZergBuildingMgr, self).__init__()
+    def __init__(self, dc):
+        super(ZergBuildingMgr, self).__init__(dc)
         self.verbose = 0
         self._step = 0
+        self.TT = dc.sd.TT  # tech tree
+        self._init_config(dc)  # do it last, as it overwrites previous members
 
     def reset(self):
         self._step = 0
 
     def update(self, dc, am):
         super(ZergBuildingMgr, self).update(dc, am)
-
-        self._update_config(dc)
 
         if self.verbose >= 2:
             units = dc.sd.obs['units']
@@ -143,7 +140,7 @@ class ZergBuildingMgr(BaseBuildingMgr):
                 actions.append(action)
         am.push_actions(actions)
 
-    def _update_config(self, dc):
+    def _init_config(self, dc):
         if hasattr(dc, 'config'):
             if hasattr(dc.config, 'building_verbose'):
                 self.verbose = dc.config.building_verbose
@@ -157,7 +154,7 @@ class ZergBuildingMgr(BaseBuildingMgr):
                     "base_tag {} invalid in base_pool".format(cmd.base_tag)
                 )
             return None
-        ability_id = TT.getUnitData(cmd.unit_type).buildAbility
+        ability_id = self.TT.getUnitData(cmd.unit_type).buildAbility
         if cmd.unit_type == UNIT_TYPEID.ZERG_QUEEN.value:
             return act_build_by_self(builder_tag=cmd.base_tag,
                                      ability_id=ability_id)
@@ -178,7 +175,7 @@ class ZergBuildingMgr(BaseBuildingMgr):
 
     def _build_building(self, cmd, dc):
         unit_type = cmd.unit_type
-        ability_id = TT.getUnitData(unit_type).buildAbility
+        ability_id = self.TT.getUnitData(unit_type).buildAbility
 
         builder_tag = self._can_build_upgrade(cmd, dc)
         if builder_tag:

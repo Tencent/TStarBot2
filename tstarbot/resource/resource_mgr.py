@@ -140,7 +140,7 @@ def append_valid_action(actions, action):
 
 
 class BaseResourceMgr(object):
-    def __init__(self):
+    def __init__(self, dc):
         pass
 
     def update(self, obs_mgr, act_mgr):
@@ -151,9 +151,8 @@ class BaseResourceMgr(object):
 
 
 class ZergResourceMgr(BaseResourceMgr):
-    def __init__(self):
-        super(ZergResourceMgr, self).__init__()
-
+    def __init__(self, dc):
+        super(ZergResourceMgr, self).__init__(dc)
         self.all_bases = None
         self.all_extractors = None
         self.all_workers = None
@@ -161,6 +160,7 @@ class ZergResourceMgr(BaseResourceMgr):
         self.is_gas_first = False
         self.verbose = 0
         self.step = 0
+        self._init_config(dc)
 
     def reset(self):
         super(ZergResourceMgr, self).reset()
@@ -175,7 +175,6 @@ class ZergResourceMgr(BaseResourceMgr):
     def update(self, dc, am):
         super(ZergResourceMgr, self).update(dc, am)
 
-        self._update_config(dc)
         self._update_data(dc)
 
         # parse commands
@@ -204,7 +203,7 @@ class ZergResourceMgr(BaseResourceMgr):
         am.push_actions(actions)
         self.step += 1
 
-    def _update_config(self, dc):
+    def _init_config(self, dc):
         if hasattr(dc, 'config'):
             if hasattr(dc.config, 'resource_verbose'):
                 self.verbose = dc.config.resource_verbose
