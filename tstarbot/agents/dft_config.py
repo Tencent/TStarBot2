@@ -13,3 +13,4 @@ resource_verbose = 0
 scout_explore_version = 0
 combat_strategy = 'HARASS'
 game_version = '4.0'
+# game_version = '3.16.1'

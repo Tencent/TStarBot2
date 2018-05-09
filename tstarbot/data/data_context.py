@@ -14,7 +14,8 @@ from tstarbot.data.pool.worker_pool import WorkerPool
 from tstarbot.data.pool.combat_pool import CombatUnitPool
 from tstarbot.data.pool.enemy_pool import EnemyPool
 from tstarbot.data.pool.scout_pool import ScoutPool
-
+from s2clientprotocol import sc2api_pb2 as sc_pb
+from pysc2.lib.data_raw import data_raw_3_16, data_raw_4_0
 from pysc2.lib import TechTree
 
 
@@ -22,6 +23,8 @@ class StaticData(object):
     def __init__(self, config):
         self._obs = None
         self._timestep = None
+        self._data_raw = data_raw_4_0
+
         game_version = '3.16.1'
         if hasattr(config, game_version):
             game_version = config.game_version
@@ -39,6 +42,10 @@ class StaticData(object):
     @property
     def timestep(self):
         return self._timestep
+
+    @property
+    def data_raw(self):
+        return self._data_raw
 
 
 class DynamicData(object):

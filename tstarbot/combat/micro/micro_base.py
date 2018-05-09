@@ -3,7 +3,7 @@ import numpy as np
 
 from s2clientprotocol import sc2api_pb2 as sc_pb
 from pysc2.lib.typeenums import ABILITY_ID
-from tstarbot.data.pool.macro_def import COMBAT_ATTACK_UNITS
+from tstarbot.data.pool.macro_def import COMBAT_ATTACK_UNITS, COMBAT_FLYING_UNITS
 
 
 class MicroBase(object):
@@ -55,11 +55,30 @@ class MicroBase(object):
         return action
 
     @staticmethod
+    def move_dir(u, direction):
+        action = sc_pb.Action()
+        action.action_raw.unit_command.ability_id = ABILITY_ID.MOVE.value
+        action.action_raw.unit_command.target_world_space_pos.x = u.float_attr.pos_x + \
+                                                                  direction[0] * 0.5
+        action.action_raw.unit_command.target_world_space_pos.y = u.float_attr.pos_y + \
+                                                                  direction[1] * 0.5
+        action.action_raw.unit_command.unit_tags.append(u.tag)
+        return action
+
+    @staticmethod
     def attack_pos(u, pos):
         action = sc_pb.Action()
         action.action_raw.unit_command.ability_id = ABILITY_ID.ATTACK_ATTACK.value
         action.action_raw.unit_command.target_world_space_pos.x = pos['x']
         action.action_raw.unit_command.target_world_space_pos.y = pos['y']
+        action.action_raw.unit_command.unit_tags.append(u.tag)
+        return action
+
+    @staticmethod
+    def attack_target(u, target):
+        action = sc_pb.Action()
+        action.action_raw.unit_command.ability_id = ABILITY_ID.ATTACK_ATTACK.value
+        action.action_raw.unit_command.target_unit_tag = target.tag
         action.action_raw.unit_command.unit_tags.append(u.tag)
         return action
 
@@ -158,11 +177,11 @@ class MicroBase(object):
                 selected_units.append(m)
         return selected_units
 
-    def find_weakest_ally_nearby(self, u, units, dist):
+    def find_weakest_nearby(self, u, units, dist):
         min_a = None
         min_hp = 10000
         for a in units:
-            if self.cal_square_dist(u, a) < dist and a.float_attr.health < min_hp:
+            if self.cal_dist(u, a) < dist and 0 < a.float_attr.health < min_hp and self.can_atk(u, a):
                 min_a = a
                 min_hp = a.float_attr.health
         return min_a
@@ -201,10 +220,48 @@ class MicroBase(object):
                 return True
         return False
 
+    def get_atk_range(self, unit_type):
+        info = self.dc.sd.data_raw.units[unit_type]
+        weapons = info.weapons
+        if len(weapons) == 0:
+            return None
+        return weapons[0].range
+
+    def get_atk_type(self, unit_type):
+        info = self.dc.sd.data_raw.units[unit_type]
+        weapons = info.weapons
+        if len(weapons) == 0:
+            return None
+        return weapons[0].type # 1: Ground, 2: Air, 3: Any
+
+    def can_fly(self, unit_type):
+        if unit_type in COMBAT_FLYING_UNITS:
+            return True
+        else:
+            return False
+
+    def can_atk(self, src, dst):
+        atk_type = self.get_atk_type(src.int_attr.unit_type)
+        if not atk_type:
+            return False
+        if atk_type == 1:
+            return not self.can_fly(dst.int_attr.unit_type)
+        if atk_type == 2:
+            return self.can_fly(dst.int_attr.unit_type)
+        if atk_type == 3:
+            return True
+        raise NotImplementedError
+
+    def ready_to_atk(self, u):
+        return u.float_attr.weapon_cooldown < 2.0  # TODO: frame skip
+
     @staticmethod
     def cal_square_dist(u1, u2):
         return pow(pow(u1.float_attr.pos_x - u2.float_attr.pos_x, 2) +
                    pow(u1.float_attr.pos_y - u2.float_attr.pos_y, 2), 0.5)
+
+    def cal_dist(self, u1, u2):
+        return self.cal_square_dist(u1, u2) - u1.float_attr.radius - u2.float_attr.radius
 
     @staticmethod
     def cal_coor_dist(pos1, pos2):

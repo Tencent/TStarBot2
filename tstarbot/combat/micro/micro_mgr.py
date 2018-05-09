@@ -68,3 +68,44 @@ class MicroMgr(MicroBase):
         action = self.attack_pos(u, pos)
         return action
 
+    def default_act_v2(self, u, pos, mode):
+        def POSX(u):
+            return u.float_attr.pos_x
+
+        def POSY(u):
+            return u.float_attr.pos_y
+
+        atk_range = self.get_atk_range(u.int_attr.unit_type)
+        atk_type = self.get_atk_type(u.int_attr.unit_type)
+        if not atk_range or not atk_type:
+            return self.default_act(u, pos, mode)
+        if len(self.enemy_combat_units) > 0:
+            if self.ready_to_atk(u):
+                weakest = self.find_weakest_nearby(u, self.enemy_combat_units, atk_range)
+                if weakest:
+                    return self.attack_target(u, weakest)
+                else:
+                    return self.attack_pos(u, pos)
+            else:
+                weakest = self.find_weakest_nearby(u, self.enemy_combat_units, 10)
+                if not weakest:
+                    return self.attack_pos(u, pos)
+                enemy_range = self.get_atk_range(weakest.int_attr.unit_type)
+                cur_dist = self.cal_dist(u, weakest)
+                if atk_range >= enemy_range:
+                    if cur_dist < atk_range:
+                        return self.move_dir(u, (POSX(u)-POSX(weakest), POSY(u)-POSY(weakest)))
+                    else:
+                        return self.move_dir(u, (POSX(weakest)-POSX(u), POSY(weakest)-POSY(u)))
+                else:
+                    return self.move_dir(u, (POSX(weakest)-POSX(u), POSY(weakest)-POSY(u)))
+            # if self.is_run_away(u, closest_enemy, self.self_combat_units):
+            #     action = self.run_away_from_closest_enemy(u, closest_enemy)
+            # else:
+            #     action = self.attack_pos(u, pos)
+        else:
+            action = self.attack_pos(u, pos)
+        return action
+
+
+
