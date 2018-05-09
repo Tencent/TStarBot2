@@ -24,7 +24,7 @@ flags.DEFINE_integer("screen_resolution", 84,
 flags.DEFINE_integer("minimap_resolution", 64,
                      "Resolution for minimap feature layers.")
 
-flags.DEFINE_integer("max_agent_episodes", 3, "Total agent steps.")
+flags.DEFINE_integer("max_agent_episodes", 3, "Total agent episodes.")
 flags.DEFINE_integer("game_steps_per_episode", 0, "Game steps per episode.")
 flags.DEFINE_integer("step_mul", 8, "Game steps per agent step.")
 
@@ -83,6 +83,9 @@ def run_loop(agents, env, max_episodes=1):
             outcome = timesteps[me_id].reward
             if outcome > 0:
                 n_win += 1
+            elif outcome == 0:
+                n_win += 0.5
+
             win_rate = n_win / n_episode
             print('episode = {}, outcome = {}, n_win = {}, current winning rate = {}'.format(
                 n_episode, outcome, n_win, win_rate))
