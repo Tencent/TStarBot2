@@ -4,7 +4,7 @@ from pysc2.lib.typeenums import UNIT_TYPEID
 import copy
 import numpy as np
 
-BASE_RANGE = 20.0
+BASE_RANGE = 10.0
 BASE_RESOURCE_RANGE = 10.0
 BASE_RESOURCE_DISTANCE = 10.0
 RESOURCE_DISTANCE = 7.0

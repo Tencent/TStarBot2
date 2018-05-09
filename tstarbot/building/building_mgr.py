@@ -96,6 +96,18 @@ class ZergBuildingMgr(BaseBuildingMgr):
         self._step = 0
         self.TT = dc.sd.TT  # tech tree
         self._init_config(dc)  # do it last, as it overwrites previous members
+        # use pre defined relative position
+        self.delta_pos = {
+            UNIT_TYPEID.ZERG_SPAWNINGPOOL.value: [6, 0],
+            UNIT_TYPEID.ZERG_ROACHWARREN.value: [0, -6],
+            UNIT_TYPEID.ZERG_EVOLUTIONCHAMBER.value: [-3, -8],
+            UNIT_TYPEID.ZERG_HYDRALISKDEN.value: [6, -3],
+            UNIT_TYPEID.ZERG_SPIRE.value: [3, -6],
+            UNIT_TYPEID.ZERG_LURKERDENMP.value: [7, -7],
+            UNIT_TYPEID.ZERG_INFESTATIONPIT.value: [1, -9],
+            UNIT_TYPEID.ZERG_ULTRALISKCAVERN.value: [7, 7],
+            UNIT_TYPEID.ZERG_SPINECRAWLER.value: [28, -8]
+        }
 
     def reset(self):
         self._step = 0
@@ -230,19 +242,6 @@ class ZergBuildingMgr(BaseBuildingMgr):
         return builder_tag, target_tag
 
     def _can_build_by_pos(self, cmd, dc):
-        # use pre defined relative position
-        self.delta_pos = {
-            UNIT_TYPEID.ZERG_SPAWNINGPOOL.value: [6, 0],
-            UNIT_TYPEID.ZERG_ROACHWARREN.value: [0, -6],
-            UNIT_TYPEID.ZERG_EVOLUTIONCHAMBER.value: [-3, -8],
-            UNIT_TYPEID.ZERG_HYDRALISKDEN.value: [6, -3],
-            UNIT_TYPEID.ZERG_SPIRE.value: [3, -6],
-            UNIT_TYPEID.ZERG_LURKERDENMP.value: [7, -7],
-            UNIT_TYPEID.ZERG_INFESTATIONPIT.value: [1, -9],
-            UNIT_TYPEID.ZERG_ULTRALISKCAVERN.value: [7, 7],
-            UNIT_TYPEID.ZERG_SPINECRAWLER.value: [30, -12]
-        }
-
         builder_tag, target_pos = None, ()
         unit_type = cmd.unit_type
         if hasattr(cmd, 'base_tag') and unit_type in self.delta_pos:
@@ -265,7 +264,8 @@ class ZergBuildingMgr(BaseBuildingMgr):
                 target_pos = [base_x - self.delta_pos[unit_type][0],
                               base_y - self.delta_pos[unit_type][1]]
             if unit_type == UNIT_TYPEID.ZERG_SPINECRAWLER.value:
-                self.delta_pos[unit_type][1] -= 2
+                self.delta_pos[unit_type][0] -= 2
+                print('spinecrawler pos: {}'.format(self.delta_pos[unit_type][0]))
         return builder_tag, target_pos
 
     def _build_base_expand(self, cmd, dc):

@@ -12,6 +12,7 @@ class InfestorMgr(MicroBase):
     def __init__(self):
         super(InfestorMgr, self).__init__()
         self.infestor_range = 20
+        self.infestor_harm_range = 4
 
     @staticmethod
     def fungal_growth_attack_pos(u, pos):
@@ -32,7 +33,7 @@ class InfestorMgr(MicroBase):
             return None
         target_density = list()
         for e in targets:
-            target_density.append(len(self.find_units_wihtin_range(e, targets, r=self.viper_harm_range)))
+            target_density.append(len(self.find_units_wihtin_range(e, targets, r=self.infestor_harm_range)))
         target_id = np.argmax(target_density)
         target = targets[target_id]
         target_pos = {'x': target.float_attr.pos_x,
@@ -50,6 +51,7 @@ class InfestorMgr(MicroBase):
                     if target_pos is None:
                         action = self.attack_pos(u, pos)
                         return action
+                    print('infestor skill attack')
                     action = self.fungal_growth_attack_pos(u, target_pos)
                 else:
                     bases = self.dc.dd.base_pool.bases
@@ -59,8 +61,7 @@ class InfestorMgr(MicroBase):
                                 'y': closest_base.float_attr.pos_y}
                     action = self.move_pos(u, base_pos)
             else:
-                action = self.attack_pos(u, pos)
+                action = self.move_pos(u, pos)
         else:
-            move_pos = self.get_center_of_units(self.self_combat_units)
-            action = self.move_pos(u, move_pos)
+            action = self.move_pos(u, pos)
         return action

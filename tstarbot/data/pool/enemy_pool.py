@@ -8,6 +8,8 @@ import collections
 from tstarbot.data.pool.pool_base import PoolBase
 from tstarbot.data.pool import macro_def as tm
 from pysc2.lib.typeenums import UNIT_TYPEID
+from tstarbot.data.pool.macro_def import BUILDING_UNITS
+import numpy as np
 
 
 class EnemyCluster(object):
@@ -59,17 +61,26 @@ class EnemyPool(PoolBase):
         self._enemy_units = list()
         self._enemy_clusters = list()
         self._self_bases = list()
+        self._is_set_main_base = False
 
     def update(self, timestep):
         self._enemy_units = list()
         units = timestep.observation['units']
+        if not self._is_set_main_base:
+            for u in units:
+                if u.int_attr.unit_type in [UNIT_TYPEID.ZERG_HATCHERY.value]:
+                    self._main_base_pos = {'x': u.float_attr.pos_x,
+                                           'y': u.float_attr.pos_y}
+                    self._is_set_main_base = True
+                    break
+
         for u in units:
             if self._is_enemy_unit(u):
                 self._enemy_units.append(u)
             else:
                 if (u.int_attr.unit_type == UNIT_TYPEID.ZERG_HATCHERY.value or
                     u.int_attr.unit_type == UNIT_TYPEID.ZERG_LAIR.value or
-                            u.int_attr.unit_type == UNIT_TYPEID.ZERG_HIVE):
+                        u.int_attr.unit_type == UNIT_TYPEID.ZERG_HIVE):
                     self._self_bases.append(u)
 
         self._enemy_clusters = list()
@@ -110,9 +121,16 @@ class EnemyPool(PoolBase):
     def closest_cluster(self):
         if len(self._enemy_clusters) == 0 or len(self._self_bases) == 0:
             return None
-        my_base_pos = {'x': self._self_bases[0].float_attr.pos_x,
-                       'y': self._self_bases[0].float_attr.pos_y}
-        return min(self._enemy_clusters, key=lambda c: self._distance(c.centroid, my_base_pos))
+
+        c_targets = [c for c in self._enemy_clusters
+                     if (c.num_units > 1 or
+                         (c.num_units == 1 and
+                          c.units[0].int_attr.unit_type in BUILDING_UNITS))]
+        if len(c_targets) == 0:
+            return None
+        target_c = min(c_targets,
+                       key=lambda c: self._distance(c.centroid, self._main_base_pos))
+        return target_c
 
     def _is_enemy_unit(self, u):
         if u.int_attr.alliance != tm.AllianceType.ENEMY.value:
@@ -166,3 +184,10 @@ class EnemyPool(PoolBase):
     def _distance(self, pos_a, pos_b):
         return ((pos_a['x'] - pos_b['x']) ** 2 + \
                 (pos_a['y'] - pos_b['y']) ** 2) ** 0.5
+
+    def _cal_dist(self, u1, u2):
+        pos_a = {'x': u1.float_attr.pos_x,
+                 'y': u1.float_attr.pos_y}
+        pos_b = {'x': u2.float_attr.pos_x,
+                 'y': u2.float_attr.pos_y}
+        return self._distance(pos_a, pos_b)

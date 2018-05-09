@@ -116,7 +116,7 @@ class BaseProductionMgr(object):
         self.obs = None
         self.cut_in_item = []
         self.born_pos = None
-        self.verbose = 1
+        self.verbose = 0
 
     def reset(self):
         self.onStart = True
@@ -124,7 +124,7 @@ class BaseProductionMgr(object):
         self.obs = None
         self.cut_in_item = []
         self.born_pos = None
-        self.verbose = 1
+        self.verbose = 0
 
     def update(self, data_context, act_mgr):
         self.obs = data_context.sd.obs
@@ -384,15 +384,16 @@ class ZergProductionMgr(BaseProductionMgr):
         actions = []
         act_mgr.push_actions(actions)
 
-    def get_goal(self, dc):
+    def get_goal_long_game(self, dc):
         if not self.has_building_built([UNIT_TYPEID.ZERG_LAIR.value,
                                         UNIT_TYPEID.ZERG_HIVE.value]):
             goal = [UNIT_TYPEID.ZERG_LAIR] + \
+                   [UPGRADE_ID.TUNNELINGCLAWS] + \
                    [UNIT_TYPEID.ZERG_DRONE] * 8 + \
                    [UNIT_TYPEID.ZERG_ROACH] * 5 + \
-                   [UNIT_TYPEID.ZERG_SPIRE] + \
+                   [UNIT_TYPEID.ZERG_SPIRE] * 0 + \
                    [UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_ROACH] * 5 + \
-                   [UNIT_TYPEID.ZERG_MUTALISK] * 9 + \
+                   [UNIT_TYPEID.ZERG_MUTALISK] * 0 + \
                    [UNIT_TYPEID.ZERG_DRONE,
                     UNIT_TYPEID.ZERG_ROACH] * 5 + \
                    [UNIT_TYPEID.ZERG_EVOLUTIONCHAMBER] + \
@@ -401,8 +402,7 @@ class ZergProductionMgr(BaseProductionMgr):
                    [UPGRADE_ID.BURROW,
                     UNIT_TYPEID.ZERG_HYDRALISKDEN] + \
                    [UNIT_TYPEID.ZERG_ROACH,
-                    UNIT_TYPEID.ZERG_DRONE] * 3 + \
-                   [UPGRADE_ID.TUNNELINGCLAWS]
+                    UNIT_TYPEID.ZERG_DRONE] * 3
         else:
             num_worker_needed = 0
             num_worker = 0
@@ -417,27 +417,30 @@ class ZergProductionMgr(BaseProductionMgr):
                 goal = [UNIT_TYPEID.ZERG_ROACH] * 2 + \
                        [UNIT_TYPEID.ZERG_HYDRALISK] * 2 + \
                        [UNIT_TYPEID.ZERG_RAVAGER] * 1
-            elif game_loop < 8 * 60 * 16: # 8 min
+            elif game_loop < 15 * 60 * 16: # 8 min
                 goal = [UNIT_TYPEID.ZERG_ROACH] * 1 + \
                        [UNIT_TYPEID.ZERG_HYDRALISK] * 2 + \
                        [UNIT_TYPEID.ZERG_RAVAGER] * 1
                 if (not self.unit_in_progress(UNIT_TYPEID.ZERG_LURKERDENMP.value)
                         and not self.has_unit(UNIT_TYPEID.ZERG_LURKERDENMP.value)):
                     goal += [UNIT_TYPEID.ZERG_LURKERDENMP]
+                if self.has_building_built([UNIT_TYPEID.ZERG_LURKERDENMP.value]):
+                    goal += [UNIT_TYPEID.ZERG_LURKERMP]
+            else:
+                goal = [UNIT_TYPEID.ZERG_ROACH] * 3 + \
+                       [UNIT_TYPEID.ZERG_RAVAGER] * 2 + \
+                       [UNIT_TYPEID.ZERG_HYDRALISK] * 3 + \
+                       [UNIT_TYPEID.ZERG_VIPER] * 1 + [UNIT_TYPEID.ZERG_INFESTOR] * 1
+                       # [UNIT_TYPEID.ZERG_OVERSEER] * 1
                 if (not self.unit_in_progress(UNIT_TYPEID.ZERG_SPIRE.value)
                         and not self.has_unit(UNIT_TYPEID.ZERG_SPIRE.value)):
                     goal += [UNIT_TYPEID.ZERG_SPIRE]
-            else:
-                goal = [UNIT_TYPEID.ZERG_ROACH] * 2 + \
-                       [UNIT_TYPEID.ZERG_RAVAGER] * 1 + \
-                       [UNIT_TYPEID.ZERG_HYDRALISK] * 3 + \
-                       [UNIT_TYPEID.ZERG_VIPER] * 1
 
                 if (not self.unit_in_progress(UNIT_TYPEID.ZERG_LURKERDENMP.value)
                         and not self.has_unit(UNIT_TYPEID.ZERG_LURKERDENMP.value)):
                     goal += [UNIT_TYPEID.ZERG_LURKERDENMP]
                 if self.has_building_built([UNIT_TYPEID.ZERG_LURKERDENMP.value]):
-                    goal += [UNIT_TYPEID.ZERG_LURKERMP]
+                    goal += [UNIT_TYPEID.ZERG_LURKERMP] * 2
 
                 if (not self.unit_in_progress(UNIT_TYPEID.ZERG_INFESTATIONPIT.value)
                         and not self.has_unit(UNIT_TYPEID.ZERG_INFESTATIONPIT.value)):
@@ -459,15 +462,51 @@ class ZergProductionMgr(BaseProductionMgr):
                         and not self.has_unit(UNIT_TYPEID.ZERG_HIVE.value)):
                     goal += [UNIT_TYPEID.ZERG_ULTRALISKCAVERN]
                 if self.has_building_built([UNIT_TYPEID.ZERG_ULTRALISKCAVERN.value]):
-                    goal += [UNIT_TYPEID.ZERG_ULTRALISK] * 1
+                    goal += [UNIT_TYPEID.ZERG_ULTRALISK] * 2
             if num_worker_needed > 0 and num_worker < 66:
                 goal = [UNIT_TYPEID.ZERG_DRONE] * 5 + goal
+        return goal
+
+    def get_goal(self, dc):
+        if not self.has_building_built([UNIT_TYPEID.ZERG_LAIR.value,
+                                        UNIT_TYPEID.ZERG_HIVE.value]):
+            goal = [UNIT_TYPEID.ZERG_LAIR] + \
+                   [UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_ROACH] * 5 + \
+                   [UNIT_TYPEID.ZERG_EVOLUTIONCHAMBER] + \
+                   [UNIT_TYPEID.ZERG_ROACH,
+                    UNIT_TYPEID.ZERG_DRONE] * 2 + \
+                   [UPGRADE_ID.BURROW,
+                    UNIT_TYPEID.ZERG_HYDRALISKDEN] + \
+                   [UNIT_TYPEID.ZERG_ROACH,
+                    UNIT_TYPEID.ZERG_DRONE] * 3 + \
+                   [UPGRADE_ID.TUNNELINGCLAWS]
+        else:
+            num_worker_needed = 0
+            num_worker = 0
+            bases = dc.dd.base_pool.bases
+            for base_tag in bases:
+                base = bases[base_tag]
+                num_worker += self.assigned_harvesters(base)
+                num_worker_needed += self.ideal_harvesters(base)
+            num_worker_needed -= num_worker
+            if num_worker_needed > 0 and num_worker < 66:
+                goal = [UNIT_TYPEID.ZERG_DRONE] * 2 +\
+                       [UNIT_TYPEID.ZERG_ROACH] * 3 +\
+                       [UNIT_TYPEID.ZERG_HYDRALISK] * 2
+            else:
+                goal = [UNIT_TYPEID.ZERG_ROACH] * 3 + \
+                       [UNIT_TYPEID.ZERG_HYDRALISK] * 2
+            # add some ravager
+            game_loop = self.obs['game_loop'][0]
+            if game_loop > 6 * 60 * 16:  # 8 min
+                goal += [UNIT_TYPEID.ZERG_RAVAGER] * 2
         return goal
 
     def perform_search(self, goal):
         return goal
 
-    def get_opening_build_order(self):
+    def get_opening_build_order_long_game(self):
         return [UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_DRONE,
                 UNIT_TYPEID.ZERG_OVERLORD, UNIT_TYPEID.ZERG_EXTRACTOR,
                 UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_DRONE,
@@ -483,7 +522,24 @@ class ZergProductionMgr(BaseProductionMgr):
                 UNIT_TYPEID.ZERG_QUEEN] + \
                [UNIT_TYPEID.ZERG_ZERGLING] * 2 + \
                [UNIT_TYPEID.ZERG_ROACH] * 5 + \
-               [UNIT_TYPEID.ZERG_SPINECRAWLER] * 1
+               [UNIT_TYPEID.ZERG_SPINECRAWLER] * 2
+
+    def get_opening_build_order(self):
+        return [UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_DRONE,
+                UNIT_TYPEID.ZERG_OVERLORD, UNIT_TYPEID.ZERG_EXTRACTOR,
+                UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_DRONE,
+                UNIT_TYPEID.ZERG_DRONE,
+                UNIT_TYPEID.ZERG_SPAWNINGPOOL] + \
+               [UNIT_TYPEID.ZERG_DRONE] * 4 + \
+               [UNIT_TYPEID.ZERG_HATCHERY,
+                UNIT_TYPEID.ZERG_DRONE,
+                UNIT_TYPEID.ZERG_DRONE,
+                UNIT_TYPEID.ZERG_ROACHWARREN,
+                UNIT_TYPEID.ZERG_DRONE,
+                UNIT_TYPEID.ZERG_DRONE,
+                UNIT_TYPEID.ZERG_QUEEN] + \
+               [UNIT_TYPEID.ZERG_ZERGLING] * 2 + \
+               [UNIT_TYPEID.ZERG_ROACH] * 5
 
     def should_expand_now(self, dc):
         expand_worker = {0: 0, 1: 20, 2: 33, 3: 40, 4: 45,

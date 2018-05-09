@@ -42,7 +42,7 @@ class RavagerMgr(MicroBase):
             if target_pos is None:
                 action = self.attack_pos(u, pos)
             else:
-                print('ravager fire!')
+                # print('ravager fire!')
                 action = self.corrosive_attack_pos(u, target_pos)
         else:
             action = self.attack_pos(u, pos)

@@ -58,14 +58,14 @@ class MicroMgr(MicroBase):
         return action
 
     def default_act(self, u, pos, mode):
-        # if len(self.enemy_combat_units) > 0:
-        #     closest_enemy = self.find_closest_enemy(u, self.enemy_combat_units)
-        #     if self.is_run_away(u, closest_enemy, self.self_combat_units):
-        #         action = self.run_away_from_closest_enemy(u, closest_enemy)
-        #     else:
-        #         action = self.attack_pos(u, pos)
-        # else:
-        action = self.attack_pos(u, pos)
+        if len(self.enemy_combat_units) > 0:
+            closest_enemy = self.find_closest_enemy(u, self.enemy_combat_units)
+            if self.is_run_away(u, closest_enemy, self.self_combat_units):
+                action = self.run_away_from_closest_enemy(u, closest_enemy)
+            else:
+                action = self.attack_pos(u, pos)
+        else:
+            action = self.attack_pos(u, pos)
         return action
 
     def default_act_v2(self, u, pos, mode):

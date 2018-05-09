@@ -1,12 +1,14 @@
 from pysc2.lib.typeenums import UNIT_TYPEID, ABILITY_ID, UPGRADE_ID
 from s2clientprotocol import sc2api_pb2 as sc_pb
 from tstarbot.combat.micro.micro_base import MicroBase
+from tstarbot.data.pool.macro_def import UNITS_CAN_DETECT
 
 
 class RoachMgr(MicroBase):
     """ A zvz Zerg combat manager """
     def __init__(self):
         super(RoachMgr, self).__init__()
+        self.overseer_sight = 15
 
     @staticmethod
     def burrow_down(u):
@@ -53,6 +55,17 @@ class RoachMgr(MicroBase):
                     if (self.is_run_away(u, closest_enemy, self.self_combat_units) and
                             UPGRADE_ID.TUNNELINGCLAWS.value in self.dc.sd.obs['raw_data'].player.upgrade_ids):
                         action = self.run_away_from_closest_enemy(u, closest_enemy)
+
+                # if detected
+                # print(u.int_attr.cloak)
+                enemy_detect_units = [u for u in self.enemy_units
+                                      if u.int_attr.unit_type in UNITS_CAN_DETECT]
+                if len(enemy_detect_units) > 0 and len(self.enemy_combat_units) > 0:
+                    closest_enemy_detect_unit = self.find_closest_enemy(u, enemy_detect_units)
+                    closest_enemy_combat_unit = self.find_closest_enemy(u, self.enemy_combat_units)
+                    if self.cal_square_dist(closest_enemy_detect_unit, u) < self.overseer_sight:
+                        # print('burrowed roach has been detected, run away.')
+                        action = self.run_away_from_closest_enemy(u, closest_enemy_combat_unit)
         else:
             print("Unrecognized roach type: %s" % str(u.int_attr.unit_type))
             raise NotImplementedError
