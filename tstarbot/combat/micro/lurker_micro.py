@@ -32,7 +32,7 @@ class LurkerMgr(MicroBase):
                     # print('lurker should burrow down!')
                     action = self.burrow_down(u)
                 else:
-                    action = self.attack_pos(u, pos)
+                    action = self.move_pos(u, pos)
             else:
                 action = self.move_pos(u, pos)
         elif u.int_attr.unit_type == UNIT_TYPEID.ZERG_LURKERMPBURROWED.value:

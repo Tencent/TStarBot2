@@ -7,11 +7,10 @@ from pysc2.lib.typeenums import UNIT_TYPEID
 from pysc2.lib.typeenums import ABILITY_ID
 from pysc2.lib.typeenums import UPGRADE_ID
 from pysc2.lib.typeenums import RACE
-from collections import deque
 from collections import namedtuple
 from tstarbot.production.map_tool import bitmap2array
 from tstarbot.production.map_tool import compute_dist
-import numpy as np
+from tstarbot.production.util import *
 
 BuildCmdBuilding = namedtuple('build_cmd_building', ['base_tag', 'unit_type'])
 BuildCmdUnit = namedtuple('build_cmd_unit', ['base_tag', 'unit_type'])
@@ -25,87 +24,6 @@ BuildCmdSpawnLarva = namedtuple('build_cmd_spawn_larva',
                                 ['base_tag', 'queen_tag'])
 
 
-def dist_to_pos(unit, pos):
-    return ((unit.float_attr.pos_x - pos[0])**2 +
-            (unit.float_attr.pos_y - pos[1])**2)**0.5
-
-
-def find_nearest(units, unit):
-    """ find the nearest one to 'unit' within the list 'units' """
-    if not units:
-        return None
-    x, y = unit.float_attr.pos_x, unit.float_attr.pos_y
-    dd = np.asarray([dist_to_pos(u, [x, y]) for u in units])
-    return units[dd.argmin()]
-
-
-def find_nearest_to_pos(units, pos):
-    """ find the nearest one to pos within the list 'units' """
-    if not units:
-        return None
-    dd = np.asarray([dist_to_pos(u, pos) for u in units])
-    return units[dd.argmin()]
-
-
-class BuildOrderQueue(object):
-    def __init__(self, TT):
-        self.queue = deque()
-        self.TT = TT
-
-    def set_build_order(self, unit_list):
-        for unit_id in unit_list:
-            if type(unit_id) == UNIT_TYPEID:
-                build_item = self.TT.getUnitData(unit_id.value)
-            elif type(unit_id) == UPGRADE_ID:
-                build_item = self.TT.getUpgradeData(unit_id.value)
-            else:
-                raise Exception('Unknown unit_id {}'.format(unit_id))
-            build_item.unit_id = unit_id
-            self.queue.append(build_item)
-
-    def size(self):
-        return len(self.queue)
-
-    def is_empty(self):
-        return len(self.queue) == 0
-
-    def current_item(self):
-        if len(self.queue) > 0:
-            return self.queue[0]
-        else:
-            return None
-
-    def remove_current_item(self):
-        if len(self.queue) > 0:
-            self.queue.popleft()
-
-    def queue_as_highest(self, unit_id):
-        if type(unit_id) == UNIT_TYPEID:
-            build_item = self.TT.getUnitData(unit_id.value)
-        elif type(unit_id) == UPGRADE_ID:
-            build_item = self.TT.getUpgradeData(unit_id.value)
-        else:
-            raise Exception('Unknown unit_id {}'.format(unit_id))
-        build_item.unit_id = unit_id
-        self.queue.appendleft(build_item)
-
-    def queue(self, unit_id):
-        if type(unit_id) == UNIT_TYPEID:
-            build_item = self.TT.getUnitData(unit_id.value)
-        elif type(unit_id) == UPGRADE_ID:
-            build_item = self.TT.getUpgradeData(unit_id.value)
-        else:
-            raise Exception('Unknown unit_id {}'.format(unit_id))
-        build_item.unit_id = unit_id
-        self.queue.append(build_item)
-
-    def clear_all(self):
-        self.queue.clear()
-
-    def reset(self):
-        self.queue.clear()
-
-
 class BaseProductionMgr(object):
     def __init__(self, dc, race=RACE.Zerg, use_search=True):
         self.onStart = True
@@ -117,6 +35,15 @@ class BaseProductionMgr(object):
         self.cut_in_item = []
         self.born_pos = None
         self.verbose = 0
+        self.strategy = 'RUSH'
+        self._init_config(dc)
+
+    def _init_config(self, dc):
+        if hasattr(dc, 'config'):
+            if hasattr(dc.config, 'production_verbose'):
+                self.verbose = dc.config.production_verbose
+            if hasattr(dc.config, 'production_strategy'):
+                self.strategy = dc.config.production_strategy
 
     def reset(self):
         self.onStart = True
@@ -124,7 +51,6 @@ class BaseProductionMgr(object):
         self.obs = None
         self.cut_in_item = []
         self.born_pos = None
-        self.verbose = 0
 
     def update(self, data_context, act_mgr):
         self.obs = data_context.sd.obs
@@ -388,21 +314,19 @@ class ZergProductionMgr(BaseProductionMgr):
         if not self.has_building_built([UNIT_TYPEID.ZERG_LAIR.value,
                                         UNIT_TYPEID.ZERG_HIVE.value]):
             goal = [UNIT_TYPEID.ZERG_LAIR] + \
-                   [UPGRADE_ID.TUNNELINGCLAWS] + \
-                   [UNIT_TYPEID.ZERG_DRONE] * 8 + \
+                   [UNIT_TYPEID.ZERG_DRONE] * 6 + \
                    [UNIT_TYPEID.ZERG_ROACH] * 5 + \
-                   [UNIT_TYPEID.ZERG_SPIRE] * 0 + \
+                   [UNIT_TYPEID.ZERG_SPIRE] * 1 + \
                    [UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_ROACH] * 5 + \
-                   [UNIT_TYPEID.ZERG_MUTALISK] * 0 + \
-                   [UNIT_TYPEID.ZERG_DRONE,
-                    UNIT_TYPEID.ZERG_ROACH] * 5 + \
+                   [UNIT_TYPEID.ZERG_MUTALISK] * 6 + \
                    [UNIT_TYPEID.ZERG_EVOLUTIONCHAMBER] + \
                    [UNIT_TYPEID.ZERG_ROACH,
-                    UNIT_TYPEID.ZERG_DRONE] * 2 + \
+                    UNIT_TYPEID.ZERG_DRONE] * 3 + \
                    [UPGRADE_ID.BURROW,
+                    UPGRADE_ID.TUNNELINGCLAWS,
                     UNIT_TYPEID.ZERG_HYDRALISKDEN] + \
                    [UNIT_TYPEID.ZERG_ROACH,
-                    UNIT_TYPEID.ZERG_DRONE] * 3
+                    UNIT_TYPEID.ZERG_DRONE] * 7
         else:
             num_worker_needed = 0
             num_worker = 0
@@ -417,7 +341,7 @@ class ZergProductionMgr(BaseProductionMgr):
                 goal = [UNIT_TYPEID.ZERG_ROACH] * 2 + \
                        [UNIT_TYPEID.ZERG_HYDRALISK] * 2 + \
                        [UNIT_TYPEID.ZERG_RAVAGER] * 1
-            elif game_loop < 15 * 60 * 16: # 8 min
+            elif game_loop < 12 * 60 * 16: # 12 min
                 goal = [UNIT_TYPEID.ZERG_ROACH] * 1 + \
                        [UNIT_TYPEID.ZERG_HYDRALISK] * 2 + \
                        [UNIT_TYPEID.ZERG_RAVAGER] * 1
@@ -467,7 +391,7 @@ class ZergProductionMgr(BaseProductionMgr):
                 goal = [UNIT_TYPEID.ZERG_DRONE] * 5 + goal
         return goal
 
-    def get_goal(self, dc):
+    def get_goal_rush(self, dc):
         if not self.has_building_built([UNIT_TYPEID.ZERG_LAIR.value,
                                         UNIT_TYPEID.ZERG_HIVE.value]):
             goal = [UNIT_TYPEID.ZERG_LAIR] + \
@@ -503,43 +427,54 @@ class ZergProductionMgr(BaseProductionMgr):
                 goal += [UNIT_TYPEID.ZERG_RAVAGER] * 2
         return goal
 
+    def get_goal(self, dc):
+        if self.strategy == 'RUSH':
+            return self.get_goal_rush(dc)
+        elif self.strategy == 'ADV_ARMS':
+            return self.get_goal_long_game(dc)
+        else:
+            raise Exception('Unknow production strategy!')
+
     def perform_search(self, goal):
         return goal
 
-    def get_opening_build_order_long_game(self):
-        return [UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_DRONE,
-                UNIT_TYPEID.ZERG_OVERLORD, UNIT_TYPEID.ZERG_EXTRACTOR,
-                UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_DRONE,
-                UNIT_TYPEID.ZERG_DRONE] + \
-               [UNIT_TYPEID.ZERG_HATCHERY] + \
-               [UNIT_TYPEID.ZERG_DRONE] * 4 + \
-               [UNIT_TYPEID.ZERG_SPAWNINGPOOL,
-                UNIT_TYPEID.ZERG_DRONE,
-                UNIT_TYPEID.ZERG_DRONE,
-                UNIT_TYPEID.ZERG_ROACHWARREN,
-                UNIT_TYPEID.ZERG_DRONE,
-                UNIT_TYPEID.ZERG_DRONE,
-                UNIT_TYPEID.ZERG_QUEEN] + \
-               [UNIT_TYPEID.ZERG_ZERGLING] * 2 + \
-               [UNIT_TYPEID.ZERG_ROACH] * 5 + \
-               [UNIT_TYPEID.ZERG_SPINECRAWLER] * 2
-
     def get_opening_build_order(self):
-        return [UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_DRONE,
-                UNIT_TYPEID.ZERG_OVERLORD, UNIT_TYPEID.ZERG_EXTRACTOR,
-                UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_DRONE,
-                UNIT_TYPEID.ZERG_DRONE,
-                UNIT_TYPEID.ZERG_SPAWNINGPOOL] + \
-               [UNIT_TYPEID.ZERG_DRONE] * 4 + \
-               [UNIT_TYPEID.ZERG_HATCHERY,
-                UNIT_TYPEID.ZERG_DRONE,
-                UNIT_TYPEID.ZERG_DRONE,
-                UNIT_TYPEID.ZERG_ROACHWARREN,
-                UNIT_TYPEID.ZERG_DRONE,
-                UNIT_TYPEID.ZERG_DRONE,
-                UNIT_TYPEID.ZERG_QUEEN] + \
-               [UNIT_TYPEID.ZERG_ZERGLING] * 2 + \
-               [UNIT_TYPEID.ZERG_ROACH] * 5
+        if self.strategy == 'RUSH':
+            return [UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_OVERLORD, UNIT_TYPEID.ZERG_EXTRACTOR,
+                    UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_SPAWNINGPOOL] + \
+                   [UNIT_TYPEID.ZERG_DRONE] * 4 + \
+                   [UNIT_TYPEID.ZERG_HATCHERY,
+                    UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_ROACHWARREN,
+                    UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_QUEEN] + \
+                   [UNIT_TYPEID.ZERG_ZERGLING] * 2 + \
+                   [UNIT_TYPEID.ZERG_ROACH] * 5
+        elif self.strategy == 'ADV_ARMS':
+            return [UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_OVERLORD, UNIT_TYPEID.ZERG_EXTRACTOR,
+                    UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_DRONE] + \
+                   [UNIT_TYPEID.ZERG_HATCHERY] + \
+                   [UNIT_TYPEID.ZERG_DRONE] * 4 + \
+                   [UNIT_TYPEID.ZERG_SPAWNINGPOOL,
+                    UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_ROACHWARREN,
+                    UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_QUEEN] + \
+                   [UNIT_TYPEID.ZERG_ROACH,
+                    UNIT_TYPEID.ZERG_SPINECRAWLER,
+                    UNIT_TYPEID.ZERG_DRONE] * 2 + \
+                   [UNIT_TYPEID.ZERG_ROACH] * 3
+        else:
+            raise Exception('Unknow production strategy!')
 
     def should_expand_now(self, dc):
         expand_worker = {0: 0, 1: 20, 2: 33, 3: 40, 4: 45,
@@ -587,6 +522,10 @@ class ZergProductionMgr(BaseProductionMgr):
                 return True
         if 0 < n_g < 6 and n_w >= gas_worker_num[n_g]:
             return True
+        play_info = self.obs["player"]
+        minerals, vespene = play_info[1:3]
+        if n_g >= 6 and (minerals > 1000 and vespene < 200):
+            return True
         return False
 
     def post_update(self, dc):
@@ -611,7 +550,7 @@ class ZergProductionMgr(BaseProductionMgr):
                       if (u.unit_type == UNIT_TYPEID.ZERG_ROACH.value
                           or u.unit_type == UNIT_TYPEID.ZERG_HYDRALISK.value)
                       and u.int_attr.alliance == 1])
-        if n_army > 12 and n_q < n_base:
+        if n_army > 12 and n_q < min(n_base, 3):
             return True
         return False
 

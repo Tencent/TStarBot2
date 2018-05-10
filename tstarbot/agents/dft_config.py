@@ -12,5 +12,6 @@ building_verbose = 0
 resource_verbose = 0
 scout_explore_version = 0
 combat_strategy = 'HARASS'
-# game_version = '4.0'
+production_strategy = 'RUSH' # 'ADV_ARMS'
+#game_version = '4.0'
 game_version = '3.16.1'
