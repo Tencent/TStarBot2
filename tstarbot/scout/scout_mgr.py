@@ -93,13 +93,13 @@ class ZergScoutMgr(BaseScoutMgr):
         self._tasks = keep_tasks
 
     def _dispatch_task(self, dc):
-        self._dispatch_cruise_task(dc)
-        self._dispatch_explore_task(dc)
-
         if self._forced_scout_count > 0:
             ret = self._dispatch_forced_scout_task(dc)
             if ret:
                 self._forced_scout_count -= 1
+
+        self._dispatch_cruise_task(dc)
+        self._dispatch_explore_task(dc)
 
     def _dispatch_explore_task(self, dc):
         sp = dc.dd.scout_pool
@@ -128,7 +128,8 @@ class ZergScoutMgr(BaseScoutMgr):
     def _dispatch_forced_scout_task(self, dc):
         sp = dc.dd.scout_pool
 
-        target = sp.find_forced_scout_target()
+        #target = sp.find_forced_scout_target()
+        target = sp.find_furthest_idle_target()
         if target is None:
             return False
 
