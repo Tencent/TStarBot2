@@ -16,6 +16,7 @@ from tstarbot.production.production_mgr import BuildCmdBuilding
 from tstarbot.production.production_mgr import BuildCmdExpand
 from tstarbot.production.production_mgr import BuildCmdSpawnLarva
 from tstarbot.data.pool.macro_def import WORKER_BUILD_ABILITY
+from tstarbot.building.placer import create_placer
 
 
 def dist(unit1, unit2):
@@ -94,22 +95,17 @@ class ZergBuildingMgr(BaseBuildingMgr):
         super(ZergBuildingMgr, self).__init__(dc)
         self.verbose = 0
         self._step = 0
+        self._placer_name = 'naive_predef'
+        self._placer_verbose = 0
         self.TT = dc.sd.TT  # tech tree
+
         self._init_config(dc)  # do it last, as it overwrites previous members
-        # use pre defined relative position
-        self.delta_pos = {
-            UNIT_TYPEID.ZERG_SPAWNINGPOOL.value: [6, 0],
-            UNIT_TYPEID.ZERG_ROACHWARREN.value: [0, -6],
-            UNIT_TYPEID.ZERG_EVOLUTIONCHAMBER.value: [-3, -8],
-            UNIT_TYPEID.ZERG_HYDRALISKDEN.value: [6, -3],
-            UNIT_TYPEID.ZERG_SPIRE.value: [3, -6],
-            UNIT_TYPEID.ZERG_LURKERDENMP.value: [7, -7],
-            UNIT_TYPEID.ZERG_INFESTATIONPIT.value: [1, -9],
-            UNIT_TYPEID.ZERG_ULTRALISKCAVERN.value: [7, 7],
-            UNIT_TYPEID.ZERG_SPINECRAWLER.value: [28, -8]
-        }
+
+        self._placer = create_placer(self._placer_name)
+        self._placer.verbose = self._placer_verbose
 
     def reset(self):
+        self._placer.reset()
         self._step = 0
 
     def update(self, dc, am):
@@ -165,6 +161,10 @@ class ZergBuildingMgr(BaseBuildingMgr):
         if hasattr(dc, 'config'):
             if hasattr(dc.config, 'building_verbose'):
                 self.verbose = dc.config.building_verbose
+            if hasattr(dc.config, 'building_placer'):
+                self._placer_name = dc.config.building_placer
+            if hasattr(dc.config, 'building_placer_verbose'):
+                self._placer_verbose = dc.config.building_placer_verbose
 
     def _build_unit(self, cmd, dc):
         base_instance = dc.dd.base_pool.bases[cmd.base_tag]
@@ -243,29 +243,13 @@ class ZergBuildingMgr(BaseBuildingMgr):
 
     def _can_build_by_pos(self, cmd, dc):
         builder_tag, target_pos = None, ()
-        unit_type = cmd.unit_type
-        if hasattr(cmd, 'base_tag') and unit_type in self.delta_pos:
-            if self.verbose >= 1:
-                print('building {}'.format(unit_type))
-                if unit_type == UNIT_TYPEID.ZERG_LURKERDENMP.value:
-                    print('building LURKERDENMP')
-
+        if hasattr(cmd, 'base_tag') and hasattr(cmd, 'unit_type'):
             base_instance = dc.dd.base_pool.bases[cmd.base_tag]
-
             builder_tag = self._find_available_worker_for_building(
                 dc, base_instance)
 
-            base_x = base_instance.unit.float_attr.pos_x
-            base_y = base_instance.unit.float_attr.pos_y
-            if base_x < base_y:
-                target_pos = [base_x + self.delta_pos[unit_type][0],
-                              base_y + self.delta_pos[unit_type][1]]
-            else:
-                target_pos = [base_x - self.delta_pos[unit_type][0],
-                              base_y - self.delta_pos[unit_type][1]]
-            if unit_type == UNIT_TYPEID.ZERG_SPINECRAWLER.value:
-                self.delta_pos[unit_type][0] -= 2
-                print('spinecrawler pos: {}'.format(self.delta_pos[unit_type][0]))
+            self._placer.update(dc)
+            target_pos = self._placer.get_planned_pos(cmd, dc)
         return builder_tag, target_pos
 
     def _build_base_expand(self, cmd, dc):

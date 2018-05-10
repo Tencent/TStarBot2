@@ -468,11 +468,15 @@ class ZergProductionMgr(BaseProductionMgr):
                     UNIT_TYPEID.ZERG_ROACHWARREN,
                     UNIT_TYPEID.ZERG_DRONE,
                     UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_DRONE,
                     UNIT_TYPEID.ZERG_QUEEN] + \
-                   [UNIT_TYPEID.ZERG_ROACH,
-                    UNIT_TYPEID.ZERG_SPINECRAWLER,
-                    UNIT_TYPEID.ZERG_DRONE] * 2 + \
-                   [UNIT_TYPEID.ZERG_ROACH] * 3
+                   [UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_ROACH] * 3 + \
+                   [UNIT_TYPEID.ZERG_SPINECRAWLER,
+                    UNIT_TYPEID.ZERG_ROACH,
+                    UNIT_TYPEID.ZERG_ROACH,
+                    UNIT_TYPEID.ZERG_SPINECRAWLER]
         else:
             raise Exception('Unknow production strategy!')
 
@@ -617,6 +621,8 @@ class ZergProductionMgr(BaseProductionMgr):
                 return True
             if build_item.unit_id == UNIT_TYPEID.ZERG_EXTRACTOR:
                 tag = self.find_base_to_build_extractor(bases)
+            elif build_item.unit_id == UNIT_TYPEID.ZERG_SPINECRAWLER:
+                tag = self.find_base_to_build_spinecrawler(bases)
             else:
                 tag = self.find_base_to_build(bases)
             if tag is not None:
@@ -688,6 +694,19 @@ class ZergProductionMgr(BaseProductionMgr):
             if worker_num > 0 and d < d_min:
                 tag = base_tag
                 d_min = d
+        return tag
+
+    def find_base_to_build_spinecrawler(self, bases):
+        d_max = -1  # find base furthest to born position
+        tag = None
+        for base_tag in bases:
+            if bases[base_tag].unit.float_attr.build_progress < 1:
+                continue
+            worker_num = self.assigned_harvesters(bases[base_tag])
+            d = dist_to_pos(bases[base_tag].unit, self.born_pos)
+            if worker_num > 0 and d > d_max:
+                tag = base_tag
+                d_max = d
         return tag
 
     def find_base_to_produce_drone(self, bases):
