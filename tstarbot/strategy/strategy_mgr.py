@@ -209,7 +209,7 @@ class ZergStrategyMgr(BaseStrategyMgr):
         if enemy_attacking_me and not self._ready_to_go:
             # print('Enemy is rushing me.')
             if self._cal_square_dist(danger_base, closest_enemy) < 10:
-                print('Defend.')
+                # print('Defend.')
                 for squad in self._army.squads + [self._create_queen_squads()]:
                     squad.status = SquadStatus.MOVE
                     cmd = CombatCommand(

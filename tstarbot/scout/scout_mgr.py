@@ -37,7 +37,7 @@ class ZergScoutMgr(BaseScoutMgr):
             self._explore_ver = dc.config.scout_explore_version
         else:
             self._explore_ver = DEF_EXPLORE_VER 
-        print('Scout explore version=', self._explore_ver)
+        # print('Scout explore version=', self._explore_ver)
 
     def reset(self):
         self._scouts = {}
