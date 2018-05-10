@@ -43,6 +43,7 @@ class Scout(object):
 
 class ScoutBaseTarget(object):
     def __init__(self):
+        self.area = None
         self.enemy_unit = None
         self.has_enemy_base = False
         self.is_main = False
@@ -208,6 +209,7 @@ class ScoutPool(PoolBase):
             raise Exception('resource areas is none')
         for area in areas:
             scout_target = ScoutBaseTarget()
+            scout_target.area = area
             scout_target.pos = area.ideal_base_pos
             dist = md.calculate_distance(self.home_pos[0], 
                                          self.home_pos[1], 

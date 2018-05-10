@@ -1,19 +1,30 @@
 from tstarbot.data.pool.pool_base import PoolBase
 from tstarbot.data.pool import macro_def as tm
 
+from enum import Enum, unique
+
+class EmployStatus(Enum):
+    EMPLOY_IDLE = 0
+    EMPLOY_PRODUCT = 1
+    EMPLOY_COMBAT = 2
+    EMPLOY_SCOUT = 3
+
 class Worker(object):
-    def __init__(self, unit, state, sub_state=None):
+    def __init__(self, unit, state):
         self._unit = unit
         self._state = state
-        self._sub = sub_state 
+        self._employ_status = EmployStatus.EMPLOY_PRODUCT
 
     @property
     def state(self):
         return self._state
 
     @property
-    def sub_state(self):
-        return self._sub
+    def employ_status(self):
+        return self._employ_status
+
+    def employ(self, status):
+        self._employ_status = status
 
     @property
     def unit(self):
@@ -22,17 +33,39 @@ class Worker(object):
 class WorkerPool(PoolBase):
     def __init__(self):
         super(WorkerPool, self).__init__()
-        """the format of workers is {uid: Worker,... }"""
-        self._workers = {}
-        """the format of idles is set([uid, uid, ....])"""
-        self._worker_idle = set([])
-        self._worker_minieral = set([])
-        self._worker_gas = set([])
-        self._worker_build = set([])
-        self._worker_tmpjob = set([])
+        self.workers = {}  # dict, {tag: Worker,... }
+        
+        self.worker_idle_set = set([])  # set, {tag_1, tag_2, ...}
+        self.worker_minieral_set = set([])
+        self.worker_gas_set = set([])
+        self.worker_build_set = set([])
+        self.worker_tmpjob_set = set([])
+
+    def employ_worker(self, employ_status):
+        idles = self._get_employ_workers(EmployStatus.EMPLOY_IDLE)
+        if len(idles) > 0:
+            idles[0].employ(employ_status)
+            return idles[0]
+
+        if employ_status == EmployStatus.EMPLOY_PRODUCT:
+            return None
+
+        products = self._get_employ_workers(EmployStatus.EMPLOY_PRODUCT)
+        if len(products) > 0:
+            products[0].employ(employ_status)
+            return products[0]
+
+        return None
+
+    def release_worker(self, worker):
+        if worker.employ_status != EmployStatus.EMPLOY_IDLE:
+            worker.employ(EmployStatus.EMPLOY_IDLE)
+
+    def get_employ_workers(self, employ_status):
+        return self._get_employ_workers(employ_status)
 
     def assign_gas(self, u):
-        if u.tag in self._workers:
+        if u.tag in self.workers:
             self._update_gas_worker(u)
         else:
             self._add_gas_worker(u)
@@ -45,7 +78,7 @@ class WorkerPool(PoolBase):
                 self._update(u)
             new_tags.add(u.tag)
 
-        union_tags = set(self._workers.keys())
+        union_tags = set(self.workers.keys())
         del_units = union_tags.difference(new_tags)
         for u in del_units:
             self._remove_worker(u)
@@ -53,7 +86,7 @@ class WorkerPool(PoolBase):
     def find_nearest_by_pos(self, x, y):
         least_distance = 0.0
         least_worker = None
-        for worker in self._workers.values():
+        for worker in self.workers.values():
             distance = self._calculate_distances(x, y, 
                     worker.unit.float_attr.pos_x, worker.unit.float_attr.pos_y)
             if distance < least_distance:
@@ -66,7 +99,7 @@ class WorkerPool(PoolBase):
         least_worker = None
         worker_sets = self._get_workerset_by_state(state)
         for tag in worker_sets:
-            worker = self._workers[tag]
+            worker = self.workers[tag]
             distance = self._calculate_distances(x, y,
                     worker.unit.float_attr.pos_x, worker.unit.float_attr.pos_y)
             if distance < least_distance:
@@ -75,8 +108,8 @@ class WorkerPool(PoolBase):
         return worker
 
     def get_by_tag(self, tag):
-        if tag in self._workers:
-            return self._workers[tag]
+        if tag in self.workers:
+            return self.workers[tag]
         else:
             return None
 
@@ -85,58 +118,58 @@ class WorkerPool(PoolBase):
 
     @property
     def idles(self):
-        return self._worker_idle
+        return self.worker_idle_set
 
     @property
     def minierals(self):
-        return self._worker_minieral
+        return self.worker_minieral_set
 
     @property
     def gas(self):
-        return self._worker_gas
+        return self.worker_gas_set
 
     @property
     def builds(self):
-        return self._worker_build
+        return self.worker_build_set
 
     def _update(self, u):
-        if u.tag in self._workers:
+        if u.tag in self.workers:
             self._update_worker(u)
         else:
             self._add_worker(u)
 
     def _add_gas_worker(self, u):
-        self._workers[u.tag] = Worker(u, tm.WorkerState.GAS)
+        self.workers[u.tag] = Worker(u, tm.WorkerState.GAS)
         self._update_state_by_tag(u.tag, tm.WorkerState.GAS)
 
     def _update_gas_worker(self, u):
-        old_worker = self._workers[u.tag]
+        old_worker = self.workers[u.tag]
         if old_worker.state == tm.WorkerState.GAS:
-            self._workers[u.tag] = Worker(u, tm.WorkerState.GAS)
+            self.workers[u.tag] = Worker(u, tm.WorkerState.GAS)
         else:
             self._remove_state_by_tag(u.tag, old_worker.state)
             self._update_state_by_tag(u.tag, tm.WorkerState.GAS)
-            self._workers[u.tag] = Worker(u, tm.WorkerState.GAS)
+            self.workers[u.tag] = Worker(u, tm.WorkerState.GAS)
 
     def _add_worker(self, u):
         state = self._judge_worker_status(u)
-        self._workers[u.tag] = Worker(u, state)
+        self.workers[u.tag] = Worker(u, state)
         self._update_state_by_tag(u.tag, state)
 
     def _update_worker(self, u):
         state = self._judge_worker_status(u)
-        old_worker = self._workers[u.tag]
+        old_worker = self.workers[u.tag]
         if old_worker.state == state:
-            self._workers[u.tag] = Worker(u, state)
+            self.workers[u.tag] = Worker(u, state)
         else:
             self._remove_state_by_tag(u.tag, old_worker.state)
             self._update_state_by_tag(u.tag, state)
-            self._workers[u.tag] = Worker(u, state)
+            self.workers[u.tag] = Worker(u, state)
 
     def _remove_worker(self, tag):
-        worker = self._workers[tag]
+        worker = self.workers[tag]
         self._remove_state_by_tag(worker.unit.tag, worker.state)
-        self._workers.pop(worker.unit.tag)
+        self.workers.pop(worker.unit.tag)
 
     def _judge_worker_status(self, u):
         return self._analysis_orders(u)
@@ -148,7 +181,7 @@ class WorkerPool(PoolBase):
         order = u.orders[0]
         #print('order=', order.ability_id)
         if order.ability_id in tm.WORKER_RESOURCE_ABILITY:
-            if u.tag in self._worker_gas:
+            if u.tag in self.worker_gas_set:
                 return tm.WorkerState.GAS 
             else:
                 return tm.WorkerState.MINERALS
@@ -163,27 +196,27 @@ class WorkerPool(PoolBase):
 
     def _update_state_by_tag(self, tag, state):
         if state == tm.WorkerState.IDLE:
-            self._worker_idle.add(tag)
+            self.worker_idle_set.add(tag)
         elif state == tm.WorkerState.MINERALS:
-            self._worker_minieral.add(tag)
+            self.worker_minieral_set.add(tag)
         elif state == tm.WorkerState.GAS:
-            self._worker_gas.add(tag)
+            self.worker_gas_set.add(tag)
         elif state == tm.WorkerState.BUILD:
-            self._worker_build.add(tag)
+            self.worker_build_set.add(tag)
         else:
-            self._worker_tmpjob.add(tag)
+            self.worker_tmpjob_set.add(tag)
 
     def _remove_state_by_tag(self, tag, state):
         if state == tm.WorkerState.IDLE:
-            self._worker_idle.remove(tag)
+            self.worker_idle_set.remove(tag)
         elif state == tm.WorkerState.MINERALS:
-            self._worker_minieral.remove(tag)
+            self.worker_minieral_set.remove(tag)
         elif state == tm.WorkerState.GAS:
-            self._worker_gas.remove(tag)
+            self.worker_gas_set.remove(tag)
         elif state == tm.WorkerState.BUILD:
-            self._worker_build.remove(tag)
+            self.worker_build_set.remove(tag)
         else:
-            self._worker_tmpjob.remove(tag)
+            self.worker_tmpjob_set.remove(tag)
 
     def _check_worker(self, u):
         if u.unit_type in tm.WORKER_UNITS and \
@@ -201,17 +234,58 @@ class WorkerPool(PoolBase):
 
     def _get_workerset_by_state(self, state):
         if state == tm.WorkerState.IDLE:
-            return self._worker_idle
+            return self.worker_idle_set
         elif state == tm.WorkerState.MINERALS:
-            return self._worker_minieral
+            return self.worker_minieral_set
         elif state == tm.WorkerState.GAS:
-            return self._worker_gas
+            return self.worker_gas_set
         elif state == tm.WorkerState.BUILD:
-            return self._worker_gas
+            return self.worker_gas_set
         else:
             ids = set([])
-            for worker in self._workers:
+            for worker in self.workers.values():
                 if worker.state == state:
                     ids.add(worker.unit.tag)
             return ids
+
+    def _get_employ_workers(self, employ_status):
+        candidates = []
+        for worker in self.workers.values():
+                if worker.employ_status == employ_status:
+                    candidates.append(worker)
+        return candidates
+
+
+if __name__ == '__main__':
+    pool = WorkerPool()
+    for i in range(10):
+        pool.workers[i] = Worker(i, 0)
+
+    employs = []
+    for i in range(15):
+        worker = pool.employ_worker(EmployStatus.EMPLOY_SCOUT)
+        if worker is None:
+            print('employ worker failed, num=', i)
+        else:
+            print('employ worker, num=', i)
+            employs.append(worker)
+
+    scouts = pool.get_employ_workers(EmployStatus.EMPLOY_SCOUT)
+    idles = pool.get_employ_workers(EmployStatus.EMPLOY_IDLE)
+    products = pool.get_employ_workers(EmployStatus.EMPLOY_PRODUCT)
+    combats = pool.get_employ_workers(EmployStatus.EMPLOY_COMBAT)
+    print('scouts_num={}, idles_num={}, products_num={}, combats_num={}'.format(
+          len(scouts), len(idles), len(products), len(combats)))
+
+    for e in employs:
+        pool.release_worker(e)
+
+    scouts = pool.get_employ_workers(EmployStatus.EMPLOY_SCOUT)
+    idles = pool.get_employ_workers(EmployStatus.EMPLOY_IDLE)
+    products = pool.get_employ_workers(EmployStatus.EMPLOY_PRODUCT)
+    combats = pool.get_employ_workers(EmployStatus.EMPLOY_COMBAT)
+    print('scouts_num={}, idles_num={}, products_num={}, combats_num={}'.format(
+          len(scouts), len(idles), len(products), len(combats)))
+
+
 

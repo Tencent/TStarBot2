@@ -4,10 +4,10 @@ from s2clientprotocol import sc2api_pb2 as sc_pb
 import pysc2.lib.typeenums as tp
 
 MAX_SCOUT_HISTORY = 10
-SCOUT_BASE_RANGE = 13
+SCOUT_BASE_RANGE = 15
+SCOUT_SAFE_RANGE = 12
 SCOUT_CRUISE_RANGE = 5
 SCOUT_CRUISE_ARRIVAED_RANGE = 1
-
 
 class ScoutTask(object):
     def __init__(self, scout, home):
@@ -77,12 +77,20 @@ class ScoutTask(object):
     def _check_scout_lost(self):
         return self._scout.is_lost()
 
+EXPLORE_V1 = 0
+EXPLORE_V2 = 1
 
 class ScoutExploreTask(ScoutTask):
-    def __init__(self, scout, target, home):
+    def __init__(self, scout, target, home, version):
         super(ScoutExploreTask, self).__init__(scout, home)
         self._target = target
         self._status = md.ScoutTaskStatus.DOING
+        self._monitor_pos = self._get_monitor_pos()
+        self._base_arrived = False
+        self._monitor_arrived = False
+        self._version = version
+        #print('SCOUT task, base_pos={} monitor_pos={}'.format(
+        #    self._target.pos, self._monitor_pos))
 
     def type(self):
         return md.ScoutTaskType.EXPORE
@@ -99,7 +107,7 @@ class ScoutExploreTask(ScoutTask):
                 self._target.has_army = True
             #print('SCOUT explore_task post destory; target=', str(self._target))
         elif self._status == md.ScoutTaskStatus.UNDER_ATTACK:
-            if self._check_in_target_range() and not self._judge_task_done():
+            if self._check_in_base_range() and not self._judge_task_done():
                 self._target.has_enemy_base = True
                 self._target.has_army = True
             #print('SCOUT explore_task post attack; target=', str(self._target))
@@ -120,15 +128,34 @@ class ScoutExploreTask(ScoutTask):
             self._status = md.ScoutTaskStatus.DONE
             return self._move_to_home()
 
-        if self._check_in_target_range():
-           if self._judge_task_done():
-               self._status = md.ScoutTaskStatus.DONE
+        if not self._base_arrived and self._check_in_base_range():
+            self._base_arrived = True
+
+        if not self._monitor_arrived and self._check_in_monitor_range():
+            self._monitor_arrived = True
 
         return self._exec_by_status()
 
+    def _exec_explore(self):
+        if self._version == EXPLORE_V1:
+            if not self._base_arrived:
+                return self._move_to_target(self._target.pos)
+            elif self._judge_task_done():
+                self._status == md.ScoutTaskStatus.DONE
+                return self._move_to_home()
+            else:
+                return self._noop()
+        else:
+            if not self._base_arrived:
+                return self._move_to_target(self._target.pos)
+            elif not self._monitor_arrived and self._judge_task_done():
+                return self._move_to_target(self._monitor_pos)
+            else:
+                return self._noop()
+
     def _exec_by_status(self):
         if self._status == md.ScoutTaskStatus.DOING:
-            return self._move_to_target(self._target.pos)
+            return self._exec_explore()
         elif self._status == md.ScoutTaskStatus.DONE:
             return self._move_to_home()
         elif self._status == md.ScoutTaskStatus.UNDER_ATTACK:
@@ -140,8 +167,9 @@ class ScoutExploreTask(ScoutTask):
     def _detect_enemy(self, view_enemys, dc):
         bases = []
         queues = []
+        airs = []
         armys = []
-        buildings = []
+        main_base_buildings = []
         for enemy in view_enemys:
             if enemy.unit_type in md.BASE_UNITS:
                 bases.append(enemy)
@@ -149,27 +177,46 @@ class ScoutExploreTask(ScoutTask):
                 queues.append(enemy)
             elif enemy.unit_type in md.COMBAT_UNITS:
                 armys.append(enemy)
-            elif enemy.unit_type in md.BUILDING_UNITS:
-                buildings.append(enemy)
+            elif enemy.unit_type in md.COMBAT_AIR_UNITS:
+                armys.append(enemy)
+            elif enemy.unit_type in md.MAIN_BASE_BUILDS:
+                main_base_buildings.append(enemy)
             else:
                 continue
 
-        done = False
+        goback = False
         for base in bases:
             dist = md.calculate_distance(self._target.pos[0], 
                                          self._target.pos[1],
                                          base.float_attr.pos_x,
                                          base.float_attr.pos_y)
+            #print('SCOUT base distance={}, base_range={}'.format(dist, SCOUT_BASE_RANGE))
             if dist < SCOUT_BASE_RANGE:
                 self._target.has_enemy_base = True
                 self._target.enemy_unit = base
                 if len(armys) > 0:
                     self._target.has_army = True
+                #print('Scout find base, is_main_base:', dc.dd.scout_pool.has_enemy_main_base())
                 if not dc.dd.scout_pool.has_enemy_main_base():
+                    #print('SCOUT find base, set main base')
                     self._target.is_main = True
+                    if not goback:
+                        goback = True
                 #print('SCOUT find enemy base, job finish, target=', str(self._target))
-                if not done:
-                    done = True
+
+        for build in main_base_buildings:
+            dist = md.calculate_distance(self._target.pos[0], 
+                                         self._target.pos[1],
+                                         build.float_attr.pos_x,
+                                         build.float_attr.pos_y)
+            if dist < SCOUT_BASE_RANGE:
+                #print('SCOUT find main_building in main base')
+                self._target.has_enemy_base= True
+                self._target.is_main = True
+                if len(armys) > 0:
+                    self._target.has_army = True
+                if not goback:
+                    goback = True
 
         for queue in queues:
             dist = md.calculate_distance(self._target.pos[0], 
@@ -180,11 +227,23 @@ class ScoutExploreTask(ScoutTask):
                 self._target.has_enemy_base = True
                 self._target.has_army = True
                 if not dc.dd.scout_pool.has_enemy_main_base():
+                    #print('SCOUT find queue, set main base')
                     self._target.is_main = True
                 #print('SCOUT find enemy queue, job finish, target=', str(self._target))
-                return True
+                if not goback:
+                    goback = True
 
-        return done
+        for unit in airs:
+             dist = md.calculate_distance(self._scout.unit().float_attr.pos_x, 
+                                          self._scout.unit().float_attr.pos_y,
+                                          unit.float_attr.pos_x,
+                                          unit.float_attr.pos_y)
+             if dist < SCOUT_SAFE_RANGE:
+                 print('SCOUT deteck air unit around me, run')
+                 if not goback:
+                     goback = True
+                 break
+        return goback
 
 
     def _check_attack(self):
@@ -200,12 +259,22 @@ class ScoutExploreTask(ScoutTask):
                     self._status == md.ScoutTaskStatus.DOING
         return attack
 
-    def _check_in_target_range(self):
+    def _check_in_base_range(self):
         dist = md.calculate_distance(self._scout.unit().float_attr.pos_x, 
                                      self._scout.unit().float_attr.pos_y,
                                      self._target.pos[0],
                                      self._target.pos[1])
-        if dist < SCOUT_BASE_RANGE:
+        if dist < SCOUT_CRUISE_ARRIVAED_RANGE:
+            return True
+        else:
+            return False
+
+    def _check_in_monitor_range(self):
+        dist = md.calculate_distance(self._scout.unit().float_attr.pos_x, 
+                                     self._scout.unit().float_attr.pos_y,
+                                     self._monitor_pos[0],
+                                     self._monitor_pos[1])
+        if dist < SCOUT_CRUISE_ARRIVAED_RANGE:
             return True
         else:
             return False
@@ -218,6 +287,14 @@ class ScoutExploreTask(ScoutTask):
         else:
             return False
 
+    def _get_monitor_pos(self):
+        avg_pos = self._target.area.calculate_avg()
+        diff_x = avg_pos[0] - self._target.pos[0]
+        diff_y = avg_pos[1] - self._target.pos[1]
+        monitor_pos = (avg_pos[0] + 2.5 * diff_x, avg_pos[1] + 2.5 * diff_y)
+        #print('task avg_pos={}, base_pos={} safe_pos={}'.format(
+        #      avg_pos, self._target.pos, safe_pos))
+        return monitor_pos
 
 class ScoutCruiseTask(ScoutTask):
     def __init__(self, scout, home, target):
@@ -281,12 +358,14 @@ class ScoutCruiseTask(ScoutTask):
         pos1 = ((home_x * 2) / 3 + target_x / 3, (home_y * 2)/3 + target_y / 3)
         pos2 = ((home_x + target_x)/2, (home_y + target_y)/2)
         pos3 = (pos2[0] - SCOUT_CRUISE_RANGE, pos2[1])
-        pos4 = (pos2[0] + SCOUT_CRUISE_RANGE, pos2[1])
+        pos4 = (home_x /3 + (target_x * 2) / 3, home_y / 3 + (target_y * 2) / 3)
+        pos5 = (pos2[0] + SCOUT_CRUISE_RANGE, pos2[1])
 
         self._paths.append(pos1)
         self._paths.append(pos3)
         self._paths.append(pos2)
         self._paths.append(pos4)
+        self._paths.append(pos5)
 
     def _check_attack(self):
         attack = self._detect_attack()

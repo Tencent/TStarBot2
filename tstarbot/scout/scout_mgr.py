@@ -19,12 +19,25 @@ class BaseScoutMgr(object):
     def reset(self):
         pass
 
+DEF_EXPLORE_VER = 0
 
 class ZergScoutMgr(BaseScoutMgr):
     def __init__(self, dc):
         super(ZergScoutMgr, self).__init__()
         self._scouts = {} # tagid -> unit
         self._tasks = []
+        self._init_config(dc)
+
+    def _init_config(self, dc):
+        if not hasattr(dc, 'config'):
+            self._explore_ver = DEF_EXPLORE_VER
+            return
+
+        if hasattr(dc.config, 'scout_explore_version'):
+            self._explore_ver = dc.config.scout_explore_version
+        else:
+            self._explore_ver = DEF_EXPLORE_VER 
+        print('Scout explore version=', self._explore_ver)
 
     def reset(self):
         self._scouts = {}
@@ -102,7 +115,7 @@ class ZergScoutMgr(BaseScoutMgr):
         if scout is None or target is None:
             '''not need dispatch task '''
             return
-        task = st.ScoutExploreTask(scout, target, sp.home_pos)
+        task = st.ScoutExploreTask(scout, target, sp.home_pos, self._explore_ver)
         scout.is_doing_task = True
         target.has_scout = True
         self._tasks.append(task)

@@ -42,17 +42,24 @@ class ResourceArea(object):
                 gtags.append(g.tag)
         return gtags
 
-    # def __str__(self):
-    #     minineral_pos = []
-    #     for tag in self.mtags:
-    #         unit = self._pool.minerals[tag]
-    #         minineral_pos.append((unit.float_attr.pos_x, unit.float_attr.pos_y))
-    #
-    #     gas_pos = []
-    #     for tag in self.gtags:
-    #         unit = self._pool.vespenes[tag]
-    #         gas_pos.append((unit.float_attr.pos_x, unit.float_attr.pos_y))
-    #     return 'mineral:{},gas:{}'.format(minineral_pos, gas_pos)
+    def calculate_avg(self):
+        num = 0
+        sum_x = 0
+        sum_y = 0
+        for m in self._pool.minerals.values():
+            if self.is_unit_in_area(m.float_attr.pos_x, m.float_attr.pos_y):
+                sum_x += m.float_attr.pos_x
+                sum_y += m.float_attr.pos_y
+                num += 1
+
+        for g in self._pool.vespenes.values():
+            if self.is_unit_in_area(g.float_attr.pos_x, g.float_attr.pos_y):
+                sum_x += g.float_attr.pos_x
+                sum_y += g.float_attr.pos_y
+                num += 1
+
+        return (sum_x / num, sum_y / num)
+
 
 
 class BaseInstance(object):
@@ -154,6 +161,7 @@ class BasePool(PoolBase):
 
     def find_base_belong(self, unit):
         target_base = None
+        mini_dist = None
         # print('base number=', len(self._bases))
         for base in self._bases.values():
             dist = self.calculate_distances(unit.float_attr.pos_x,
@@ -161,8 +169,14 @@ class BasePool(PoolBase):
                                              base.unit.float_attr.pos_x,
                                              base.unit.float_attr.pos_y)
             # print('dist=', dist, ';range=', BASE_RANGE)
-            if dist < BASE_RANGE:
+            if mini_dist is None:
+                mini_dist = dist
                 target_base = base
+            elif mini_dist > dist:
+                mini_dist = dist
+                target_base = base
+            else:
+                pass
 
         return target_base
 

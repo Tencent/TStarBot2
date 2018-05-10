@@ -14,10 +14,6 @@ class WorkerState(Enum):
   DEFAULT = 8
 
 @unique
-class WorkerSubState(Enum):
-  pass
-
-@unique
 class AllianceType(Enum):
   SELF = 1
   ALLY = 2
@@ -148,6 +144,20 @@ COMBAT_UNITS = set([
     UNIT_TYPEID.ZERG_ULTRALISK.value,
     UNIT_TYPEID.ZERG_ZERGLING.value,
     UNIT_TYPEID.ZERG_ZERGLINGBURROWED.value
+])
+
+COMBAT_AIR_UNITS = set([
+    #Zerg
+    UNIT_TYPEID.ZERG_QUEEN.value,
+    UNIT_TYPEID.ZERG_HYDRALISK.value,
+    UNIT_TYPEID.ZERG_MUTALISK.value,
+])
+
+MAIN_BASE_BUILDS = set([
+    #Zerg
+    UNIT_TYPEID.ZERG_SPAWNINGPOOL.value,
+    UNIT_TYPEID.ZERG_ROACHWARREN.value,
+    UNIT_TYPEID.ZERG_BANELINGNEST.value,
 ])
 
 COMBAT_ATTACK_UNITS = set([
