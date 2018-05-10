@@ -26,6 +26,7 @@ class ScoutTaskType(Enum):
   CRUISE = 1
   SENTINEL = 2
   RETREAT = 3
+  FORCED = 4
 
 @unique
 class ScoutTaskStatus(Enum):

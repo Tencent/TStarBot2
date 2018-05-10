@@ -1,6 +1,7 @@
 from tstarbot.data.pool.pool_base import PoolBase
 from tstarbot.data.pool import macro_def as md
 from pysc2.lib.typeenums import UNIT_TYPEID
+from tstarbot.data.pool.worker_pool import EmployStatus
 
 import queue
 
@@ -143,7 +144,10 @@ class ScoutPool(PoolBase):
         # update scout
         for u in units:
             if u.int_attr.unit_type == UNIT_TYPEID.ZERG_OVERLORD.value \
-                and u.int_attr.alliance == md.AllianceType.SELF.value:
+                    and u.int_attr.alliance == md.AllianceType.SELF.value:
+                self.add_scout(u)
+            elif u.int_attr.unit_type == UNIT_TYPEID.ZERG_DRONE.value \
+                    and u.int_attr.tag in self._scouts:
                 self.add_scout(u)
 
         # delete lost scouts
@@ -161,6 +165,15 @@ class ScoutPool(PoolBase):
             if not scout.is_doing_task and scout.is_health():
                 return scout
         return None
+
+    def select_drone_scout(self):
+        worker = self._dd.worker_pool.employ_worker(EmployStatus.EMPLOY_SCOUT)
+        if worker == None:
+            return None
+
+        self.add_scout(worker.unit)
+
+        return self._scouts[worker.unit.int_attr.tag]
 
     def find_cruise_target(self):
         for target in self._scout_base_target:
@@ -188,6 +201,28 @@ class ScoutPool(PoolBase):
             dist = md.calculate_distance(self.home_pos[0], 
                                          self.home_pos[1], 
                                          candidate.pos[0], 
+                                         candidate.pos[1])
+            if furthest_dist < dist:
+                furthest_dist = dist
+                furthest_candidate = candidate
+
+        return furthest_candidate
+
+    def find_forced_scout_target(self):
+        candidates = []
+        for target in self._scout_base_target:
+            if target.has_scout:
+                continue
+
+            if target.has_enemy_base or target.has_army:
+                candidates.append(target)
+
+        furthest_dist = 0.0
+        furthest_candidate = None
+        for candidate in candidates:
+            dist = md.calculate_distance(self.home_pos[0],
+                                         self.home_pos[1],
+                                         candidate.pos[0],
                                          candidate.pos[1])
             if furthest_dist < dist:
                 furthest_dist = dist

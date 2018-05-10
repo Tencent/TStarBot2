@@ -2,6 +2,8 @@ from tstarbot.data.pool import macro_def as md
 from tstarbot.data.pool import scout_pool as sp
 from s2clientprotocol import sc2api_pb2 as sc_pb
 import pysc2.lib.typeenums as tp
+from enum import Enum
+import numpy as np
 
 MAX_SCOUT_HISTORY = 10
 SCOUT_BASE_RANGE = 15
@@ -102,7 +104,7 @@ class ScoutExploreTask(ScoutTask):
         self._target.has_scout = False
         self._scout.is_doing_task = False
         if self._status == md.ScoutTaskStatus.SCOUT_DESTROY:
-            if self._check_in_target_range() and not self._judge_task_done():
+            if self._check_in_base_range() and not self._judge_task_done():
                 self._target.has_enemy_base = True
                 self._target.has_army = True
             #print('SCOUT explore_task post destory; target=', str(self._target))
@@ -141,7 +143,7 @@ class ScoutExploreTask(ScoutTask):
             if not self._base_arrived:
                 return self._move_to_target(self._target.pos)
             elif self._judge_task_done():
-                self._status == md.ScoutTaskStatus.DONE
+                self._status = md.ScoutTaskStatus.DONE
                 return self._move_to_home()
             else:
                 return self._noop()
@@ -256,7 +258,7 @@ class ScoutExploreTask(ScoutTask):
             if self._status == md.ScoutTaskStatus.UNDER_ATTACK:
                 if self._detect_recovery() and not self._judge_task_done():
                     #print('SCOUT task turn UNDER_ATTACK to DOING, target=', str(self._target))
-                    self._status == md.ScoutTaskStatus.DOING
+                    self._status = md.ScoutTaskStatus.DOING
         return attack
 
     def _check_in_base_range(self):
@@ -305,6 +307,9 @@ class ScoutCruiseTask(ScoutTask):
         self._generate_path()
         self._status = md.ScoutTaskStatus.DOING
 
+    def type(self):
+        return md.ScoutTaskType.CRUISE
+
     def _do_task_inner(self, view_enemys, dc):
         if self._check_scout_lost():
             self._status = md.ScoutTaskStatus.SCOUT_DESTROY
@@ -347,7 +352,6 @@ class ScoutCruiseTask(ScoutTask):
             return True
         else:
             return False
-
 
     def _generate_path(self):
         home_x = self._home[0]
@@ -397,3 +401,112 @@ class ScoutCruiseTask(ScoutTask):
             alarm.enmey_armys = scout_armys
             if not spool.alarms.full():
                 spool.alarms.put(alarm)
+
+
+class ForcedScoutStep(Enum):
+    STEP_INIT = 0
+    STEP_MOVE_TO_BASE = 1
+    STEP_CIRCLE_MINERAL = 2
+    STEP_RETREAT = 3
+
+
+class ScoutForcedTask(ScoutTask):
+    def __init__(self, scout, target, home):
+        super(ScoutForcedTask, self).__init__(scout, home)
+        self._target = target
+        self._circle_path = []
+        self._cur_circle_target = 0  # index of _circle_path
+        self._cur_step = ForcedScoutStep.STEP_INIT
+
+    def type(self):
+        return md.ScoutTaskType.FORCED
+
+    def post_process(self):
+        self._target.has_scout = False
+        self._scout.is_doing_task = False
+
+        if self._status == md.ScoutTaskStatus.SCOUT_DESTROY:
+            self._target.has_enemy_base = True
+            self._target.has_army = True
+
+    def _do_task_inner(self, view_enemys, dc):
+        if self._check_scout_lost():
+            self._status = md.ScoutTaskStatus.SCOUT_DESTROY
+            return None
+
+        if self._cur_step == ForcedScoutStep.STEP_INIT:
+            # step one, move to target base
+            action = self._move_to_target(self._target.pos)
+            self._cur_step = ForcedScoutStep.STEP_MOVE_TO_BASE
+            return action
+        elif self._cur_step == ForcedScoutStep.STEP_MOVE_TO_BASE:
+            # step two, circle target base
+            if self._arrive_xy(self.scout().unit(),
+                               self._target.pos[0], self._target.pos[1], 10):
+                self._generate_circle_path(self._target.area.m_pos)
+                self._cur_step = ForcedScoutStep.STEP_CIRCLE_MINERAL
+                return self._move_to_target(self._circle_path[0])
+            else:
+                return None
+        elif self._cur_step == ForcedScoutStep.STEP_CIRCLE_MINERAL:
+            cur_target = self._circle_path[self._cur_circle_target]
+            if self._arrive_xy(self.scout().unit(),
+                               cur_target[0], cur_target[1], 1):
+                self._cur_circle_target += 1
+                if self._cur_circle_target < len(self._circle_path):
+                    return self._move_to_target(self._circle_path[
+                                                    self._cur_circle_target])
+                else:
+                    self._cur_step = ForcedScoutStep.STEP_RETREAT
+                    return self._move_to_home()
+            else:
+                return None
+        elif self._cur_step == ForcedScoutStep.STEP_RETREAT:
+            # step three, retreat
+            if self._arrive_xy(self.scout().unit(),
+                               self._home[0], self._home[1], 10):
+                self._status = md.ScoutTaskStatus.DONE
+
+            return None
+
+    def _generate_circle_path(self, m_pos):
+        m_dim = len(m_pos)
+        dis_mat = np.zeros((m_dim, m_dim))
+
+        for i in range(m_dim):
+            for j in range(m_dim):
+                dis_mat[i][j] = self.distance(m_pos[i], m_pos[j])
+
+        max_i = 0
+        max_dist = 0
+
+        for i in range(m_dim):
+            for j in range(m_dim):
+                if dis_mat[i][j] > max_dist:
+                    max_dist = dis_mat[i][j]
+                    max_i = i
+
+        dist_list = []
+        for i in range(m_dim):
+            d = {'idx': i, 'distance': dis_mat[max_i][i]}
+            dist_list.append(d)
+
+        dist_list.sort(key=lambda x: x['distance'])
+
+        for i in range(m_dim):
+            self._circle_path.append(m_pos[dist_list[i]['idx']])
+
+        # print(self._circle_path)
+
+    def _arrive_xy(self, u, target_x, target_y, error):
+        x = u.float_attr.pos_x - target_x
+        y = u.float_attr.pos_y - target_y
+        distance = (x * x + y * y) ** 0.5
+
+        return distance < error
+
+    def distance(self, pos1, pos2):
+        x = pos1[0] - pos2[0]
+        y = pos1[1] - pos2[1]
+
+        return (x * x + y * y) ** 0.5

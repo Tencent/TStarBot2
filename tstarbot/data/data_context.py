@@ -19,6 +19,9 @@ from pysc2.lib.data_raw import data_raw_3_16, data_raw_4_0
 from pysc2.lib import TechTree
 
 
+from pysc2.lib import TechTree
+
+
 class StaticData(object):
     def __init__(self, config):
         self._obs = None

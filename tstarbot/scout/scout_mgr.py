@@ -8,6 +8,8 @@ import pysc2.lib.typeenums as tp
 import tstarbot.scout.scout_task as st
 import tstarbot.data.pool.macro_def as md
 
+from tstarbot.data.pool.worker_pool import EmployStatus
+from tstarbot.data.pool.scout_pool import Scout
 
 class BaseScoutMgr(object):
     def __init__(self):
@@ -24,9 +26,9 @@ DEF_EXPLORE_VER = 0
 class ZergScoutMgr(BaseScoutMgr):
     def __init__(self, dc):
         super(ZergScoutMgr, self).__init__()
-        self._scouts = {} # tagid -> unit
         self._tasks = []
         self._init_config(dc)
+        self._forced_scout_count = 1
 
     def _init_config(self, dc):
         if not hasattr(dc, 'config'):
@@ -39,15 +41,17 @@ class ZergScoutMgr(BaseScoutMgr):
             self._explore_ver = DEF_EXPLORE_VER 
         # print('Scout explore version=', self._explore_ver)
 
+        if hasattr(dc.config, 'max_forced_scout_count'):
+            self._forced_scout_count = dc.config.max_forced_scout_count
+
     def reset(self):
-        self._scouts = {}
         self._tasks = []
 
     def update(self, dc, am):
         super(ZergScoutMgr, self).update(dc, am)
         #print('SCOUT scout_mgr update, task_num=', len(self._tasks))
         self._dispatch_task(dc)
-        self._check_task()
+        self._check_task(dc)
 
         actions = []
         # observe the enemy
@@ -63,30 +67,10 @@ class ZergScoutMgr(BaseScoutMgr):
             if act is not None:
                 actions.append(act)
 
-        '''
-        for (k,u) in self._scouts.items():
-            action = self.goto_xy(u, 50, 40)
-            actions.append(action)
-        '''
         if len(actions) > 0:
             am.push_actions(actions)
 
-    def goto_xy(self, u, target_x, target_y):
-        action = sc_pb.Action()
-        action.action_raw.unit_command.unit_tags.append(u.int_attr.tag)
-        action.action_raw.unit_command.ability_id = tp.ABILITY_ID.SMART.value
-        action.action_raw.unit_command.target_world_space_pos.x = target_x
-        action.action_raw.unit_command.target_world_space_pos.y = target_y
-        return action
-
-    def arrive_xy(self, u, target_x, target_y):
-        x = u.float_attr.pos_x - target_x
-        y = u.float_attr.pos_y - target_y
-        distance = (x*x + y*y) ** 0.5
-
-        return distance < 0.1
-
-    def _check_task(self):
+    def _check_task(self, dc):
         keep_tasks = []
         done_tasks = []
         for task in self._tasks:
@@ -102,18 +86,27 @@ class ZergScoutMgr(BaseScoutMgr):
         for task in done_tasks:
             task.post_process()
 
+            if task.type() == md.ScoutTaskType.FORCED \
+                and task.status() == md.ScoutTaskStatus.DONE:
+                dc.dd.scout_pool.remove_scout(task.scout().unit().int_attr.tag)
+
         self._tasks = keep_tasks
 
     def _dispatch_task(self, dc):
         self._dispatch_cruise_task(dc)
         self._dispatch_explore_task(dc)
 
+        if self._forced_scout_count > 0:
+            ret = self._dispatch_forced_scout_task(dc)
+            if ret:
+                self._forced_scout_count -= 1
+
     def _dispatch_explore_task(self, dc):
         sp = dc.dd.scout_pool
         scout = sp.select_scout()
         target = sp.find_furthest_idle_target()
         if scout is None or target is None:
-            '''not need dispatch task '''
+            # not need dispatch task
             return
         task = st.ScoutExploreTask(scout, target, sp.home_pos, self._explore_ver)
         scout.is_doing_task = True
@@ -132,3 +125,20 @@ class ZergScoutMgr(BaseScoutMgr):
         target.has_cruise = True
         self._tasks.append(task)
 
+    def _dispatch_forced_scout_task(self, dc):
+        sp = dc.dd.scout_pool
+
+        target = sp.find_forced_scout_target()
+        if target is None:
+            return False
+
+        scout = sp.select_drone_scout()
+        if scout is None:
+            return False
+
+        task = st.ScoutForcedTask(scout, target, sp.home_pos)
+        scout.is_doing_task = True
+        target.has_scout = True
+        self._tasks.append(task)
+
+        return True
