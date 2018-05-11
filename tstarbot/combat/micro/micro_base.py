@@ -282,12 +282,22 @@ class MicroBase(object):
                'y': center_y}
         return pos
 
-    def is_run_away(self, u, closest_enemy, self_combat_units):
+    def is_run_away_old(self, u, closest_enemy, self_combat_units):
         closest_enemy_dist = math.sqrt(self.cal_square_dist(u, closest_enemy))
         near_by_units = self.find_units_wihtin_range(u, self_combat_units, r=6)
         if (closest_enemy_dist < self.roach_attack_range and
             u.float_attr.health / u.float_attr.health_max < 0.3 and
                 # not self.check_stronger_unit_front(u, near_by_units, closest_enemy_unit)):
                 self.find_strongest_unit_hp(near_by_units) > 0.9):
+            return True
+        return False
+
+    def is_run_away(self, u, closest_enemy, self_combat_units):
+        closest_enemy_dist = self.cal_square_dist(u, closest_enemy)
+        near_by_units = self.find_units_wihtin_range(u, self_combat_units, r=6)
+        atk_range = self.get_atk_range(u.int_attr.unit_type)
+        if atk_range and closest_enemy_dist < atk_range and \
+            u.float_attr.health / u.float_attr.health_max < 0.3 and \
+                self.find_strongest_unit_hp(near_by_units) > 0.9:
             return True
         return False

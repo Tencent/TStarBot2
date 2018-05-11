@@ -11,7 +11,7 @@ from tstarbot.combat.micro.infestor_micro import InfestorMgr
 
 class MicroMgr(MicroBase):
     """ A zvz Zerg combat manager """
-    def __init__(self):
+    def __init__(self, dc):
         super(MicroMgr, self).__init__()
         self.roach_mgr = RoachMgr()
         self.lurker_mgr = LurkerMgr()
@@ -20,6 +20,14 @@ class MicroMgr(MicroBase):
         self.viper_mgr = ViperMgr()
         self.corruptor_mgr = CorruptorMgr()
         self.infestor_mgr = InfestorMgr()
+
+        self.default_micro_version = 1
+        self.init_config(dc)
+
+    def init_config(self, dc):
+        if hasattr(dc, 'config'):
+            if hasattr(dc.config, 'default_micro_version'):
+                self.default_micro_verion = int(dc.config.default_micro_version)
 
     def exe(self, dc, u, pos, mode):
         if u.int_attr.unit_type in [
@@ -54,7 +62,12 @@ class MicroMgr(MicroBase):
             action = self.infestor_mgr.act(u, pos, mode)
         else:
             self.update(dc)
-            action = self.default_act(u, pos, mode)
+            if self.default_micro_version == 1:
+                action = self.default_act(u, pos, mode)
+            elif self.default_micro_version == 2:
+                action = self.default_act_v2(u, pos, mode)
+            else:
+                raise NotImplementedError
         return action
 
     def default_act(self, u, pos, mode):
@@ -88,24 +101,21 @@ class MicroMgr(MicroBase):
                     return self.attack_pos(u, pos)
             else:
                 weakest = self.find_weakest_nearby(u, self.enemy_combat_units, 10)
+                closest_enemy = self.find_closest_enemy(u, self.enemy_combat_units)
                 if not weakest:
                     return self.attack_pos(u, pos)
                 enemy_range = self.get_atk_range(weakest.int_attr.unit_type)
+                if self.is_run_away(u, closest_enemy, self.self_combat_units):
+                    return self.run_away_from_closest_enemy(u, closest_enemy)
                 cur_dist = self.cal_dist(u, weakest)
-                if atk_range >= enemy_range:
+                if enemy_range and atk_range >= enemy_range:
                     if cur_dist < atk_range:
                         return self.move_dir(u, (POSX(u)-POSX(weakest), POSY(u)-POSY(weakest)))
                     else:
                         return self.move_dir(u, (POSX(weakest)-POSX(u), POSY(weakest)-POSY(u)))
                 else:
                     return self.move_dir(u, (POSX(weakest)-POSX(u), POSY(weakest)-POSY(u)))
-            # if self.is_run_away(u, closest_enemy, self.self_combat_units):
-            #     action = self.run_away_from_closest_enemy(u, closest_enemy)
-            # else:
-            #     action = self.attack_pos(u, pos)
         else:
             action = self.attack_pos(u, pos)
         return action
-
-
 

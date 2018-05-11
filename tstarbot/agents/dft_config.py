@@ -15,4 +15,5 @@ resource_verbose = 0
 scout_explore_version = 0
 combat_strategy = 'HARASS'  # 'REFORM' | 'HARASS'
 production_strategy = 'RUSH'  # 'RUSH' | 'ADV_ARMS'
+default_micro_version = 1
 game_version = '3.16.1'  # '3.16.1' | '4.0'

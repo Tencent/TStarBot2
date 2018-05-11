@@ -47,11 +47,11 @@ class ZergCombatMgr(BaseCombatMgr):
     def __init__(self, dc):
         super(ZergCombatMgr, self).__init__(dc)
         self.dc = dc
-        self.micro_mgr = MicroMgr()
+        self.micro_mgr = MicroMgr(dc)
 
     def reset(self):
+        self.micro_mgr = MicroMgr(self.dc)
         self.dc = None
-        self.micro_mgr = MicroMgr()
 
     def update(self, dc, am):
         super(ZergCombatMgr, self).update(dc, am)
