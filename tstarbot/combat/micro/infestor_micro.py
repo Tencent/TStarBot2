@@ -51,7 +51,7 @@ class InfestorMgr(MicroBase):
                     if target_pos is None:
                         action = self.attack_pos(u, pos)
                         return action
-                    print('infestor skill attack')
+                    # print('infestor skill attack')
                     action = self.fungal_growth_attack_pos(u, target_pos)
                 else:
                     bases = self.dc.dd.base_pool.bases

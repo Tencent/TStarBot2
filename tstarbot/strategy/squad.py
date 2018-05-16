@@ -6,6 +6,7 @@ from __future__ import print_function
 from enum import Enum
 from pysc2.lib.typeenums import UNIT_TYPEID
 from tstarbot.data.pool import macro_def as tm
+from tstarbot.data.pool.combat_pool import CombatUnitStatus
 
 
 SquadStatus = Enum('SquadStatus', ('IDLE', 'MOVE', 'ATTACK', 'DEFEND', 'SCOUT'))
@@ -31,7 +32,7 @@ class Squad(object):
         self._units = list()
         for tag in tags:
             combat_unit = combat_unit_pool.get_by_tag(tag)
-            if combat_unit is not None:
+            if combat_unit is not None and combat_unit.status != CombatUnitStatus.SCOUT:
                 self._units.append(combat_unit)
 
     @property

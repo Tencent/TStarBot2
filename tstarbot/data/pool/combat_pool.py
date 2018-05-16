@@ -5,14 +5,16 @@ from __future__ import print_function
 
 from tstarbot.data.pool import macro_def as tm
 from tstarbot.data.pool.pool_base import PoolBase
+from enum import Enum
 
+CombatUnitStatus = Enum('CombatUnitStatus', ('IDLE', 'COMBAT', 'SCOUT'))
 
-# TODO(@xinghai): delete CombatUnit if not necessary.
 
 class CombatUnit(object):
 
     def __init__(self, unit):
         self._unit = unit
+        self._status = CombatUnitStatus.IDLE
 
     @property
     def unit(self):
@@ -25,6 +27,10 @@ class CombatUnit(object):
     @property
     def type(self):
         return self._unit.unit_type
+
+    @property
+    def status(self):
+        return self._status
 
     @property
     def position(self):
@@ -46,6 +52,14 @@ class CombatUnitPool(PoolBase):
 
     def get_by_tag(self, tag):
         return self._units.get(tag, None)
+
+    def employ_combat_unit(self, employ_status, unit_type):
+        idles = [u for u in self.units
+                 if u.unit.int_attr.unit_type == unit_type and u.status == CombatUnitStatus.IDLE]
+        if len(idles) > 0:
+            idles[0].status = employ_status
+            return idles[0].unit
+        return None
 
     @property
     def num_units(self):
