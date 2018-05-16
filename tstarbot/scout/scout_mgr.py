@@ -78,8 +78,6 @@ class ZergScoutMgr(BaseScoutMgr):
                 done_tasks.append(task)
             elif task.status() == md.ScoutTaskStatus.SCOUT_DESTROY:
                 done_tasks.append(task)
-            elif task.status() == md.ScoutTaskStatus.UNDER_ATTACK:
-                done_tasks.append(task)
             else:
                 keep_tasks.append(task)
 

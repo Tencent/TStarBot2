@@ -82,6 +82,69 @@ class ScoutTask(object):
 EXPLORE_V1 = 0
 EXPLORE_V2 = 1
 
+class ScoutAttackEscape(object):
+    def __init__(self):
+        self._paths = []
+        self._curr = 0
+
+    def curr_arrived(self, me_pos):
+        curr_pos = self._paths[self._curr]
+        dist = md.calculate_distance(curr_pos[0], curr_pos[1],
+                                     me_pos[0], me_pos[1])
+        if dist <= SCOUT_CRUISE_ARRIVAED_RANGE:
+            return True
+        else:
+            return False
+
+    def curr_pos(self):
+        return self._paths[self._curr]
+
+    def next_pos(self):
+        self._curr += 1
+        return self._paths[self._curr]
+
+    def is_last_pos(self):
+        last = len(self._paths) - 1
+        return self._curr == last
+
+    def generate_path(self, view_enemys, me, home_pos):
+        airs = []
+        for enemy in view_enemys:
+            if enemy.unit_type in md.COMBAT_AIR_UNITS:
+                dist = md.calculate_distance(me.float_attr.pos_x,
+                                             me.float_attr.pos_y,
+                                             enemy.float_attr.pos_x,
+                                             enemy.float_attr.pos_y)
+                if dist < SCOUT_SAFE_RANGE:
+                    airs.append(enemy)
+            else:
+                continue
+
+        enemy_pos = None
+        total_x = 0.0
+        total_y = 0.0
+        if len(airs) > 0:
+            for unit in airs:
+                total_x += unit.float_attr.pos_x
+                total_y += unit.float_attr.pos_y
+            enemy_pos = (total_x / len(airs), total_y / len(airs))
+        else:
+            total_x = me.float_attr.pos_x + 1
+            total_y = me.float_attr.pos_y + 1
+            enemy_pos = (total_x, total_y)
+        self._generate_path(home_pos, (me.float_attr.pos_x, 
+                             me.float_attr.pos_y), enemy_pos)
+        #print("SCOUT escape attack, path=", self._paths)
+
+    def _generate_path(self, home_pos, me_pos, enemy_pos):
+        diff_x = me_pos[0] - enemy_pos[0]
+        diff_y = me_pos[1] - enemy_pos[1]
+        pos_1 = (me_pos[0] + diff_x, me_pos[1] + diff_y)
+        pos_2 = (pos_1[0], home_pos[1])
+        self._paths.append(pos_1)
+        self._paths.append(pos_2)
+        self._paths.append(home_pos)
+
 class ScoutExploreTask(ScoutTask):
     def __init__(self, scout, target, home, version):
         super(ScoutExploreTask, self).__init__(scout, home)
@@ -91,8 +154,7 @@ class ScoutExploreTask(ScoutTask):
         self._base_arrived = False
         self._monitor_arrived = False
         self._version = version
-        #print('SCOUT task, base_pos={} monitor_pos={}'.format(
-        #    self._target.pos, self._monitor_pos))
+        self._attack_escape = None
 
     def type(self):
         return md.ScoutTaskType.EXPORE
@@ -108,11 +170,6 @@ class ScoutExploreTask(ScoutTask):
                 self._target.has_enemy_base = True
                 self._target.has_army = True
             #print('SCOUT explore_task post destory; target=', str(self._target))
-        elif self._status == md.ScoutTaskStatus.UNDER_ATTACK:
-            if self._check_in_base_range() and not self._judge_task_done():
-                self._target.has_enemy_base = True
-                self._target.has_army = True
-            #print('SCOUT explore_task post attack; target=', str(self._target))
         else:
             #print('SCOUT task post_process, status=', self._status, ';target=', str(self._target))
             pass
@@ -123,8 +180,8 @@ class ScoutExploreTask(ScoutTask):
             self._status = md.ScoutTaskStatus.SCOUT_DESTROY
             return None
 
-        if self._check_attack():
-            return self._exec_by_status()
+        if self._status == md.ScoutTaskStatus.UNDER_ATTACK or self._check_attack():
+            return self._exec_under_attack(view_enemys)
 
         if self._detect_enemy(view_enemys, dc):
             self._status = md.ScoutTaskStatus.DONE
@@ -155,15 +212,36 @@ class ScoutExploreTask(ScoutTask):
             else:
                 return self._noop()
 
+    def _exec_under_attack(self, view_enemys):
+        me = self._scout.unit()
+        if self._attack_escape is None:
+            self._attack_escape = ScoutAttackEscape()
+            self._attack_escape.generate_path(view_enemys, me, self._home)
+
+        me_pos = (me.float_attr.pos_x, me.float_attr.pos_y)
+        if not self._attack_escape.curr_arrived(me_pos):
+            #print('Scout exec_under_attack move to curr=', 
+            #      self._attack_escape.curr_pos())
+            act = self._move_to_target(self._attack_escape.curr_pos())
+        else:
+            act = self._move_to_target(self._attack_escape.next_pos())
+            #print('Scout exec_under_attack move to next=', 
+            #      self._attack_escape.curr_pos())
+
+        if self._attack_escape.is_last_pos():
+            self._status = md.ScoutTaskStatus.DONE
+
+        if not self._judge_task_done():
+            self._target.has_army = True
+        return act
+
     def _exec_by_status(self):
         if self._status == md.ScoutTaskStatus.DOING:
             return self._exec_explore()
         elif self._status == md.ScoutTaskStatus.DONE:
             return self._move_to_home()
-        elif self._status == md.ScoutTaskStatus.UNDER_ATTACK:
-            return self._move_to_home()
         else:
-            print('SCOUT exec noop, scout status=', self._status)
+            print('SCOUT explore exec noop, scout status=', self._status)
             return self._noop()
 
     def _detect_enemy(self, view_enemys, dc):
@@ -254,11 +332,7 @@ class ScoutExploreTask(ScoutTask):
             if self._status == md.ScoutTaskStatus.DOING:
                 #print('SCOUT task turn DOING to UNDER_ATTACK, target=', str(self._target))
                 self._status = md.ScoutTaskStatus.UNDER_ATTACK
-        else:
-            if self._status == md.ScoutTaskStatus.UNDER_ATTACK:
-                if self._detect_recovery() and not self._judge_task_done():
-                    #print('SCOUT task turn UNDER_ATTACK to DOING, target=', str(self._target))
-                    self._status = md.ScoutTaskStatus.DOING
+
         return attack
 
     def _check_in_base_range(self):
@@ -306,6 +380,7 @@ class ScoutCruiseTask(ScoutTask):
         self._curr_pos = 0
         self._generate_path()
         self._status = md.ScoutTaskStatus.DOING
+        self._attack_escape = None
 
     def type(self):
         return md.ScoutTaskType.CRUISE
@@ -315,8 +390,8 @@ class ScoutCruiseTask(ScoutTask):
             self._status = md.ScoutTaskStatus.SCOUT_DESTROY
             return None
 
-        if self._check_attack():
-            self._exec_by_status()
+        if self._status == md.ScoutTaskStatus.UNDER_ATTACK or self._check_attack():
+            return self._exec_under_attack(view_enemys)
 
         self._detect_enemy(view_enemys, dc)
         return self._exec_by_status()
@@ -330,11 +405,30 @@ class ScoutCruiseTask(ScoutTask):
             return self._exec_cruise()
         elif self._status == md.ScoutTaskStatus.DONE:
             return self._move_to_home()
-        elif self._status == md.ScoutTaskStatus.UNDER_ATTACK:
-            return self._move_to_home()
         else:
-            print('SCOUT exec noop, scout status=', self._status)
+            print('SCOUT cruise exec noop, scout status=', self._status)
             return self._noop()
+
+    def _exec_under_attack(self, view_enemys):
+        me = self._scout.unit()
+        if self._attack_escape is None:
+            self._attack_escape = ScoutAttackEscape()
+            self._attack_escape.generate_path(view_enemys, me, self._home)
+
+        me_pos = (me.float_attr.pos_x, me.float_attr.pos_y)
+        if not self._attack_escape.curr_arrived(me_pos):
+            #print('Scout exec_under_attack move to curr=', 
+            #      self._attack_escape.curr_pos())
+            act = self._move_to_target(self._attack_escape.curr_pos())
+        else:
+            act = self._move_to_target(self._attack_escape.next_pos())
+            #print('Scout exec_under_attack move to next=', 
+            #      self._attack_escape.curr_pos())
+
+        if self._attack_escape.is_last_pos():
+            self._status = md.ScoutTaskStatus.DONE
+
+        return act
 
     def _exec_cruise(self):
         if self._curr_pos < 0 or self._curr_pos >= len(self._paths):
@@ -376,6 +470,9 @@ class ScoutCruiseTask(ScoutTask):
         if attack:
             #print('SCOUT task turn DOING to UNDER_ATTACK, target=', str(self._target))
             self._status = md.ScoutTaskStatus.UNDER_ATTACK
+            return True
+        else:
+            return False
 
     def _detect_enemy(self, view_enemys, dc):
         spool = dc.dd.scout_pool
