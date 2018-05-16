@@ -282,6 +282,8 @@ class ZergStrategyMgr(BaseStrategyMgr):
                 for squad in self._army.squads + [self._create_queen_squads()]:
                     if squad.uniform is not None:
                         continue
+                    if squad.status == SquadStatus.SCOUT:
+                        continue
                     squad.status = SquadStatus.MOVE
                     cmd = CombatCommand(
                         type=CombatCmdType.DEFEND,
@@ -310,6 +312,8 @@ class ZergStrategyMgr(BaseStrategyMgr):
             for squad in self._army.squads:
                 if squad.uniform is not None:
                     continue
+                if squad.status == SquadStatus.SCOUT:
+                    continue
                 squad.status = SquadStatus.MOVE
                 cmd = CombatCommand(
                     type=CombatCmdType.MOVE,
@@ -322,6 +326,8 @@ class ZergStrategyMgr(BaseStrategyMgr):
                               if self._distance(squad.centroid, self._rally_pos) < 10]
             for squad in rallied_squads:
                 if squad.uniform is not None:
+                    continue
+                if squad.status == SquadStatus.SCOUT:
                     continue
                 squad.status = SquadStatus.IDLE
             # print('food: {}, go: {}'.format(self._dc.sd.obs['player'][3], self._food_trigger))
@@ -339,6 +345,8 @@ class ZergStrategyMgr(BaseStrategyMgr):
             for squad in self._army.squads:
                 if squad.uniform is not None:
                     continue
+                if squad.status == SquadStatus.SCOUT:
+                    continue
                 if self._distance(squad.centroid,
                                   enemy_pool.closest_cluster.centroid) < 30:  # safe dist
                     self._rally_pos_for_attack = squad.centroid
@@ -352,6 +360,8 @@ class ZergStrategyMgr(BaseStrategyMgr):
 
             for squad in self._army.squads:
                 if squad.uniform is not None:
+                    continue
+                if squad.status == SquadStatus.SCOUT:
                     continue
                 squad.status = SquadStatus.MOVE
                 cmd = CombatCommand(
@@ -368,6 +378,8 @@ class ZergStrategyMgr(BaseStrategyMgr):
                 if (self._rally_pos_for_attack is not None) else []
             for squad in rallied_squads_for_attack:
                 if squad.uniform is not None:
+                    continue
+                if squad.status == SquadStatus.SCOUT:
                     continue
                 squad.status = SquadStatus.IDLE
 
@@ -390,6 +402,8 @@ class ZergStrategyMgr(BaseStrategyMgr):
                 return None
             for squad in self._army.squads:
                 if squad.uniform is not None:
+                    continue
+                if squad.status == SquadStatus.SCOUT:
                     continue
                 squad.status = SquadStatus.ATTACK
                 cmd = CombatCommand(

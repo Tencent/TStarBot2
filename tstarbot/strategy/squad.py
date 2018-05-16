@@ -8,7 +8,7 @@ from pysc2.lib.typeenums import UNIT_TYPEID
 from tstarbot.data.pool import macro_def as tm
 
 
-SquadStatus = Enum('SquadStatus', ('IDLE', 'MOVE', 'ATTACK', 'DEFEND'))
+SquadStatus = Enum('SquadStatus', ('IDLE', 'MOVE', 'ATTACK', 'DEFEND', 'SCOUT'))
 MutaliskSquadStatus = Enum('SquadStatus', ('IDLE', 'PHASE1', 'PHASE2'))
 
 
@@ -86,4 +86,4 @@ class Squad(object):
         if len(self._units) > 0:
             x = sum(u.position['x'] for u in self._units) / len(self._units)
             y = sum(u.position['y'] for u in self._units) / len(self._units)
-        return {'x':x, 'y':y}
+        return {'x': x, 'y': y}
