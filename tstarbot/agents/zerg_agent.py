@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 import importlib
+from time import sleep
 
 from pysc2.lib import actions as pysc2_actions
 from pysc2.agents import base_agent
@@ -27,10 +28,12 @@ class ZergAgent(base_agent.BaseAgent):
 
     def __init__(self, **kwargs):
         super(ZergAgent, self).__init__()
+        self._sleep_per_step = None
 
         config = None
         if kwargs.get('config_path'):  # use the config file
             config = importlib.import_module(kwargs['config_path'])
+        self._init_config(config)
 
         self.dc = DataContext(config)
         self.am = ActMgr()
@@ -42,8 +45,15 @@ class ZergAgent(base_agent.BaseAgent):
         self.combat_mgr = ZergCombatMgr(self.dc)
         self.scout_mgr = ZergScoutMgr(self.dc)
 
+    def _init_config(self, cfg):
+        if hasattr(cfg, 'sleep_per_step'):
+            self._sleep_per_step = cfg.sleep_per_step
+
     def step(self, timestep):
         super(ZergAgent, self).step(timestep)
+
+        if self._sleep_per_step:
+            sleep(self._sleep_per_step)
 
         self.dc.update(timestep)  # update data context
 

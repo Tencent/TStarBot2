@@ -8,6 +8,7 @@ var2 = value2
 
 Do NOT ABUSE it, do NOT define nested or complex data structure.
 """
+sleep_per_step = 0.0
 building_verbose = 0
 building_placer = 'hybrid'  # 'naive_predef' | 'hybrid'
 building_placer_verbose = 0
