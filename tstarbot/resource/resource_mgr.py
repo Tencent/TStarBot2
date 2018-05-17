@@ -47,6 +47,16 @@ def find_first_if(units, f=lambda x: True):
     return None
 
 
+def find_n_if(units, n, f=lambda x: True):
+    ru = []
+    for u in units:
+        if len(ru) >= n:
+            break
+        if f(u):
+            ru.append(u)
+    return ru
+
+
 def sort_units_by_distance(units, unit):
     def my_dist(x_u):
         return dist(x_u, unit)
@@ -160,6 +170,7 @@ class ZergResourceMgr(BaseResourceMgr):
         self.is_gas_first = False
         self.verbose = 0
         self.step = 0
+        self._rebalance_last_tried_gameloop = -1
         self._init_config(dc)
 
     def reset(self):
@@ -171,6 +182,7 @@ class ZergResourceMgr(BaseResourceMgr):
         self.all_minerals = None
         self.is_gas_first = False
         self.step = 0
+        self._rebalance_last_tried_gameloop = -1
 
     def update(self, dc, am):
         super(ZergResourceMgr, self).update(dc, am)
@@ -200,6 +212,7 @@ class ZergResourceMgr(BaseResourceMgr):
         actions = []
         actions += self._update_base_instance()
         actions += self._update_idle_workers()
+        actions += self._rebalance_workers()
         am.push_actions(actions)
         self.step += 1
 
@@ -300,6 +313,51 @@ class ZergResourceMgr(BaseResourceMgr):
                 )
                 if worker:
                     return act_stop(worker.tag)
+
+    def _rebalance_workers(self):
+        actions = []
+        b_from, b_to = self._can_rebalance_workers()
+        if not b_from or not b_to:
+            return actions
+
+        local_workers = collect_units_by_tags(self.all_workers,
+                                              b_from.worker_set)
+        workers_migrate = find_n_if(units=local_workers, n=3,
+                                    f=func_is_harvesting_local_mineral(b_from))
+        for w in workers_migrate:
+            base = b_to.unit
+            act = self._harvest_on_base(w, base)
+            append_valid_action(actions, act)
+        self._rebalance_last_tried_gameloop = self.dc.sd.obs['game_loop']
+        return actions
+
+    def _can_rebalance_workers(self):
+        # always do it for the first time no matter the game_loop;
+        # or don't do it too frequent
+        if self._rebalance_last_tried_gameloop is not -1:
+            game_loop = self.dc.sd.obs['game_loop']
+            if game_loop - self._rebalance_last_tried_gameloop < 24*15:
+                return None, None
+
+        base_instances = list(self.dc.dd.base_pool.bases.values())
+        if len(base_instances) != 2:
+            return None, None  # currently only rebalance for 2 bases
+
+        bb = sorted(base_instances,
+                    key=lambda b: b.unit.int_attr.assigned_harvesters)
+
+        b_to, b_from = bb[0], bb[1]
+
+        # base_to must be almost built
+        if b_to.unit.float_attr.build_progress < 0.98:
+            return None, None
+
+        # base_to must have empty harvesters
+        n_from = b_from.unit.int_attr.assigned_harvesters
+        n_to = b_to.unit.int_attr.assigned_harvesters
+        if n_to > 0:
+            return None, None
+        return b_from, b_to
 
     def _update_idle_workers(self):
         actions = []
