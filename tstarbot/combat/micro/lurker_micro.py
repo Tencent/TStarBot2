@@ -1,6 +1,7 @@
 from pysc2.lib.typeenums import UNIT_TYPEID, ABILITY_ID, UPGRADE_ID
 from s2clientprotocol import sc2api_pb2 as sc_pb
 from tstarbot.combat.micro.micro_base import MicroBase
+from tstarbot.data.pool.macro_def import AIR_UNITS
 
 
 class LurkerMgr(MicroBase):
@@ -24,9 +25,11 @@ class LurkerMgr(MicroBase):
         return action
 
     def act(self, u, pos, mode):
+        lurker_can_atk_units = [u for u in self.enemy_units
+                                if u.int_attr.unit_type not in AIR_UNITS]
         if u.int_attr.unit_type == UNIT_TYPEID.ZERG_LURKERMP.value:
-            if len(self.enemy_combat_units) > 0:
-                closest_enemy = self.find_closest_enemy(u, self.enemy_combat_units)
+            if len(lurker_can_atk_units) > 0:
+                closest_enemy = self.find_closest_enemy(u, lurker_can_atk_units)
 
                 if self.cal_square_dist(u, closest_enemy) < self.lurker_range:
                     # print('lurker should burrow down!')
@@ -36,8 +39,8 @@ class LurkerMgr(MicroBase):
             else:
                 action = self.move_pos(u, pos)
         elif u.int_attr.unit_type == UNIT_TYPEID.ZERG_LURKERMPBURROWED.value:
-            if len(self.enemy_combat_units) > 0:
-                closest_enemy = self.find_closest_enemy(u, self.enemy_combat_units)
+            if len(lurker_can_atk_units) > 0:
+                closest_enemy = self.find_closest_enemy(u, lurker_can_atk_units)
                 if self.cal_square_dist(u, closest_enemy) < self.lurker_range:
                     action = self.attack_pos(u, pos)
                 else:

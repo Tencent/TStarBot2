@@ -9,6 +9,7 @@ from tstarbot.data.pool.pool_base import PoolBase
 from tstarbot.data.pool import macro_def as tm
 from pysc2.lib.typeenums import UNIT_TYPEID
 from tstarbot.data.pool.macro_def import BUILDING_UNITS
+import operator
 import numpy as np
 
 
@@ -56,12 +57,14 @@ class EnemyCluster(object):
 
 class EnemyPool(PoolBase):
 
-    def __init__(self):
+    def __init__(self, dd):
         super(PoolBase, self).__init__()
+        self._dd = dd
         self._enemy_units = list()
         self._enemy_clusters = list()
         self._self_bases = list()
         self._is_set_main_base = False
+        self._main_base_pos = None
 
     def update(self, timestep):
         self._enemy_units = list()
@@ -100,6 +103,10 @@ class EnemyPool(PoolBase):
         return sum(cluster.num_combat_units for cluster in self._enemy_clusters)
 
     @property
+    def main_base_pos(self):
+        return self._main_base_pos
+
+    @property
     def enemy_clusters(self):
         return self._enemy_clusters
 
@@ -131,6 +138,22 @@ class EnemyPool(PoolBase):
         target_c = min(c_targets,
                        key=lambda c: self._distance(c.centroid, self._main_base_pos))
         return target_c
+
+    @property
+    def priority_pos(self):
+        sorted_x = sorted(self._dd.base_pool.enemy_home_dist.items(), key=operator.itemgetter(1), reverse=True)
+        # sorted_x = sorted(self._dd.base_pool.home_dist.items(), key=operator.itemgetter(1))
+        sorted_pos_list = [x[0].ideal_base_pos for x in sorted_x]
+        for pos in sorted_pos_list:
+            pos = {'x': pos[0],
+                   'y': pos[1]}
+            detected = [u for u in self.units
+                        if u.int_attr.unit_type in BUILDING_UNITS and
+                        self._distance({'x': u.float_attr.pos_x,
+                                        'y': u.float_attr.pos_y}, pos) < 10]
+            if len(detected) > 0:
+                return pos
+        return None
 
     def _is_enemy_unit(self, u):
         if u.int_attr.alliance != tm.AllianceType.ENEMY.value:

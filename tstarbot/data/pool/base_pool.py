@@ -1,5 +1,6 @@
 from tstarbot.data.pool.pool_base import PoolBase
 from tstarbot.data.pool import macro_def as tm
+from tstarbot.data.pool.map_tool import compute_area_dist
 from pysc2.lib.typeenums import UNIT_TYPEID
 import copy
 import numpy as np
@@ -121,6 +122,10 @@ class BasePool(PoolBase):
         super(PoolBase, self).__init__()
         self._dd = dd
         self._init = False
+        self.home_pos = None
+        self.home_dist = {} # {area: distance}
+        self.enemy_home_pos = None
+        self.enemy_home_dist = {} # {area: distance}
 
         self._bases = {}  # {base_tag: BaseInstance, ...}
         self._unit_to_base = {}  # map unit to base
@@ -140,6 +145,10 @@ class BasePool(PoolBase):
         # print('base_pool reset')
         self._dc = None
         self._init = False
+        self.home_pos = None
+        self.home_dist = {}
+        self.enemy_home_pos = None
+        self.enemy_home_dist = {}
         self._bases = {}
         self._unit_to_base = {}
         self.resource_cluster = []
@@ -155,6 +164,22 @@ class BasePool(PoolBase):
         if not self._init:
             # self._analysis_resource(units)
             self._init_base(units)
+            for base in self.bases.values():
+                self.home_pos = (base.unit.float_attr.pos_x,
+                                 base.unit.float_attr.pos_y)
+            self.home_dist = compute_area_dist(self.resource_cluster,
+                                               timestep, self.home_pos)
+            d_min = 0
+            for area in self.resource_cluster:
+                d = self.calculate_distances(area.ideal_base_pos[0],
+                                             area.ideal_base_pos[1],
+                                             self.home_pos[0],
+                                             self.home_pos[1])
+                if d > d_min:
+                    self.enemy_home_pos = area.ideal_base_pos
+                    d_min = d
+            self.enemy_home_dist = compute_area_dist(self.resource_cluster,
+                                                timestep, self.enemy_home_pos)
             self._init = True
         else:
             self._update_base(units)
@@ -301,6 +326,7 @@ class BasePool(PoolBase):
             area = self.find_resource_area(mtags, gtags,
                                            self.minerals, self.vespenes)
             self.resource_cluster.append(area)
+
         # for cluster in self.resource_cluster:
         #    print('clusters=', str(cluster))
 

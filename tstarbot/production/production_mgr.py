@@ -2,15 +2,17 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+import operator
 
 from pysc2.lib.typeenums import UNIT_TYPEID
 from pysc2.lib.typeenums import ABILITY_ID
 from pysc2.lib.typeenums import UPGRADE_ID
 from pysc2.lib.typeenums import RACE
 from collections import namedtuple
-from tstarbot.production.map_tool import bitmap2array
-from tstarbot.production.map_tool import compute_dist
+from tstarbot.data.pool.map_tool import compute_area_dist
+from tstarbot.data.pool.macro_def import BASE_UNITS
 from tstarbot.production.util import *
+import distutils.version
 
 BuildCmdBuilding = namedtuple('build_cmd_building', ['base_tag', 'unit_type'])
 BuildCmdUnit = namedtuple('build_cmd_unit', ['base_tag', 'unit_type'])
@@ -99,7 +101,7 @@ class BaseProductionMgr(object):
 
         # check resource, builder, requirement and determine the build base
         current_item = self.build_order.current_item()
-        if self.can_build(current_item, data_context):
+        if current_item and self.can_build(current_item, data_context):
             if current_item.isUnit:
                 if self.set_build_base(current_item, data_context):
                     self.build_order.remove_current_item()
@@ -197,11 +199,13 @@ class BaseProductionMgr(object):
         play_info = self.obs["player"]
         current_item = self.build_order.current_item()
         # No enough supply and supply not in building process
-        if (play_info[3] + current_item.supplyCost
-                > play_info[4] - min(8, max(0, (play_info[4]-30)/5))
+        if (current_item is not None
+                and play_info[3] + current_item.supplyCost
+                    > play_info[4] - min(20, max(0, (play_info[4]-30)/5))
                 and current_item.supplyCost > 0
                 and not self.supply_in_progress()
-                and current_item.unit_id != self.supply_unit()):
+                and current_item.unit_id != self.supply_unit()
+                and play_info[4] < 200):
             self.build_order.queue_as_highest(self.supply_unit())
             if self.verbose > 0:
                 print('Cut in: {}'.format(self.supply_unit()))
@@ -234,10 +238,10 @@ class BaseProductionMgr(object):
         builders = [unit for unit in self.obs['units']
                     if unit.unit_type in data.whatBuilds
                     and unit.int_attr.alliance == alliance]
-        in_progress = [len(builder.orders) > 0
-                       and builder.orders[0].ability_id == data.buildAbility
-                       for builder in builders]
-        return any(in_progress)
+        in_progress = [builder for builder in builders
+                       if len(builder.orders) > 0
+                       and builder.orders[0].ability_id == data.buildAbility]
+        return in_progress
 
     def unit_in_progress(self, unit_type, alliance=1):
         data = self.TT.getUnitData(unit_type)
@@ -299,6 +303,19 @@ class BaseProductionMgr(object):
 class ZergProductionMgr(BaseProductionMgr):
     def __init__(self, dc):
         super(ZergProductionMgr, self).__init__(dc)
+        self.ultra_goal = {UNIT_TYPEID.ZERG_ROACH: 15,
+                           UNIT_TYPEID.ZERG_HYDRALISK: 22,
+                           UNIT_TYPEID.ZERG_INFESTOR: 3,
+                           UNIT_TYPEID.ZERG_CORRUPTOR: 0,
+                           UNIT_TYPEID.ZERG_LURKERMP: 8,
+                           UNIT_TYPEID.ZERG_VIPER: 2,
+                           UNIT_TYPEID.ZERG_RAVAGER: 4,
+                           UNIT_TYPEID.ZERG_ULTRALISK: 4,
+                           UNIT_TYPEID.ZERG_MUTALISK: 3,
+                           UNIT_TYPEID.ZERG_BROODLORD: 0,
+                           UNIT_TYPEID.ZERG_QUEEN: 3,
+                           UNIT_TYPEID.ZERG_OVERSEER: 20,
+                           UNIT_TYPEID.ZERG_DRONE: 66}
 
     def reset(self):
         super(ZergProductionMgr, self).reset()
@@ -322,6 +339,7 @@ class ZergProductionMgr(BaseProductionMgr):
                    [UNIT_TYPEID.ZERG_EVOLUTIONCHAMBER] + \
                    [UNIT_TYPEID.ZERG_ROACH,
                     UNIT_TYPEID.ZERG_DRONE] * 3 + \
+                   [UNIT_TYPEID.ZERG_EVOLUTIONCHAMBER] + \
                    [UPGRADE_ID.BURROW,
                     UPGRADE_ID.TUNNELINGCLAWS,
                     UNIT_TYPEID.ZERG_HYDRALISKDEN] + \
@@ -337,6 +355,8 @@ class ZergProductionMgr(BaseProductionMgr):
                 num_worker_needed += self.ideal_harvesters(base)
             num_worker_needed -= num_worker
             game_loop = self.obs['game_loop'][0]
+
+            count = unique_unit_count(self.obs['units'], self.TT)
             if game_loop < 6 * 60 * 16:  # 8 min
                 goal = [UNIT_TYPEID.ZERG_ROACH] * 2 + \
                        [UNIT_TYPEID.ZERG_HYDRALISK] * 2 + \
@@ -348,14 +368,35 @@ class ZergProductionMgr(BaseProductionMgr):
                 if (not self.unit_in_progress(UNIT_TYPEID.ZERG_LURKERDENMP.value)
                         and not self.has_unit(UNIT_TYPEID.ZERG_LURKERDENMP.value)):
                     goal += [UNIT_TYPEID.ZERG_LURKERDENMP]
+
                 if self.has_building_built([UNIT_TYPEID.ZERG_LURKERDENMP.value]):
-                    goal += [UNIT_TYPEID.ZERG_LURKERMP]
+                    diff = self.ultra_goal[UNIT_TYPEID.ZERG_LURKERMP] - count[
+                        UNIT_TYPEID.ZERG_LURKERMP.value]
+                    if diff > 0:
+                        goal += [UNIT_TYPEID.ZERG_LURKERMP] * 2
             else:
-                goal = [UNIT_TYPEID.ZERG_ROACH] * 3 + \
-                       [UNIT_TYPEID.ZERG_RAVAGER] * 2 + \
-                       [UNIT_TYPEID.ZERG_HYDRALISK] * 3 + \
-                       [UNIT_TYPEID.ZERG_VIPER] * 1 + [UNIT_TYPEID.ZERG_INFESTOR] * 1
-                       # [UNIT_TYPEID.ZERG_OVERSEER] * 1
+                goal = []
+                diff = self.ultra_goal[UNIT_TYPEID.ZERG_ROACH] - count[
+                    UNIT_TYPEID.ZERG_ROACH.value]
+                if diff > 0:
+                    goal += [UNIT_TYPEID.ZERG_ROACH] * min(3, diff)
+
+                diff = self.ultra_goal[UNIT_TYPEID.ZERG_RAVAGER] - count[
+                    UNIT_TYPEID.ZERG_RAVAGER.value]
+                if diff > 0:
+                    goal += [UNIT_TYPEID.ZERG_RAVAGER] * min(1, diff)
+
+                diff = self.ultra_goal[UNIT_TYPEID.ZERG_HYDRALISK] - count[
+                    UNIT_TYPEID.ZERG_HYDRALISK.value]
+                if diff > 0:
+                    goal += [UNIT_TYPEID.ZERG_HYDRALISK] * min(3, diff)
+
+
+                # goal = [UNIT_TYPEID.ZERG_ROACH] * 3 + \
+                #        [UNIT_TYPEID.ZERG_RAVAGER] * 2 + \
+                #        [UNIT_TYPEID.ZERG_HYDRALISK] * 3 + \
+                #        [UNIT_TYPEID.ZERG_VIPER] * 1 + [UNIT_TYPEID.ZERG_INFESTOR] * 1
+                #        [UNIT_TYPEID.ZERG_OVERSEER] * 1
                 if (not self.unit_in_progress(UNIT_TYPEID.ZERG_SPIRE.value)
                         and not self.has_unit(UNIT_TYPEID.ZERG_SPIRE.value)):
                     goal += [UNIT_TYPEID.ZERG_SPIRE]
@@ -363,12 +404,31 @@ class ZergProductionMgr(BaseProductionMgr):
                 if (not self.unit_in_progress(UNIT_TYPEID.ZERG_LURKERDENMP.value)
                         and not self.has_unit(UNIT_TYPEID.ZERG_LURKERDENMP.value)):
                     goal += [UNIT_TYPEID.ZERG_LURKERDENMP]
+
                 if self.has_building_built([UNIT_TYPEID.ZERG_LURKERDENMP.value]):
-                    goal += [UNIT_TYPEID.ZERG_LURKERMP] * 2
+                    diff = self.ultra_goal[UNIT_TYPEID.ZERG_LURKERMP] - count[
+                        UNIT_TYPEID.ZERG_LURKERMP.value]
+                    if diff > 0:
+                        goal += [UNIT_TYPEID.ZERG_LURKERMP] * min(2, diff)
+                    #goal += [UNIT_TYPEID.ZERG_LURKERMP] * 2
+
+                if self.has_building_built([UNIT_TYPEID.ZERG_SPIRE.value]) and \
+                        self.has_building_built([UNIT_TYPEID.ZERG_HIVE.value]):
+                    diff = self.ultra_goal[UNIT_TYPEID.ZERG_VIPER] - count[
+                        UNIT_TYPEID.ZERG_VIPER.value]
+                    if diff > 0:
+                        goal += [UNIT_TYPEID.ZERG_VIPER] * min(1, diff)
 
                 if (not self.unit_in_progress(UNIT_TYPEID.ZERG_INFESTATIONPIT.value)
                         and not self.has_unit(UNIT_TYPEID.ZERG_INFESTATIONPIT.value)):
                     goal += [UNIT_TYPEID.ZERG_INFESTATIONPIT]
+
+                if self.has_building_built([UNIT_TYPEID.ZERG_INFESTATIONPIT.value]):
+                    diff = self.ultra_goal[UNIT_TYPEID.ZERG_INFESTOR] - count[
+                        UNIT_TYPEID.ZERG_INFESTOR.value]
+                    if diff > 0:
+                        goal += [UNIT_TYPEID.ZERG_INFESTOR] * min(1, diff)
+
                 if (self.has_building_built([UNIT_TYPEID.ZERG_INFESTATIONPIT.value])
                         and not self.unit_in_progress(UNIT_TYPEID.ZERG_HIVE.value)
                         and not self.has_unit(UNIT_TYPEID.ZERG_HIVE.value)):
@@ -382,13 +442,20 @@ class ZergProductionMgr(BaseProductionMgr):
                 #     goal += [UNIT_TYPEID.ZERG_CORRUPTOR] * 3
 
                 # ULTRALISK
-                if (not self.unit_in_progress(UNIT_TYPEID.ZERG_HIVE.value)
-                        and not self.has_unit(UNIT_TYPEID.ZERG_HIVE.value)):
+                if (self.has_building_built([UNIT_TYPEID.ZERG_HIVE.value]) and
+                        not self.unit_in_progress(UNIT_TYPEID.ZERG_ULTRALISKCAVERN.value)
+                        and not self.has_unit(UNIT_TYPEID.ZERG_ULTRALISKCAVERN.value)):
                     goal += [UNIT_TYPEID.ZERG_ULTRALISKCAVERN]
+
                 if self.has_building_built([UNIT_TYPEID.ZERG_ULTRALISKCAVERN.value]):
-                    goal += [UNIT_TYPEID.ZERG_ULTRALISK] * 2
+                    diff = self.ultra_goal[UNIT_TYPEID.ZERG_ULTRALISK] - count[
+                        UNIT_TYPEID.ZERG_ULTRALISK.value]
+                    if diff > 0:
+                        goal += [UNIT_TYPEID.ZERG_ULTRALISK] * min(2, diff)
             if num_worker_needed > 0 and num_worker < 66:
-                goal = [UNIT_TYPEID.ZERG_DRONE] * 5 + goal
+                diff = self.ultra_goal[UNIT_TYPEID.ZERG_DRONE] - count[UNIT_TYPEID.ZERG_DRONE.value]
+                if diff > 0:
+                    goal = [UNIT_TYPEID.ZERG_DRONE] * min(5, diff) + goal
         return goal
 
     def get_goal_rush(self, dc):
@@ -457,10 +524,11 @@ class ZergProductionMgr(BaseProductionMgr):
                    [UNIT_TYPEID.ZERG_ROACH] * 5
         elif self.strategy == 'ADV_ARMS':
             return [UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_DRONE,
-                    UNIT_TYPEID.ZERG_OVERLORD, UNIT_TYPEID.ZERG_EXTRACTOR,
-                    UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_OVERLORD,
+                    UNIT_TYPEID.ZERG_DRONE,
                     UNIT_TYPEID.ZERG_DRONE] + \
-                   [UNIT_TYPEID.ZERG_HATCHERY] + \
+                   [UNIT_TYPEID.ZERG_HATCHERY,
+                    UNIT_TYPEID.ZERG_EXTRACTOR, UNIT_TYPEID.ZERG_DRONE] + \
                    [UNIT_TYPEID.ZERG_DRONE] * 4 + \
                    [UNIT_TYPEID.ZERG_SPAWNINGPOOL,
                     UNIT_TYPEID.ZERG_DRONE,
@@ -472,7 +540,10 @@ class ZergProductionMgr(BaseProductionMgr):
                     UNIT_TYPEID.ZERG_DRONE,
                     UNIT_TYPEID.ZERG_QUEEN] + \
                    [UNIT_TYPEID.ZERG_DRONE,
-                    UNIT_TYPEID.ZERG_ROACH] * 3 + \
+                    UNIT_TYPEID.ZERG_ROACH] * 1 + \
+                   [UNIT_TYPEID.ZERG_SPINECRAWLER] + \
+                   [UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_ROACH] * 2 + \
                    [UNIT_TYPEID.ZERG_SPINECRAWLER,
                     UNIT_TYPEID.ZERG_ROACH,
                     UNIT_TYPEID.ZERG_ROACH,
@@ -481,8 +552,13 @@ class ZergProductionMgr(BaseProductionMgr):
             raise Exception('Unknow production strategy!')
 
     def should_expand_now(self, dc):
-        expand_worker = {0: 0, 1: 20, 2: 33, 3: 40, 4: 45,
-                         5: 50, 6: 55, 7: 60, 8: 200}
+        if self.strategy == 'ADV_ARMS':
+            expand_worker = {0: 0, 1: 20, 2: 28, 3: 40, 4: 45,
+                             5: 50, 6: 55, 7: 60, 8: 64, 9: 65,
+                             10: 65, 11: 65, 12: 200}
+        else:
+            expand_worker = {0: 0, 1: 20, 2: 33, 3: 40, 4: 45,
+                             5: 50, 6: 55, 7: 60, 8: 200}
         num = len([unit for unit in self.obs['units']
                    if unit.int_attr.unit_type == UNIT_TYPEID.ZERG_DRONE.value
                    and unit.int_attr.alliance == 1])
@@ -493,6 +569,7 @@ class ZergProductionMgr(BaseProductionMgr):
             base_num += 1
             if bases[base_tag].unit.float_attr.build_progress == 1:
                 ideal_harvesters_all += self.ideal_harvesters(bases[base_tag])
+        base_num = min(12, base_num)
         if (num > min(ideal_harvesters_all, expand_worker[base_num])
                 and not self.unit_in_progress(self.base_unit().value)):
             return True
@@ -754,34 +831,51 @@ class ZergProductionMgr(BaseProductionMgr):
                 larva_count = num_larva
         return tag
 
-    def find_base_pos(self, dc):
+    def find_base_pos_old(self, dc):
         areas = dc.dd.base_pool.resource_cluster
         bases = dc.dd.base_pool.bases
-        timestep = dc.sd.timestep
-        pathing_grid = timestep.game_info.start_raw.pathing_grid
-        array = bitmap2array(pathing_grid)
-        dist = {}
-        # erase base in pathing_grid
-        for tag in bases:
-            base = bases[tag].unit
-            for dx in range(-2, 3):
-                for dy in range(-2, 3):
-                    array[int(base.float_attr.pos_x) + dx,
-                          int(base.float_attr.pos_y) + dy] = 0
-        # compute map distance from the base
-        for tag in bases:
-            base = bases[tag].unit
-            dist[tag] = compute_dist(int(base.float_attr.pos_x),
-                                     int(base.float_attr.pos_y), array)
         d_min = 10000
         pos = None
         for area in areas:
-            d = min([dist[tag][int(area.ideal_base_pos[0]),
-                               int(area.ideal_base_pos[1])] for tag in bases])
-            if 5 < d < d_min:
-                pos = area.ideal_base_pos
-                d_min = d
+            if area not in [base.resource_area for base in bases.values()]:
+                d = dc.dd.base_pool.home_dist[area]
+                if 5 < d < d_min:
+                    pos = area.ideal_base_pos
+                    d_min = d
         return pos
+
+    def find_base_pos(self, dc):
+        areas = dc.dd.base_pool.resource_cluster
+        bases = [unit for unit in self.obs['units']
+                    if unit.unit_type in BASE_UNITS]
+        d_min = 10000
+        pos = None
+        for area in areas:
+            dist = [dist_to_pos(base, area.ideal_base_pos) for base in bases]
+            if min(dist) > 5: # area do not have a base now
+                d = dc.dd.base_pool.home_dist[area]
+                if 5 < d < d_min:
+                    pos = area.ideal_base_pos
+                    d_min = d
+        return pos
+
+    def find_base_pos_aggressive(self, dc):
+        areas = dc.dd.base_pool.resource_cluster
+        bases = [unit for unit in self.obs['units']
+                    if unit.unit_type in BASE_UNITS]
+        if len(dc.dd.base_pool.bases) < 4:
+            sorted_area = sorted(dc.dd.base_pool.home_dist.items(),
+                                 key=operator.itemgetter(1))
+        else:
+            sorted_area = sorted(dc.dd.base_pool.enemy_home_dist.items(),
+                                 key=operator.itemgetter(1))
+            sorted_area = sorted_area[4:]
+        sorted_pos_list = [x[0].ideal_base_pos for x in sorted_area]
+        for area_pos in sorted_pos_list:
+            dist = [dist_to_pos(base, area_pos) for base in bases]
+            if min(dist) > 5: # area do not have a base now
+                return area_pos
+        return None
 
     def find_unit_by_tag(self, tag):
         return [unit for unit in self.obs['units'] if unit.tag == tag]
@@ -817,33 +911,53 @@ class ZergProductionMgr(BaseProductionMgr):
     def add_upgrade(self, dc):
         upgrade_list = [UPGRADE_ID.ZERGGROUNDARMORSLEVEL1,
                         UPGRADE_ID.ZERGMISSILEWEAPONSLEVEL1,
+                        UPGRADE_ID.CHITINOUSPLATING,
                         UPGRADE_ID.ZERGGROUNDARMORSLEVEL2,
                         UPGRADE_ID.ZERGMISSILEWEAPONSLEVEL2]
+        if (distutils.version.LooseVersion(dc.sd.game_version)
+                >= distutils.version.LooseVersion('4.1.4')):
+            upgrade_list.append(UPGRADE_ID.EVOLVEGROOVEDSPINES)
+        upgrade_list.extend([UPGRADE_ID.ZERGGROUNDARMORSLEVEL3,
+                             UPGRADE_ID.ZERGMISSILEWEAPONSLEVEL3,
+                             UPGRADE_ID.EVOLVEMUSCULARAUGMENTS,
+                             UPGRADE_ID.ZERGMELEEWEAPONSLEVEL1,
+                             UPGRADE_ID.ZERGMELEEWEAPONSLEVEL2,
+                             UPGRADE_ID.ZERGMELEEWEAPONSLEVEL3])
+
         for upgrade_id in upgrade_list:
             build_item = self.TT.getUpgradeData(upgrade_id.value)
-            if not self.has_building_built(build_item.whatBuilds):
-                break
+            if (not self.has_building_built(build_item.whatBuilds) or
+                    not self.has_building_built(build_item.requiredUnits) or
+                    not self.has_upgrade(dc, build_item.requiredUpgrades)):
+                continue
             if self.upgrade_in_progress(upgrade_id.value):
-                break
+                continue
             if self.has_upgrade(dc, [upgrade_id.value]):
                 continue
             else:
-                if upgrade_id not in self.cut_in_item:
+                if (upgrade_id not in self.cut_in_item and
+                        self.find_spare_building(build_item.whatBuilds)):
                     self.build_order.queue_as_highest(upgrade_id)
                     self.cut_in_item.append(upgrade_id)
                     if self.verbose > 0:
                         print('Cut in: {}'.format(upgrade_id))
                 break
 
+    def find_spare_building(self, unit_type_list):
+        for unit_type in unit_type_list:
+            units = self.find_unit(unit_type)
+            for unit in units:
+                if (len(unit.orders) == 0
+                        and unit.float_attr.build_progress == 1):
+                    return unit
+        return None
+
     def upgrade(self, build_item, dc):
         builder_list = build_item.whatBuilds
-        for builder_type in builder_list[::-1]:
-            builders = self.find_unit(builder_type)
-            for builder in builders:
-                if (len(builder.orders) == 0
-                        and builder.float_attr.build_progress == 1):
-                    dc.dd.build_command_queue.put(
-                        BuildCmdUpgrade(building_tag=builder.tag,
-                                        ability_id=build_item.buildAbility))
-                    return True
+        builder = self.find_spare_building(builder_list)
+        if builder is not None:
+            dc.dd.build_command_queue.put(
+                BuildCmdUpgrade(building_tag=builder.tag,
+                                ability_id=build_item.buildAbility))
+            return True
         return False

@@ -49,7 +49,7 @@ class ZergStrategyMgr(BaseStrategyMgr):
         self._ready_to_attack = False
         self._mutalisk_ready_to_go = False
         self._mutalisk_ready_to_harass = False
-        self._food_trigger = 70
+        self._food_trigger = 100
 
         self._rally_pos = None
         self._rally_pos_for_attack = None
@@ -66,7 +66,7 @@ class ZergStrategyMgr(BaseStrategyMgr):
         self._ready_to_attack = False
         self._mutalisk_ready_to_go = False
         self._mutalisk_ready_to_harass = False
-        self._food_trigger = 70
+        self._food_trigger = 100
 
         self._rally_pos = None
         self._rally_pos_for_attack = None
@@ -104,6 +104,7 @@ class ZergStrategyMgr(BaseStrategyMgr):
 
     def _organize_army_by_size(self, size):
         # self._create_fixed_size_squads(size)
+        # self._create_fixed_size_zergling_squads(squad_size=4, uniform='stone', unique=True)
         self._create_fixed_size_spec_type_squads(size, UNIT_BLACKLIST)
         self._create_fixed_size_mutalisk_squads(squad_size=3, muta_list_uniform='main_base', unique=True)
         self._create_fixed_size_mutalisk_squads(squad_size=3, muta_list_uniform='sub_base1', unique=True)
@@ -178,6 +179,21 @@ class ZergStrategyMgr(BaseStrategyMgr):
                 u for u in self._army.unsquaded_units
                 if u.unit.unit_type == UNIT_TYPEID.ZERG_MUTALISK.value]
 
+    def _create_fixed_size_zergling_squads(self, squad_size, uniform, unique=False):
+        if unique:
+            squads = [s for s in self._army.squads]
+            if uniform in [s.uniform for s in squads]:
+                return None
+        unsquaded_zerglings = [u for u in self._army.unsquaded_units if
+                               u.unit.unit_type == UNIT_TYPEID.ZERG_ZERGLING.value]
+        while len(unsquaded_zerglings) >= squad_size:
+            print('create zerglings squad: ' + uniform)
+            self._army.create_squad(
+                random.sample(unsquaded_zerglings, squad_size), uniform)
+            unsquaded_zerglings = [
+                u for u in self._army.unsquaded_units
+                if u.unit.unit_type == UNIT_TYPEID.ZERG_ZERGLING.value]
+
     def _create_queen_squads(self):
         queens = [u for u in self._army.unsquaded_units
                   if u.unit.unit_type == UNIT_TYPEID.ZERG_QUEEN.value]
@@ -196,8 +212,8 @@ class ZergStrategyMgr(BaseStrategyMgr):
             self._command_army_onewave(cmd_queue)
         elif self._strategy == Strategy.REFORM:
             self._organize_army_by_size(size=1)
-            if not self._command_army_defend(cmd_queue):
-                self._command_army_reform(cmd_queue)
+            self._command_army_defend(cmd_queue)
+            self._command_army_reform(cmd_queue)
         elif self._strategy == Strategy.HARASS:
             self._organize_army_by_size(size=1)
             if not self._command_army_defend(cmd_queue):
@@ -262,39 +278,38 @@ class ZergStrategyMgr(BaseStrategyMgr):
         enemy_pool = self._dc.dd.enemy_pool
         enemy_combat_units = self._find_enemy_combat_units(enemy_pool.units)
         if len(enemy_combat_units) == 0 or enemy_pool.closest_cluster is None:
-            return
+            return False
 
-        danger_base = self._find_closest_base_to_enemy(enemy_pool)
-        if danger_base is None:
-            return
         enemy_attacking_me = False
-        closest_enemy = self._find_closest_enemy(danger_base, enemy_combat_units)
-        # print('dist to enemy: {}'.format(self._cal_square_dist(danger_base, closest_enemy)))
-        if (UNIT_TYPEID.ZERG_ZERGLING.value in [u.int_attr.unit_type for u in enemy_combat_units] and
-                self._cal_square_dist(danger_base, closest_enemy) < 50):
-            enemy_attacking_me = True
+        bases = self._dc.dd.base_pool.bases
+        for tag in bases:
+            b = bases[tag].unit
+            for e in enemy_combat_units:
+                if self._cal_square_dist(e, b) < 30:
+                    enemy_attacking_me = True
+                    closest_enemy = e
+                    break
+            if enemy_attacking_me:
+                break
 
-        if enemy_attacking_me and not self._ready_to_go:
-            # print('Enemy is rushing me.')
-            if self._cal_square_dist(danger_base, closest_enemy) < 20:
-                if self._verbose > 0:
-                    print('Defend.')
-                for squad in self._army.squads + [self._create_queen_squads()]:
-                    if squad.uniform is not None:
-                        continue
-                    if squad.status == SquadStatus.SCOUT:
-                        continue
-                    squad.status = SquadStatus.MOVE
-                    cmd = CombatCommand(
-                        type=CombatCmdType.DEFEND,
-                        squad=squad,
-                        position={
-                            'x': closest_enemy.float_attr.pos_x,
-                            'y': closest_enemy.float_attr.pos_y
-                        })
-                    cmd_queue.push(cmd)
-                    self._cmds.append(cmd)
-                return True
+        if enemy_attacking_me:
+            # print('Defend.')
+            for squad in self._army.squads + [self._create_queen_squads()]:
+                if squad.uniform is not None:
+                    continue
+                if squad.status == SquadStatus.SCOUT:
+                    continue
+                squad.status = SquadStatus.MOVE
+                cmd = CombatCommand(
+                    type=CombatCmdType.ATTACK,
+                    squad=squad,
+                    position={
+                        'x': closest_enemy.float_attr.pos_x,
+                        'y': closest_enemy.float_attr.pos_y
+                    })
+                cmd_queue.push(cmd)
+                self._cmds.append(cmd)
+            return True
         return False
 
     def _command_army_reform(self, cmd_queue):
@@ -315,8 +330,9 @@ class ZergStrategyMgr(BaseStrategyMgr):
                 if squad.status == SquadStatus.SCOUT:
                     continue
                 squad.status = SquadStatus.MOVE
+
                 cmd = CombatCommand(
-                    type=CombatCmdType.MOVE,
+                    type=CombatCmdType.MOVE,  # if self.estimate_self_army_power_in_battle() < 0 else CombatCmdType.MOVE,
                     squad=squad,
                     position=self._rally_pos)
                 cmd_queue.push(cmd)
@@ -336,19 +352,26 @@ class ZergStrategyMgr(BaseStrategyMgr):
                 self._ready_to_go = True
 
         # rally before attack
+        attack_pos = enemy_pool.priority_pos
+        if attack_pos is None:
+            if enemy_pool.closest_cluster is None:
+                return None
+            attack_pos = enemy_pool.closest_cluster.centroid
+
         if self._ready_to_go and not self._ready_to_attack:
             if enemy_pool.closest_cluster is None:
                 return None
             if self._verbose > 0:
                 print('ready to go and rally before attack')
-            temp_pos = enemy_pool.closest_cluster.centroid
+
+            temp_pos = attack_pos
             for squad in self._army.squads:
                 if squad.uniform is not None:
                     continue
                 if squad.status == SquadStatus.SCOUT:
                     continue
-                if self._distance(squad.centroid,
-                                  enemy_pool.closest_cluster.centroid) < 30:  # safe dist
+                if 25 < self._distance(squad.centroid,
+                                       enemy_pool.closest_cluster.centroid) < 30:  # safe dist
                     self._rally_pos_for_attack = squad.centroid
 
             # # fix rally pos
@@ -357,6 +380,10 @@ class ZergStrategyMgr(BaseStrategyMgr):
             #     self._rally_pos_for_attack = {'x': 110, 'y': 48}
             # else:
             #     self._rally_pos_for_attack = {'x': 60, 'y': 90}
+            if self._dc.sd.obs['player'][5] < self.estimate_enemy_army_power():
+                self._ready_to_go = False
+                self._food_trigger += 20
+                self._food_trigger = min(self._food_trigger, 195)
 
             for squad in self._army.squads:
                 if squad.uniform is not None:
@@ -394,7 +421,9 @@ class ZergStrategyMgr(BaseStrategyMgr):
             if self._verbose > 0:
                 print('attack')
             # print('army food me: {}, enemy: {}'.format(self._dc.sd.obs['player'][5], self.estimate_enemy_army_power()))
-            if self._dc.sd.obs['player'][5] < self.estimate_enemy_army_power() - 5:
+            est_enemy_power = self.estimate_enemy_army_power()
+            # print('battle self power: ', self.estimate_self_army_power_in_battle(), 'enemy: ', est_enemy_power)
+            if self._dc.sd.obs['player'][5] < est_enemy_power:
                 self._ready_to_attack = False
                 self._ready_to_go = False
                 self._food_trigger += 20
@@ -409,7 +438,7 @@ class ZergStrategyMgr(BaseStrategyMgr):
                 cmd = CombatCommand(
                     type=CombatCmdType.ATTACK,
                     squad=squad,
-                    position=enemy_pool.closest_cluster.centroid)
+                    position=attack_pos)
                 cmd_queue.push(cmd)
                 self._cmds.append(cmd)
 
@@ -422,18 +451,59 @@ class ZergStrategyMgr(BaseStrategyMgr):
             enemy_army_food += COMBAT_UNITS_FOOD_DICT[e.int_attr.unit_type]
         return enemy_army_food
 
+    def estimate_self_army_power_in_battle(self):
+        enemy_combat_units = [u for u in self._dc.dd.enemy_pool.units if u.int_attr.unit_type in COMBAT_UNITS]
+        if len(enemy_combat_units) == 0:
+            return -1
+        self_combat_units = [u.unit for u in self._dc.dd.combat_pool.units
+                             if u.unit.int_attr.unit_type != UNIT_TYPEID.ZERG_MUTALISK.value]  # do not include mutalisk
+        battle_pos = None
+        for e in enemy_combat_units:
+            for u in self_combat_units:
+                if self._cal_square_dist(u, e) < 30:
+                    battle_pos = {'x': u.float_attr.pos_x,
+                                  'y': u.float_attr.pos_y}
+
+        if battle_pos is None:
+            return -1
+
+        self_combat_units_in_battle = [u for u in self_combat_units
+                                       if self._distance({'x': u.float_attr.pos_x,
+                                                          'y': u.float_attr.pos_y}, battle_pos) < 10]
+        self_army_food_in_battle = 0
+        for u in self_combat_units_in_battle:
+            if u.int_attr.unit_type not in COMBAT_UNITS_FOOD_DICT.keys():
+                continue
+            self_army_food_in_battle += COMBAT_UNITS_FOOD_DICT[u.int_attr.unit_type]
+        return self_army_food_in_battle
+
     def _command_army_harass(self, cmd_queue):
         self._command_army_reform(cmd_queue)
+
+
+
         self._get_mutalisk_safe_pos()
         self._mutalisk_harass(cmd_queue, 'main_base',
                               self.safe_mutalisk_safe_pos1,
                               self.safe_mutalisk_safe_pos2)
+        # self._mutalisk_harass(cmd_queue, 'sub_base1',
+        #                      self.safe_mutalisk_safe_pos3,
+        #                      self.safe_mutalisk_safe_pos4)
         self._mutalisk_harass(cmd_queue, 'sub_base1',
-                              self.safe_mutalisk_safe_pos3,
-                              self.safe_mutalisk_safe_pos4)
-        self._mutalisk_harass(cmd_queue, 'sub_base2',
                               self.safe_mutalisk_safe_pos5,
                               self.safe_mutalisk_safe_pos6)
+
+    # def _command_army_atk_stone(self, cmd_queue, uniform='stone'):
+    #     stones = [u for u in self._dc.sd.obs['units']
+    #               if u.int_attr.unit_type == UNIT_TYPEID.]
+    #     for squad in self._army.squads:
+    #         if squad.uniform == uniform:
+    #             cmd = CombatCommand(
+    #                     type=CombatCmdType.MOVE,
+    #                     squad=squad,
+    #                     position=harass_station_pos2)
+    #             cmd_queue.push(cmd)
+    #             self._cmds.append(cmd)
 
     def _mutalisk_harass(self, cmd_queue, mutalisk_uniform,
                          harass_station_pos1, harass_station_pos2):
@@ -576,3 +646,17 @@ class ZergStrategyMgr(BaseStrategyMgr):
             dist.append(self._distance(pos, e_pos))
         idx = np.argmin(dist)
         return enemies[idx]
+
+    @staticmethod
+    def _get_center_of_units(units):
+        center_x = 0
+        center_y = 0
+        for u in units:
+            center_x += u.float_attr.pos_x
+            center_y += u.float_attr.pos_y
+        if len(units) > 0:
+            center_x /= len(units)
+            center_y /= len(units)
+        pos = {'x': center_x,
+               'y': center_y}
+        return pos

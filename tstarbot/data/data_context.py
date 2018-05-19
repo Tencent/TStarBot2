@@ -19,20 +19,17 @@ from pysc2.lib.data_raw import data_raw_3_16, data_raw_4_0
 from pysc2.lib import TechTree
 
 
-from pysc2.lib import TechTree
-
-
 class StaticData(object):
     def __init__(self, config):
         self._obs = None
         self._timestep = None
         self._data_raw = data_raw_4_0
 
-        game_version = '3.16.1'
-        if hasattr(config, game_version):
-            game_version = config.game_version
+        self.game_version = '3.16.1'
+        if hasattr(config, 'game_version'):
+            self.game_version = config.game_version
         self.TT = TechTree()
-        self.TT.update_version(game_version)
+        self.TT.update_version(self.game_version)
 
     def update(self, timestep):
         self._obs = timestep.observation
@@ -60,8 +57,8 @@ class DynamicData(object):
         self.building_pool = BuildingPool()
         self.worker_pool = WorkerPool()
         self.combat_pool = CombatUnitPool()
-        self.enemy_pool = EnemyPool()
         self.base_pool = BasePool(self)
+        self.enemy_pool = EnemyPool(self)
         self.scout_pool = ScoutPool(self)
 
     def update(self, timestep):
@@ -71,8 +68,8 @@ class DynamicData(object):
         self.building_pool.update(timestep)
         self.worker_pool.update(timestep)
         self.combat_pool.update(timestep)
-        self.enemy_pool.update(timestep)
         self.base_pool.update(timestep)
+        self.enemy_pool.update(timestep)
         self.scout_pool.update(timestep)
 
         # update statistic

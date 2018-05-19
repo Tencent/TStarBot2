@@ -60,6 +60,10 @@ class MicroMgr(MicroBase):
                 UNIT_TYPEID.ZERG_INFESTOR.value]:
             self.infestor_mgr.update(dc)
             action = self.infestor_mgr.act(u, pos, mode)
+        elif u.int_attr.unit_type in [
+                UNIT_TYPEID.ZERG_ULTRALISK.value]:
+            self.update(dc)
+            action = self.attack_pos(u, pos)
         else:
             self.update(dc)
             if self.default_micro_version == 1:

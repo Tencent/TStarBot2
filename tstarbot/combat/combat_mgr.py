@@ -3,10 +3,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from pysc2.lib.typeenums import ABILITY_ID
+from pysc2.lib.typeenums import ABILITY_ID, UNIT_TYPEID
 from s2clientprotocol import sc2api_pb2 as sc_pb
 from tstarbot.data.queue.combat_command_queue import CombatCmdType
 from tstarbot.combat.micro.micro_mgr import MicroMgr
+from tstarbot.combat.micro.lurker_micro import LurkerMgr
 
 
 class BaseCombatMgr(object):
@@ -107,7 +108,11 @@ class ZergCombatMgr(BaseCombatMgr):
     def exe_move(self, squad, pos):
         actions = []
         for u in squad.units:
-            actions.append(self.move_pos(u.unit, pos))
+            u = u.unit
+            if u.int_attr.unit_type in [UNIT_TYPEID.ZERG_LURKERMPBURROWED.value]:
+                actions.append(LurkerMgr().burrow_up(u))
+            else:
+                actions.append(self.move_pos(u, pos))
         return actions
 
     def exe_rally(self, squad, pos):

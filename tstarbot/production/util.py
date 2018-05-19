@@ -26,6 +26,68 @@ def find_nearest_to_pos(units, pos):
     return units[dd.argmin()]
 
 
+def unit_count(units, TT, alliance=1):
+    count = {}
+    for unit_id in UNIT_TYPEID: # init
+        count[unit_id.value] = 0
+
+    for u in units: # add unit
+        if u.int_attr.alliance == alliance:
+            if u.unit_type in count:
+                count[u.unit_type] += 1
+            else:
+                count[u.unit_type] = 1
+
+    eggs = []
+    for u in units: # get all the eggs
+        if u.unit_type == UNIT_TYPEID.ZERG_EGG.value:
+            eggs.append(u)
+
+    for unit_type, data in TT.m_unitTypeData.items(): # add unit in egg
+        if data.isUnit:
+            count[unit_type] += sum(
+                [(len(egg.orders) > 0 and
+                    egg.orders[0].ability_id == data.buildAbility)
+                    for egg in eggs])
+    return count
+
+
+def unique_unit_count(units, TT, alliance=1):
+    count = unit_count(units, TT, alliance)
+    unit_alias = {UNIT_TYPEID.ZERG_BANELING.value:
+                      [UNIT_TYPEID.ZERG_BANELINGBURROWED.value,
+                       UNIT_TYPEID.ZERG_BANELINGCOCOON.value],
+                  UNIT_TYPEID.ZERG_BROODLORD.value:
+                      [UNIT_TYPEID.ZERG_BROODLORDCOCOON.value],
+                  UNIT_TYPEID.ZERG_DRONE.value:
+                      [UNIT_TYPEID.ZERG_DRONEBURROWED.value],
+                  UNIT_TYPEID.ZERG_HYDRALISK.value:
+                      [UNIT_TYPEID.ZERG_HYDRALISKBURROWED.value],
+                  UNIT_TYPEID.ZERG_INFESTOR.value:
+                      [UNIT_TYPEID.ZERG_INFESTORBURROWED.value],
+                  UNIT_TYPEID.ZERG_LURKERMP.value:
+                      [UNIT_TYPEID.ZERG_LURKERMPBURROWED.value,
+                       UNIT_TYPEID.ZERG_LURKERMPEGG.value],
+                  UNIT_TYPEID.ZERG_OVERSEER.value:
+                      [UNIT_TYPEID.ZERG_OVERLORDCOCOON.value],
+                  UNIT_TYPEID.ZERG_QUEEN.value:
+                      [UNIT_TYPEID.ZERG_QUEENBURROWED.value],
+                  UNIT_TYPEID.ZERG_RAVAGER.value:
+                      [UNIT_TYPEID.ZERG_RAVAGERCOCOON.value],
+                  UNIT_TYPEID.ZERG_ROACH.value:
+                      [UNIT_TYPEID.ZERG_ROACHBURROWED.value],
+                  UNIT_TYPEID.ZERG_SPORECRAWLER.value:
+                      [UNIT_TYPEID.ZERG_SPORECRAWLERUPROOTED.value],
+                  UNIT_TYPEID.ZERG_SWARMHOSTMP.value:
+                      [UNIT_TYPEID.ZERG_SWARMHOSTBURROWEDMP.value],
+                  UNIT_TYPEID.ZERG_ZERGLING.value:
+                      [UNIT_TYPEID.ZERG_ZERGLINGBURROWED.value]}
+    for unit_type, alias in unit_alias.items():
+        for a in alias:
+            count[unit_type] += count[a]
+    return count
+
+
 class BuildOrderQueue(object):
     def __init__(self, TT):
         self.queue = deque()

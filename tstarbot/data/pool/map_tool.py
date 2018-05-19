@@ -33,4 +33,25 @@ def compute_dist(x, y, array):
                 if dist[x_next, y_next] == -1 and array[x_next, y_next] == 0:
                     dist[x_next, y_next] = dist[x_now, y_now] + 1
                     q.put((x_next, y_next))
-    return dist 
+    return dist
+
+def compute_area_dist(areas, timestep, pos):
+    """ distance from area.ideal_base_pos to pos """
+    pathing_grid = timestep.game_info.start_raw.pathing_grid
+    array = bitmap2array(pathing_grid)
+    dist = {}
+    # erase base in pathing_grid
+    for area in areas:
+        pos_area = area.ideal_base_pos
+        if array[int(pos_area[0]), int(pos_area[1])] !=0:
+            for dx in range(-2, 3):
+                for dy in range(-2, 3):
+                    array[int(pos_area[0]) + dx,
+                          int(pos_area[1]) + dy] = 0
+    # compute map distance from area.ideal_base_pos to pos
+    d = compute_dist(int(pos[0]),
+                     int(pos[1]), array)
+    for area in areas:
+        pos_area = area.ideal_base_pos
+        dist[area] = d[int(pos_area[0]), int(pos_area[1])]
+    return dist

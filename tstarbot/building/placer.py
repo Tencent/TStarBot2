@@ -164,6 +164,7 @@ class HybridPlacer(BasicPlacer):
     def reset(self):
         self._base_cs = {}
         self._all_units = None
+        self.predef_delta_pos[UNIT_TYPEID.ZERG_EVOLUTIONCHAMBER.value] = [5, 4]
 
     def update(self, dc):
         self._all_units = dc.sd.obs['units']
@@ -196,6 +197,8 @@ class HybridPlacer(BasicPlacer):
         cs = self._base_cs[base_tag]
         if unit_type in self.predef_delta_pos:
             local_xy = self.predef_delta_pos[unit_type]
+            if unit_type == UNIT_TYPEID.ZERG_EVOLUTIONCHAMBER.value:
+                self.predef_delta_pos[unit_type] = [3, 7]
             return cs.local_to_global(local_xy)
 
         # for others, find random position

@@ -29,6 +29,8 @@ class ZergScoutMgr(BaseScoutMgr):
         self._tasks = []
         self._init_config(dc)
         self._forced_scout_count = 1
+        if self._explore_ver == DEF_EXPLORE_VER:
+            self._forced_scout_count = 0
 
     def _init_config(self, dc):
         if not hasattr(dc, 'config'):
