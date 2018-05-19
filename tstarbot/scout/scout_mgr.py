@@ -27,10 +27,8 @@ class ZergScoutMgr(BaseScoutMgr):
     def __init__(self, dc):
         super(ZergScoutMgr, self).__init__()
         self._tasks = []
-        self._init_config(dc)
         self._forced_scout_count = 1
-        if self._explore_ver == DEF_EXPLORE_VER:
-            self._forced_scout_count = 0
+        self._init_config(dc)
 
     def _init_config(self, dc):
         if not hasattr(dc, 'config'):
@@ -48,6 +46,7 @@ class ZergScoutMgr(BaseScoutMgr):
 
     def reset(self):
         self._tasks = []
+        self._forced_scout_count = 1
 
     def update(self, dc, am):
         super(ZergScoutMgr, self).update(dc, am)
