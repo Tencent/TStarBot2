@@ -35,7 +35,7 @@ class ViperMgr(MicroBase):
     @staticmethod
     def consume_target(u, target):
         action = sc_pb.Action()
-        action.action_raw.unit_command.ability_id = ABILITY_ID.EFFECT_CONTAMINATE.value
+        action.action_raw.unit_command.ability_id = ABILITY_ID.EFFECT_VIPERCONSUME.value
         action.action_raw.unit_command.target_unit_tag = target.tag
         action.action_raw.unit_command.unit_tags.append(u.tag)
         return action
@@ -74,30 +74,28 @@ class ViperMgr(MicroBase):
 
     def act(self, u, pos, mode):
         if len(self.enemy_combat_units) > 0:
-            if u.float_attr.energy > 100:
+            if ((len(u.orders)==0 or u.orders[0].ability_id != ABILITY_ID.EFFECT_VIPERCONSUME.value) and
+                    u.float_attr.energy > 100):
                 # enough energy
                 closest_enemy = self.find_closest_enemy(u, self.enemy_combat_units)
-                if self.cal_square_dist(u, closest_enemy) > self.viper_range:
-                    # follow the ground unit
-                    # print('follow the ground unit')
-                    self_ground_units = [u for u in self.self_combat_units
-                                         if u.int_attr.unit_type not in COMBAT_FLYING_UNITS]
-                    if len(self_ground_units) == 0:
-                        action = self.hold_fire(u)
-                        return action
-                    self_most_dangerous_ground_unit = self.find_closest_units_in_battle(self_ground_units, closest_enemy)
-                    pos = {'x': self_most_dangerous_ground_unit.float_attr.pos_x,
-                           'y': self_most_dangerous_ground_unit.float_attr.pos_y}
-                    action = self.move_pos(u, pos)
-                else:
+                # follow the ground unit
+                # print('follow the ground unit')
+                self_ground_units = [u for u in self.self_combat_units
+                                     if u.int_attr.unit_type not in COMBAT_FLYING_UNITS]
+                if len(self_ground_units) == 0:
+                    action = self.hold_fire(u)
+                    return action
+                self_most_dangerous_ground_unit = self.find_closest_units_in_battle(self_ground_units, closest_enemy)
+                pos = {'x': self_most_dangerous_ground_unit.float_attr.pos_x,
+                       'y': self_most_dangerous_ground_unit.float_attr.pos_y}
+                action = self.move_pos(u, pos)
+                if self.cal_square_dist(u, closest_enemy) <= self.viper_range:
                     # use bomb
                     air_target = self.find_densest_air_enemy_unit_in_range(u)
                     if air_target is None:
                         # print('use blind')
                         ground_pos = self.find_densest_enemy_pos_in_range(u)
-                        if ground_pos is None:
-                            action = self.hold_fire(u)
-                        else:
+                        if ground_pos is not None:
                             action = self.blinding_cloud_attack_pos(u, ground_pos)
                     else:
                         # print('use bomb')
@@ -106,7 +104,9 @@ class ViperMgr(MicroBase):
                 # not enough energy
                 # print('not enough energy')
                 bases = self.dc.dd.base_pool.bases
-                base_units = [bases[tag].unit for tag in bases]
+                base_units = [bases[tag].unit for tag in bases
+                                if bases[tag].unit.float_attr.health > 500
+                                and bases[tag].unit.float_attr.build_progress == 1]
                 closest_base = self.find_closest_enemy(u, base_units)
                 if self.cal_square_dist(u, closest_base) < self.viper_consume_range:
                     action = self.consume_target(u, closest_base)

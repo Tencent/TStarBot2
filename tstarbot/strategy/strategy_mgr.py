@@ -106,9 +106,9 @@ class ZergStrategyMgr(BaseStrategyMgr):
         # self._create_fixed_size_squads(size)
         # self._create_fixed_size_zergling_squads(squad_size=4, uniform='stone', unique=True)
         self._create_fixed_size_spec_type_squads(size, UNIT_BLACKLIST)
-        self._create_fixed_size_mutalisk_squads(squad_size=3, muta_list_uniform='main_base', unique=True)
-        self._create_fixed_size_mutalisk_squads(squad_size=3, muta_list_uniform='sub_base1', unique=True)
-        self._create_fixed_size_mutalisk_squads(squad_size=3, muta_list_uniform='sub_base2', unique=True)
+        self._create_fixed_size_mutalisk_squads(squad_size=3, mutalisk_uniform='main_base', unique=True)
+        self._create_fixed_size_mutalisk_squads(squad_size=3, mutalisk_uniform='sub_base1', unique=True)
+        self._create_fixed_size_mutalisk_squads(squad_size=3, mutalisk_uniform='sub_base2', unique=True)
 
     def _organize_army_by_type(self, squad_size):
         units_by_type = {}
@@ -164,17 +164,17 @@ class ZergStrategyMgr(BaseStrategyMgr):
                 if u.unit.unit_type not in unit_type_blacklist
             ]
 
-    def _create_fixed_size_mutalisk_squads(self, squad_size, muta_list_uniform, unique=False):
+    def _create_fixed_size_mutalisk_squads(self, squad_size, mutalisk_uniform, unique=False):
         if unique:
             squads = [s for s in self._army.squads]
-            if muta_list_uniform in [s.uniform for s in squads]:
+            if mutalisk_uniform in [s.uniform for s in squads]:
                 return None
         unsquaded_mutalisks = [u for u in self._army.unsquaded_units if
                               u.unit.unit_type == UNIT_TYPEID.ZERG_MUTALISK.value]
         while len(unsquaded_mutalisks) >= squad_size:
-            print('create mutalisk squad: ' + muta_list_uniform)
+            print('create mutalisk squad: ' + mutalisk_uniform)
             self._army.create_squad(
-                random.sample(unsquaded_mutalisks, squad_size), muta_list_uniform)
+                random.sample(unsquaded_mutalisks, squad_size), mutalisk_uniform)
             unsquaded_mutalisks = [
                 u for u in self._army.unsquaded_units
                 if u.unit.unit_type == UNIT_TYPEID.ZERG_MUTALISK.value]
@@ -216,8 +216,9 @@ class ZergStrategyMgr(BaseStrategyMgr):
             self._command_army_reform(cmd_queue)
         elif self._strategy == Strategy.HARASS:
             self._organize_army_by_size(size=1)
+            self._command_army_harass(cmd_queue)
             if not self._command_army_defend(cmd_queue):
-                self._command_army_harass(cmd_queue)
+                self._command_army_reform(cmd_queue)
 
     def _command_army_rush(self, cmd_queue):
         enemy_pool = self._dc.dd.enemy_pool
@@ -295,7 +296,9 @@ class ZergStrategyMgr(BaseStrategyMgr):
         if enemy_attacking_me:
             # print('Defend.')
             for squad in self._army.squads + [self._create_queen_squads()]:
-                if squad.uniform is not None:
+                if squad.uniform is not None and \
+                        squad.combat_status not in [MutaliskSquadStatus.IDLE,
+                                                    MutaliskSquadStatus.PHASE1]:
                     continue
                 if squad.status == SquadStatus.SCOUT:
                     continue
@@ -380,7 +383,8 @@ class ZergStrategyMgr(BaseStrategyMgr):
             #     self._rally_pos_for_attack = {'x': 110, 'y': 48}
             # else:
             #     self._rally_pos_for_attack = {'x': 60, 'y': 90}
-            if self._dc.sd.obs['player'][5] < self.estimate_enemy_army_power():
+            if (self._dc.sd.obs['player'][5] < self.estimate_enemy_army_power()
+                    and self._dc.sd.obs['player'][3] < 195):
                 self._ready_to_go = False
                 self._food_trigger += 20
                 self._food_trigger = min(self._food_trigger, 195)
@@ -423,7 +427,8 @@ class ZergStrategyMgr(BaseStrategyMgr):
             # print('army food me: {}, enemy: {}'.format(self._dc.sd.obs['player'][5], self.estimate_enemy_army_power()))
             est_enemy_power = self.estimate_enemy_army_power()
             # print('battle self power: ', self.estimate_self_army_power_in_battle(), 'enemy: ', est_enemy_power)
-            if self._dc.sd.obs['player'][5] < est_enemy_power:
+            if (self._dc.sd.obs['player'][5] < est_enemy_power
+                    and self._dc.sd.obs['player'][3] < 195):
                 self._ready_to_attack = False
                 self._ready_to_go = False
                 self._food_trigger += 20
@@ -478,10 +483,7 @@ class ZergStrategyMgr(BaseStrategyMgr):
         return self_army_food_in_battle
 
     def _command_army_harass(self, cmd_queue):
-        self._command_army_reform(cmd_queue)
-
-
-
+        # if has mutalisk -> harass
         self._get_mutalisk_safe_pos()
         self._mutalisk_harass(cmd_queue, 'main_base',
                               self.safe_mutalisk_safe_pos1,

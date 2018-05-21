@@ -73,8 +73,11 @@ class BaseProductionMgr(object):
                 self.build_order.set_build_order(goal)
 
         # determine whether to Expand
+        current_item = self.build_order.current_item()
         if (self.base_unit() not in self.cut_in_item
-                and self.should_expand_now(data_context)):
+                and self.should_expand_now(data_context)
+                and (current_item is None
+                     or current_item.unit_id != self.base_unit())):
             self.build_order.queue_as_highest(self.base_unit())
             self.cut_in_item.append(self.base_unit())
             if self.verbose > 0:
@@ -303,15 +306,15 @@ class BaseProductionMgr(object):
 class ZergProductionMgr(BaseProductionMgr):
     def __init__(self, dc):
         super(ZergProductionMgr, self).__init__(dc)
-        self.ultra_goal = {UNIT_TYPEID.ZERG_ROACH: 15,
-                           UNIT_TYPEID.ZERG_HYDRALISK: 22,
+        self.ultra_goal = {UNIT_TYPEID.ZERG_ROACH: 13,
+                           UNIT_TYPEID.ZERG_HYDRALISK: 20,
                            UNIT_TYPEID.ZERG_INFESTOR: 3,
                            UNIT_TYPEID.ZERG_CORRUPTOR: 0,
                            UNIT_TYPEID.ZERG_LURKERMP: 8,
                            UNIT_TYPEID.ZERG_VIPER: 2,
                            UNIT_TYPEID.ZERG_RAVAGER: 4,
                            UNIT_TYPEID.ZERG_ULTRALISK: 4,
-                           UNIT_TYPEID.ZERG_MUTALISK: 3,
+                           UNIT_TYPEID.ZERG_MUTALISK: 0,
                            UNIT_TYPEID.ZERG_BROODLORD: 0,
                            UNIT_TYPEID.ZERG_QUEEN: 3,
                            UNIT_TYPEID.ZERG_OVERSEER: 20,
@@ -526,9 +529,10 @@ class ZergProductionMgr(BaseProductionMgr):
             return [UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_DRONE,
                     UNIT_TYPEID.ZERG_OVERLORD,
                     UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_DRONE,
                     UNIT_TYPEID.ZERG_DRONE] + \
-                   [UNIT_TYPEID.ZERG_HATCHERY,
-                    UNIT_TYPEID.ZERG_EXTRACTOR, UNIT_TYPEID.ZERG_DRONE] + \
+                   [UNIT_TYPEID.ZERG_HATCHERY, UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_EXTRACTOR] + \
                    [UNIT_TYPEID.ZERG_DRONE] * 4 + \
                    [UNIT_TYPEID.ZERG_SPAWNINGPOOL,
                     UNIT_TYPEID.ZERG_DRONE,

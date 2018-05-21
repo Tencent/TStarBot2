@@ -28,9 +28,9 @@ class ZergScoutMgr(BaseScoutMgr):
         super(ZergScoutMgr, self).__init__()
         self._tasks = []
         self._explore_ver = DEF_EXPLORE_VER
-        self._forced_scout_count = 1
+        self._forced_scout_count = 0
+        self._assigned_forced_scout_count = 0
         self._init_config(dc)
-        self._parse_explore_ver()
 
     def _init_config(self, dc):
         if not hasattr(dc, 'config'):
@@ -41,23 +41,22 @@ class ZergScoutMgr(BaseScoutMgr):
         # print('Scout explore version=', self._explore_ver)
 
         if hasattr(dc.config, 'max_forced_scout_count'):
-            # TODO(pengsun): redundant property?
             self._forced_scout_count = dc.config.max_forced_scout_count
 
     def reset(self):
         self._tasks = []
-        self._parse_explore_ver()
+        self._assigned_forced_scout_count = 0
 
-    def _parse_explore_ver(self):
-        if self._explore_ver == 0:
-            self._forced_scout_count = 0
-        elif self._explore_ver == 1:
-            self._forced_scout_count = 1
-        else:
-            raise ValueError(
-                'ScoutMgr: unknown scout_expolore_version {}'.format(
-                    self._explore_ver)
-            )
+    # def _parse_explore_ver(self):
+    #     if self._explore_ver == 0:
+    #         self._forced_scout_count = 0
+    #     elif self._explore_ver == 1:
+    #         self._forced_scout_count = 1
+    #     else:
+    #         raise ValueError(
+    #             'ScoutMgr: unknown scout_expolore_version {}'.format(
+    #                 self._explore_ver)
+    #         )
 
     def update(self, dc, am):
         super(ZergScoutMgr, self).update(dc, am)
@@ -103,10 +102,10 @@ class ZergScoutMgr(BaseScoutMgr):
         self._tasks = keep_tasks
 
     def _dispatch_task(self, dc):
-        if self._forced_scout_count > 0:
+        if self._forced_scout_count > self._assigned_forced_scout_count:
             ret = self._dispatch_forced_scout_task(dc)
             if ret:
-                self._forced_scout_count -= 1
+                self._assigned_forced_scout_count += 1
 
         self._dispatch_cruise_task(dc)
         self._dispatch_explore_task(dc)
