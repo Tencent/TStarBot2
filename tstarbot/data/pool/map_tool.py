@@ -9,12 +9,12 @@ def bitmap2array(image):
     array = copy.copy(array[::-1].transpose())
     return array
 
-def save_image(image):
+def save_image(image, figure_name):
     array = np.frombuffer(image.data, dtype=np.uint8)
     array = np.reshape(array, (image.size.y, image.size.x))
     im = Image.fromarray(array, mode='L')
     im = im.convert('RGB')
-    im.save('temp.png')
+    im.save(figure_name)
 
 def compute_dist(x, y, array):
     q = Queue()
@@ -55,3 +55,65 @@ def compute_area_dist(areas, timestep, pos):
         pos_area = area.ideal_base_pos
         dist[area] = d[int(pos_area[0]), int(pos_area[1])]
     return dist
+
+class Slope(object):
+    def __init__(self, mean_x, mean_y, size, min_height, max_height, pos, h):
+        self.x = mean_x
+        self.y = mean_y
+        self.size = size
+        self.min_h = min_height
+        self.max_h = max_height
+        self.pos = pos # [(x1, y1), (x2, y2), ... , (xn, yn)]
+        self.height = h # [H1, H2, ... , Hn]
+
+def get_slopes(timestep):
+    """ get all the slopes in map """
+    pathing_grid = timestep.game_info.start_raw.pathing_grid
+    placement_grid = timestep.game_info.start_raw.placement_grid
+    terrain_height = timestep.game_info.start_raw.terrain_height
+    pathing = bitmap2array(pathing_grid)
+    placement = bitmap2array(placement_grid)
+    height = bitmap2array(terrain_height)
+
+    slopes = []
+    for i in range(pathing_grid.size.x):
+        for j in range(pathing_grid.size.y):
+            if pathing[i, j] == 0 and placement[i, j] == 0:
+                slope_item = extract_slope(i, j, pathing, placement, height)
+                if slope_item.min_h != slope_item.max_h:
+                    slopes.append(slope_item)
+    return slopes
+
+def extract_slope(x, y, pathing, placement, height):
+    q = Queue()
+    q.put((x,y))
+    pathing[x, y] = 255
+    nx, ny = pathing.shape
+    pos = [(x, y)]
+    h = height[x,y]
+    heights = [h]
+    sum_x = x
+    sum_y = y
+    num = 1
+    max_h = h
+    min_h = h
+    dx = [-1, 1, 0, 0]
+    dy = [0, 0, -1, 1]
+    while not q.empty():
+        x_now, y_now = q.get()
+        for i in range(4):
+            x_next = x_now + dx[i]
+            y_next = y_now + dy[i]
+            if x_next>=0 and x_next<nx and y_next>=0 and y_next<ny:
+                if pathing[x_next, y_next] == 0 and placement[x_next, y_next] == 0:
+                    pathing[x_next, y_next] = 255
+                    q.put((x_next, y_next))
+                    pos.append((x_next, y_next))
+                    sum_x += x_next
+                    sum_y += y_next
+                    num += 1
+                    h = height[x_next, y_next]
+                    heights.append(h)
+                    max_h = max(h, max_h)
+                    min_h = min(h, min_h)
+    return Slope(sum_x/num, sum_y/num, num, min_h, max_h, pos, heights)

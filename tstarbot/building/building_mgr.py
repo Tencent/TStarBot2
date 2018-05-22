@@ -79,6 +79,15 @@ def act_build_by_pos(builder_tag, target_pos, ability_id):
     return action
 
 
+def act_move_to_pos(unit_tag, target_pos):
+    action = sc_pb.Action()
+    action.action_raw.unit_command.ability_id = ABILITY_ID.MOVE.value
+    action.action_raw.unit_command.target_world_space_pos.x = target_pos[0]
+    action.action_raw.unit_command.target_world_space_pos.y = target_pos[1]
+    action.action_raw.unit_command.unit_tags.append(unit_tag)
+    return action
+
+
 class BaseBuildingMgr(object):
     def __init__(self, dc):
         pass
@@ -150,7 +159,7 @@ class ZergBuildingMgr(BaseBuildingMgr):
             elif type(cmd) == BuildCmdBuilding:
                 action = self._build_building(cmd, dc)
             elif type(cmd) == BuildCmdExpand:
-                action = self._build_base_expand(cmd, dc)
+                action = self._build_base_expand_v2(cmd, dc)
             elif type(cmd) == BuildCmdSpawnLarva:
                 action = self._spawn_larva(cmd, dc)
             if action:
@@ -261,6 +270,33 @@ class ZergBuildingMgr(BaseBuildingMgr):
                 target_pos = cmd.pos
                 ability_id = ABILITY_ID.BUILD_HATCHERY.value
                 return act_build_by_pos(builder_tag, target_pos, ability_id)
+        if self.verbose >= 1:
+            print(
+                "Warning: ZergBuildingMgr._build_base_expand: "
+                "invalid base_tag in base_pool or no worker around this base"
+            )
+        return None
+
+    def _build_base_expand_v2(self, cmd, dc):
+        base_instance = dc.dd.base_pool.bases[cmd.base_tag]
+        if base_instance:
+            if cmd.builder_tag is not None:
+                builder_tag = cmd.builder_tag
+            else:
+                builder_tag = self._find_available_worker_for_building(
+                    dc, base_instance)
+            if builder_tag:
+                target_pos = cmd.pos
+                player_info = dc.sd.obs['player']
+                base_data = self.TT.getUnitData(UNIT_TYPEID.ZERG_HATCHERY.value)
+                if player_info[1] >= base_data.mineralCost:
+                    ability_id = ABILITY_ID.BUILD_HATCHERY.value
+                    return act_build_by_pos(builder_tag, target_pos, ability_id)
+                else:
+                    cmd_n = BuildCmdExpand(base_tag=cmd.base_tag, pos=cmd.pos,
+                                           builder_tag = builder_tag)
+                    dc.dd.build_command_queue.put(cmd_n)
+                    return act_move_to_pos(builder_tag, target_pos)
         if self.verbose >= 1:
             print(
                 "Warning: ZergBuildingMgr._build_base_expand: "

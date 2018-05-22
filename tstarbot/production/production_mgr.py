@@ -20,7 +20,8 @@ BuildCmdUpgrade = namedtuple('build_cmd_upgrade', ['building_tag',
                                                    'ability_id'])
 BuildCmdMorph = namedtuple('build_cmd_morph', ['unit_tag',
                                                'ability_id'])
-BuildCmdExpand = namedtuple('build_cmd_expand', ['base_tag', 'pos'])
+BuildCmdExpand = namedtuple('build_cmd_expand', ['base_tag', 'pos',
+                                                 'builder_tag'])
 BuildCmdHarvest = namedtuple('build_cmd_harvest', ['gas_first'])
 BuildCmdSpawnLarva = namedtuple('build_cmd_spawn_larva',
                                 ['base_tag', 'queen_tag'])
@@ -502,6 +503,8 @@ class ZergProductionMgr(BaseProductionMgr):
             return self.get_goal_rush(dc)
         elif self.strategy == 'ADV_ARMS':
             return self.get_goal_long_game(dc)
+        elif self.strategy == 'DEF_AND_ADV':
+            return self.get_goal_long_game(dc)
         else:
             raise Exception('Unknow production strategy!')
 
@@ -552,10 +555,40 @@ class ZergProductionMgr(BaseProductionMgr):
                     UNIT_TYPEID.ZERG_ROACH,
                     UNIT_TYPEID.ZERG_ROACH,
                     UNIT_TYPEID.ZERG_SPINECRAWLER]
+        elif self.strategy == 'DEF_AND_ADV':
+            return [UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_OVERLORD,
+                    UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_DRONE] + \
+                   [UNIT_TYPEID.ZERG_HATCHERY, UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_EXTRACTOR] + \
+                   [UNIT_TYPEID.ZERG_DRONE] * 4 + \
+                   [UNIT_TYPEID.ZERG_SPAWNINGPOOL,
+                    UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_ZERGLING,
+                    UNIT_TYPEID.ZERG_ROACHWARREN,
+                    UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_QUEEN] + \
+                   [UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_ROACH] * 1 + \
+                   [UNIT_TYPEID.ZERG_SPINECRAWLER] + \
+                   [UNIT_TYPEID.ZERG_DRONE,
+                    UNIT_TYPEID.ZERG_ROACH] * 2 + \
+                   [UNIT_TYPEID.ZERG_SPINECRAWLER,
+                    UNIT_TYPEID.ZERG_ROACH,
+                    UNIT_TYPEID.ZERG_ROACH,
+                    UNIT_TYPEID.ZERG_SPINECRAWLER]
         else:
             raise Exception('Unknow production strategy!')
 
     def should_expand_now(self, dc):
+        if self.expand_waiting_resource(dc):
+            return False
         if self.strategy == 'ADV_ARMS':
             expand_worker = {0: 0, 1: 20, 2: 28, 3: 40, 4: 45,
                              5: 50, 6: 55, 7: 60, 8: 64, 9: 65,
@@ -676,15 +709,28 @@ class ZergProductionMgr(BaseProductionMgr):
                 return True
         return False
 
+    def expand_waiting_resource(self, dc):
+        l = dc.dd.build_command_queue.size()
+        for _ in range(l):
+            cmd = dc.dd.build_command_queue.get()
+            dc.dd.build_command_queue.put(cmd)
+            if type(cmd) == BuildCmdExpand:
+                return True
+        return False
+
+
     def can_build(self, build_item, dc):  # check resource requirement
         if not (self.has_building_built(build_item.whatBuilds)
                 and self.has_building_built(build_item.requiredUnits)
-                and self.has_upgrade(dc, build_item.requiredUpgrades)):
+                and self.has_upgrade(dc, build_item.requiredUpgrades)
+                and not self.expand_waiting_resource(dc)):
             return False
         play_info = self.obs["player"]
         if (build_item.supplyCost > 0
                 and play_info[3] + build_item.supplyCost > play_info[4]):
             return False
+        if build_item.unit_id == UNIT_TYPEID.ZERG_HATCHERY:
+            return self.obs['player'][1] >= build_item.mineralCost - 100
         return (self.obs['player'][1] >= build_item.mineralCost
                 and self.obs['player'][2] >= build_item.gasCost)
 
@@ -711,7 +757,8 @@ class ZergProductionMgr(BaseProductionMgr):
                     pos = self.find_base_pos(data_context)
                     if pos is not None:
                         data_context.dd.build_command_queue.put(
-                            BuildCmdExpand(base_tag=tag, pos=pos))
+                            BuildCmdExpand(base_tag=tag, pos=pos,
+                                           builder_tag = None))
                 else:
                     data_context.dd.build_command_queue.put(
                         BuildCmdBuilding(base_tag=tag,
