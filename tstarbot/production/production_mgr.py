@@ -589,7 +589,7 @@ class ZergProductionMgr(BaseProductionMgr):
     def should_expand_now(self, dc):
         if self.expand_waiting_resource(dc):
             return False
-        if self.strategy == 'ADV_ARMS':
+        if self.strategy == 'ADV_ARMS' or self.strategy == 'DEF_AND_ADV':
             expand_worker = {0: 0, 1: 20, 2: 28, 3: 40, 4: 45,
                              5: 50, 6: 55, 7: 60, 8: 64, 9: 65,
                              10: 65, 11: 65, 12: 200}
