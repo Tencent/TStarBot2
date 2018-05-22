@@ -181,6 +181,28 @@ class ScoutPool(PoolBase):
                 return target
         return None
 
+    def find_enemy_subbase_target(self):
+        candidates = []
+        for target in self._scout_base_target:
+            if target.has_enemy_base:
+                continue
+
+            if target.has_army:
+                continue
+
+            if target.has_scout:
+                continue
+            candidates.append(target)
+
+        min_dist = 1000
+        target = None
+        for candidate in candidates:
+            dist = self._dd.base_pool.enemy_home_dist[candidate.area]
+            if min_dist > dist > 0:
+                min_dist = dist
+                target = candidate
+        return target
+
     def find_furthest_idle_target(self):
         candidates = []
         for target in self._scout_base_target:

@@ -38,7 +38,7 @@ class ZergScoutMgr(BaseScoutMgr):
 
         if hasattr(dc.config, 'scout_explore_version'):
             self._explore_ver = dc.config.scout_explore_version
-        # print('Scout explore version=', self._explore_ver)
+        print('Scout explore version=', self._explore_ver)
 
         if hasattr(dc.config, 'max_forced_scout_count'):
             self._forced_scout_count = dc.config.max_forced_scout_count
@@ -107,13 +107,17 @@ class ZergScoutMgr(BaseScoutMgr):
             if ret:
                 self._assigned_forced_scout_count += 1
 
-        self._dispatch_cruise_task(dc)
+        if self._explore_ver < st.EXPLORE_V3:
+            self._dispatch_cruise_task(dc)
         self._dispatch_explore_task(dc)
 
     def _dispatch_explore_task(self, dc):
         sp = dc.dd.scout_pool
         scout = sp.select_scout()
-        target = sp.find_furthest_idle_target()
+        if self._explore_ver >= st.EXPLORE_V3:
+            target = sp.find_enemy_subbase_target()
+        else:
+            target = sp.find_furthest_idle_target()
         if scout is None or target is None:
             # not need dispatch task
             return

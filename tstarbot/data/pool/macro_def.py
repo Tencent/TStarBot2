@@ -152,9 +152,14 @@ COMBAT_UNITS = set([
 
 COMBAT_AIR_UNITS = set([
     #Zerg
+    # used in scout pool
     UNIT_TYPEID.ZERG_QUEEN.value,
     UNIT_TYPEID.ZERG_HYDRALISK.value,
     UNIT_TYPEID.ZERG_MUTALISK.value,
+    UNIT_TYPEID.ZERG_CORRUPTOR.value,
+    UNIT_TYPEID.ZERG_SPORECRAWLER.value,
+    UNIT_TYPEID.ZERG_RAVAGER.value,
+    UNIT_TYPEID.ZERG_VIPER.value
 ])
 
 AIR_UNITS = set([
