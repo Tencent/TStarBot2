@@ -208,11 +208,11 @@ class HybridPlacer(BasicPlacer):
         unit_type = cmd.unit_type
         if self.verbose >= 2:
             if unit_type == UNIT_TYPEID.ZERG_HYDRALISKDEN.value:
-                print('HybridPlacer: tryting to build ZERG_HYDRALISKDEN')
+                print('HybridPlacer: trying to build ZERG_HYDRALISKDEN')
             if unit_type == UNIT_TYPEID.ZERG_INFESTATIONPIT.value:
-                print('HybridPlacer: tryting to build ZERG_INFESTATIONPIT')
+                print('HybridPlacer: trying to build ZERG_INFESTATIONPIT')
             if unit_type == UNIT_TYPEID.ZERG_ULTRALISKCAVERN.value:
-                print('HybridPlacer: tryting to build ZERG_ULTRALISKCAVERN')
+                print('HybridPlacer: trying to build ZERG_ULTRALISKCAVERN')
             if unit_type == UNIT_TYPEID.ZERG_SPINECRAWLER.value:
                 print('HybridPlacer: trying to build ZERG_SPINECRAWLER')
 
@@ -362,11 +362,11 @@ class HybridPlacerV2(BasicPlacer):
         unit_type = cmd.unit_type
         if self.verbose >= 2:
             if unit_type == UNIT_TYPEID.ZERG_HYDRALISKDEN.value:
-                print('HybridPlacerV2: tryting to build ZERG_HYDRALISKDEN')
+                print('HybridPlacerV2: trying to build ZERG_HYDRALISKDEN')
             if unit_type == UNIT_TYPEID.ZERG_INFESTATIONPIT.value:
-                print('HybridPlacerV2: tryting to build ZERG_INFESTATIONPIT')
+                print('HybridPlacerV2: trying to build ZERG_INFESTATIONPIT')
             if unit_type == UNIT_TYPEID.ZERG_ULTRALISKCAVERN.value:
-                print('HybridPlacerV2: tryting to build ZERG_ULTRALISKCAVERN')
+                print('HybridPlacerV2: trying to build ZERG_ULTRALISKCAVERN')
             if unit_type == UNIT_TYPEID.ZERG_SPINECRAWLER.value:
                 print('HybridPlacerV2: trying to build ZERG_SPINECRAWLER')
 

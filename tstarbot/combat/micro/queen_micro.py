@@ -54,10 +54,10 @@ class QueenMgr(MicroBase):
 
         if u.float_attr.energy > 50:
 
-            spine_crawlers = [u for u in self.self_combat_units
-                              if u.int_attr.unit_type == UNIT_TYPEID.ZERG_SPINECRAWLER.value]
-            roaches = [u for u in self.self_combat_units
-                       if u.int_attr.unit_type == UNIT_TYPEID.ZERG_ROACH.value]
+            spine_crawlers = [a for a in self.self_combat_units
+                              if a.int_attr.unit_type == UNIT_TYPEID.ZERG_SPINECRAWLER.value]
+            roaches = [a for a in self.self_combat_units
+                       if a.int_attr.unit_type == UNIT_TYPEID.ZERG_ROACH.value]
 
             weakest_spine_crawler = self.find_weakest_unit(u, spine_crawlers, self.cure_range)
             weakest_roach = self.find_weakest_unit(u, roaches, self.cure_range)

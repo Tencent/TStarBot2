@@ -41,9 +41,9 @@ class ViperMgr(MicroBase):
         return action
 
     def find_densest_enemy_pos_in_range(self, u):
-        enemy_ground_units = [u for u in self.enemy_combat_units
-                              if u.int_attr.unit_type not in COMBAT_FLYING_UNITS and
-                              u.int_attr.unit_type not in [UNIT_TYPEID.ZERG_SPINECRAWLER.value,
+        enemy_ground_units = [e for e in self.enemy_combat_units
+                              if e.int_attr.unit_type not in COMBAT_FLYING_UNITS and
+                              e.int_attr.unit_type not in [UNIT_TYPEID.ZERG_SPINECRAWLER.value,
                                                            UNIT_TYPEID.ZERG_SPORECRAWLER.value]]
         targets = self.find_units_wihtin_range(u, enemy_ground_units, r=self.viper_range)
         if len(targets) == 0:
@@ -58,8 +58,8 @@ class ViperMgr(MicroBase):
         return target_pos
 
     def find_densest_air_enemy_unit_in_range(self, u):
-        enemy_combat_flying_units = [u for u in self.enemy_combat_units
-                                     if u.int_attr.unit_type in COMBAT_FLYING_UNITS]
+        enemy_combat_flying_units = [e for e in self.enemy_combat_units
+                                     if e.int_attr.unit_type in COMBAT_FLYING_UNITS]
         if len(enemy_combat_flying_units) == 0:
             return None
         targets = self.find_units_wihtin_range(u, enemy_combat_flying_units, r=self.viper_range)
@@ -80,8 +80,8 @@ class ViperMgr(MicroBase):
                 closest_enemy = self.find_closest_enemy(u, self.enemy_combat_units)
                 # follow the ground unit
                 # print('follow the ground unit')
-                self_ground_units = [u for u in self.self_combat_units
-                                     if u.int_attr.unit_type not in COMBAT_FLYING_UNITS]
+                self_ground_units = [a for a in self.self_combat_units
+                                     if a.int_attr.unit_type not in COMBAT_FLYING_UNITS]
                 if len(self_ground_units) == 0:
                     action = self.hold_fire(u)
                     return action

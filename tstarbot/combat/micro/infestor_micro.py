@@ -24,9 +24,9 @@ class InfestorMgr(MicroBase):
         return action
 
     def find_densest_enemy_pos_in_range(self, u):
-        enemy_ground_units = [u for u in self.enemy_combat_units
-                              if u.int_attr.unit_type not in COMBAT_FLYING_UNITS and
-                              u.int_attr.unit_type not in [UNIT_TYPEID.ZERG_SPINECRAWLER.value,
+        enemy_ground_units = [e for e in self.enemy_combat_units
+                              if e.int_attr.unit_type not in COMBAT_FLYING_UNITS and
+                              e.int_attr.unit_type not in [UNIT_TYPEID.ZERG_SPINECRAWLER.value,
                                                            UNIT_TYPEID.ZERG_SPORECRAWLER.value]]
         targets = self.find_units_wihtin_range(u, enemy_ground_units, r=self.infestor_range)
         if len(targets) == 0:

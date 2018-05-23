@@ -25,8 +25,8 @@ class LurkerMgr(MicroBase):
         return action
 
     def act(self, u, pos, mode):
-        lurker_can_atk_units = [u for u in self.enemy_units
-                                if u.int_attr.unit_type not in AIR_UNITS]
+        lurker_can_atk_units = [e for e in self.enemy_units
+                                if e.int_attr.unit_type not in AIR_UNITS]
         if u.int_attr.unit_type == UNIT_TYPEID.ZERG_LURKERMP.value:
             if len(lurker_can_atk_units) > 0:
                 closest_enemy = self.find_closest_enemy(u, lurker_can_atk_units)
@@ -49,6 +49,6 @@ class LurkerMgr(MicroBase):
             else:
                 action = self.burrow_up(u)
         else:
-            print("Unrecognized roach type: %s" % str(u.int_attr.unit_type))
+            print("Unrecognized lurker type: %s" % str(u.int_attr.unit_type))
             raise NotImplementedError
         return action
