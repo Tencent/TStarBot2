@@ -11,6 +11,8 @@ from random import uniform
 
 from pysc2.lib.typeenums import UNIT_TYPEID
 
+from tstarbot.production.map_tool import bitmap2array
+
 
 def dist_to_pos(unit, pos):
     return ((unit.float_attr.pos_x - pos[0])**2 +
@@ -53,6 +55,26 @@ def polar_to_cart(rho, theta):
 
 def cart_to_polar(x, y):
     return sqrt(x*x + y*x), atan2(y, x)
+
+
+def is_overlap(unit, pos_xy, dist_thres=1):
+    d = dist_to_pos(unit=unit, pos=pos_xy)
+    return d <= dist_thres
+
+
+def is_on_creep(creep_map, pos_xy, radius):
+    x_min, x_max = 0, creep_map.shape[0] - 1
+    y_min, y_max = 0, creep_map.shape[1] - 1
+    x_center, y_center = pos_xy[0], pos_xy[1]
+    x_lo, x_hi = int(x_center - radius), int(x_center + radius)
+    y_lo, y_hi = int(y_center - radius), int(y_center + radius)
+    xy = [(x, y) for x in range(x_lo, x_hi+1) for y in range(y_lo, y_hi+1)]
+    for pos in xy:
+        x, y = pos[0], pos[1]
+        if x_min <= x <= x_max and y_min <= y <= y_max:
+            if creep_map[y][x] < 1:
+                return False
+    return True
 
 
 class CoordSystem(object):
@@ -223,11 +245,6 @@ class HybridPlacer(BasicPlacer):
         xy = cs.local_to_global(local_xy)
 
         # detect possible overlap/collision and adjust the position slightly
-        def is_overlap(unit, pos_xy):
-            dist_thres = 1
-            d = dist_to_pos(unit=unit, pos=pos_xy)
-            return d <= dist_thres
-
         max_try, n = 8, 0
         while any(is_overlap(u, xy) for u in self._all_units) and n < max_try:
             local_xy = self._find_rand_rim_pos(dc, cs)
@@ -246,10 +263,196 @@ class HybridPlacer(BasicPlacer):
         return polar_to_cart(rho, theta)
 
 
+class PredefBuildingDeltaPos(object):
+    """ Pre-defined delta position """
+
+    def __init__(self):
+        self._predef_delta_pos = {
+            UNIT_TYPEID.ZERG_SPAWNINGPOOL.value: [5, 0],
+            UNIT_TYPEID.ZERG_ROACHWARREN.value: [0, 5],
+            UNIT_TYPEID.ZERG_SPIRE.value: [-2, 4],
+            UNIT_TYPEID.ZERG_EVOLUTIONCHAMBER.value: [5, 4],
+            UNIT_TYPEID.ZERG_HYDRALISKDEN.value: [-4.5, 2],
+            UNIT_TYPEID.ZERG_INFESTATIONPIT.value: [-7, 3],
+            UNIT_TYPEID.ZERG_ULTRALISKCAVERN.value: [8, 1]
+        }
+        pass
+
+    def reset(self):
+        # TODO: fix this dirty work-around for multiple buildings
+        self._predef_delta_pos[UNIT_TYPEID.ZERG_EVOLUTIONCHAMBER.value] = [5, 4]
+
+    def get_delta_pos(self, unit_type):
+        if unit_type not in self._predef_delta_pos:
+            return ()
+        local_xy = self._predef_delta_pos[unit_type]
+        # TODO: fix this dirty work-around for multiple buildings
+        if unit_type == UNIT_TYPEID.ZERG_EVOLUTIONCHAMBER.value:
+            self._predef_delta_pos[unit_type] = [3, 7]
+        return local_xy
+
+
+class PredefTowerDeltaPos(object):
+    """ """
+    def __init__(self):
+        self.predef_delta_pos = [
+            [0, 9],
+            [-1.5, 8],
+            [1.5, 8]
+        ]
+        self.next_cnt = 0
+        pass
+
+    def reset(self):
+        self.next_cnt = 0
+
+    def get_delta_pos(self):
+        if self.next_cnt == len(self.predef_delta_pos):
+            return ()
+        pos = self.predef_delta_pos[self.next_cnt]
+        self.next_cnt += 1
+        return pos
+
+
+class HybridPlacerV2(BasicPlacer):
+    """ Pre-defined adaptive hybrid positions, v2 """
+
+    def __init__(self):
+        super(HybridPlacerV2, self).__init__()
+        self._building_delta = PredefBuildingDeltaPos()
+        self._base_tower_delta = {} # {base_tag: PredefTowerDeltaPos(), ...}
+        self._base_cs = {}   # {base_tag: cs, ...}
+        self._all_units = None
+        self._raw_creep = None
+        self._creep_map = None
+
+    def reset(self):
+        self._base_cs = {}
+        self._all_units = None
+        self._raw_creep = None
+        self._creep_map = None
+        self._building_delta.reset()
+        self._base_tower_delta = {}
+
+    def update(self, dc):
+        self._all_units = dc.sd.obs['units']
+        self._raw_creep = dc.sd.obs['raw_data'].map_state.creep
+        self._creep_map = bitmap2array(self._raw_creep).transpose()
+        pass
+
+    def get_planned_pos(self, cmd, dc):
+        if not hasattr(cmd, 'base_tag') or not hasattr(cmd, 'unit_type'):
+            return ()
+
+        # build coordinate system by lazy evaluation
+        base_instance = dc.dd.base_pool.bases[cmd.base_tag]
+        base_tag = base_instance.unit.tag
+        self._base_cs[base_tag] = (
+            self._base_cs.get(base_tag, False) or
+            self._make_base_coord_system(base_instance, dc)
+        )
+        cs = self._base_cs[base_tag]
+        # build tower placer for each base by lazy evaluation
+        self._base_tower_delta[base_tag] = (
+            self._base_tower_delta.get(base_tag, False) or
+            PredefTowerDeltaPos()
+        )
+
+        # use predefined position when possible
+        unit_type = cmd.unit_type
+        if self.verbose >= 2:
+            if unit_type == UNIT_TYPEID.ZERG_HYDRALISKDEN.value:
+                print('HybridPlacerV2: tryting to build ZERG_HYDRALISKDEN')
+            if unit_type == UNIT_TYPEID.ZERG_INFESTATIONPIT.value:
+                print('HybridPlacerV2: tryting to build ZERG_INFESTATIONPIT')
+            if unit_type == UNIT_TYPEID.ZERG_ULTRALISKCAVERN.value:
+                print('HybridPlacerV2: tryting to build ZERG_ULTRALISKCAVERN')
+            if unit_type == UNIT_TYPEID.ZERG_SPINECRAWLER.value:
+                print('HybridPlacerV2: trying to build ZERG_SPINECRAWLER')
+
+        pos = self._can_use_pos_predef(dc, cs, unit_type)
+        if pos:
+            return pos
+
+        pos = self._can_use_pos_for_towers(dc, cs, base_tag, unit_type)
+        if pos:
+            return pos
+
+        return self._find_rand_pos(dc, cs)
+
+    def _make_base_coord_system(self, base_instance, dc):
+        base_xy = (base_instance.unit.float_attr.pos_x,
+                   base_instance.unit.float_attr.pos_y)
+
+        local_minerals = collect_units_by_tags(
+            self._all_units, base_instance.mineral_set)
+        local_gas = collect_units_by_tags(
+            self._all_units, base_instance.gas_set)
+        local_res = local_minerals + local_gas
+        res_xy = mean_pos(local_res)
+
+        return CoordSystem(pos_origin=base_xy, pos_ref=res_xy)
+
+    def _can_use_pos_predef(self, dc, cs, unit_type):
+        local_xy = self._building_delta.get_delta_pos(unit_type)
+        if local_xy:
+            return cs.local_to_global(local_xy)
+        else:
+            return ()
+
+    def _can_use_pos_for_towers(self, dc, cs, base_tag, unit_type):
+        if unit_type is not UNIT_TYPEID.ZERG_SPINECRAWLER.value:
+            return ()
+        local_xy = self._base_tower_delta[base_tag].get_delta_pos()
+        if not local_xy:
+            return ()
+        xy = cs.local_to_global(local_xy)
+        r = 1  # TODO: tower's true radius?
+
+        def _is_available_pos(pos_xy):
+            return (is_on_creep(self._creep_map, pos_xy, radius=r) and
+                    not any(is_overlap(u, pos_xy) for u in self._all_units))
+
+        n_try, max_try = 0, 5
+        while not _is_available_pos(xy) and n_try < max_try:
+            xy = (xy[0], xy[1] - r)
+            n_try += 1
+        if self.verbose >= 1 and n_try >= max_try:
+            print("HybridPlacerV2: Fail to find an available position for the"
+                  " Tower after trying {} times".format(max_try))
+        return xy
+
+    def _find_rand_pos(self, dc, cs):
+        # find a random position in the rim
+        local_xy = self._find_rand_rim_pos(dc, cs)
+        xy = cs.local_to_global(local_xy)
+
+        # detect possible overlap/collision and adjust the position slightly
+        max_try, n = 8, 0
+        while (any(is_overlap(u, xy, dist_thres=2) for u in self._all_units)
+               and n < max_try):
+            local_xy = self._find_rand_rim_pos(dc, cs)
+            xy = cs.local_to_global(local_xy)
+            n += 1
+        if self.verbose >= 1 and n >= max_try:
+            print("HybridPlacerV2: Fail to find an available random position"
+                  "after trying {} times".format(max_try))
+        return xy
+
+    def _find_rand_rim_pos(self, dc, cs):
+        r_lo, r_hi = 6.5, 10.5
+        a_lo, a_hi = 60, 120
+        rho = uniform(r_lo, r_hi)
+        theta = uniform(a_lo, a_hi) / 180 * pi
+        return polar_to_cart(rho, theta)
+
+
 def create_placer(name):
     if name.lower() == 'naive_predef':
         return NaivePredefPlacer()
     elif name.lower() == 'hybrid':
         return HybridPlacer()
+    elif name.lower() == 'hybrid_v2':
+        return HybridPlacerV2()
     else:
         raise ValueError('Unknown building_placer config value {}'.format(name))
