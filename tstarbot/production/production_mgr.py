@@ -590,7 +590,7 @@ class ZergProductionMgr(BaseProductionMgr):
         if self.expand_waiting_resource(dc):
             return False
         if self.strategy == 'ADV_ARMS' or self.strategy == 'DEF_AND_ADV':
-            expand_worker = {0: 0, 1: 20, 2: 28, 3: 40, 4: 45,
+            expand_worker = {0: 0, 1: 20, 2: 33, 3: 40, 4: 45,
                              5: 50, 6: 55, 7: 60, 8: 64, 9: 65,
                              10: 65, 11: 65, 12: 200}
         else:
@@ -675,7 +675,7 @@ class ZergProductionMgr(BaseProductionMgr):
     def spawn_larva(self, dc):
         queens = self.find_unit(UNIT_TYPEID.ZERG_QUEEN.value)
         for queen in queens:
-            if (queen.float_attr.energy > 25
+            if (queen.float_attr.energy > 75
                     and len(queen.orders) == 0):
                 bases = dc.dd.base_pool.bases
                 base = find_nearest([bases[tag].unit for tag in bases], queen)

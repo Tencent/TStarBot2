@@ -13,15 +13,15 @@ class MutaliskMgr(MicroBase):
         super(MutaliskMgr, self).__init__()
         self.safe_harass_dist = 11
         self.safe_positions = [
-            {'x': 20, 'y': 5},
-            {'x': 20, 'y': 140},
-            {'x': 180, 'y': 140},
-            {'x': 180, 'y': 5},
+            {'x': 20, 'y': 4},
+            {'x': 20, 'y': 145},
+            {'x': 180, 'y': 145},
+            {'x': 180, 'y': 4},
 
             {'x': 20, 'y': 75},
-            {'x': 100, 'y': 140},
+            {'x': 90, 'y': 145},
             {'x': 180, 'y': 75},
-            {'x': 100, 'y': 5}
+            {'x': 110, 'y': 4}
         ]
 
     def act(self, u, pos, mode):

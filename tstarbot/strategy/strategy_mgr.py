@@ -15,7 +15,8 @@ from tstarbot.data.queue.combat_command_queue import CombatCmdType
 from tstarbot.data.queue.combat_command_queue import CombatCommand
 from tstarbot.strategy.renderer import StrategyRenderer
 from tstarbot.data.pool.macro_def import COMBAT_ATTACK_UNITS, COMBAT_FLYING_UNITS
-from tstarbot.data.pool.macro_def import COMBAT_UNITS, COMBAT_UNITS_FOOD_DICT
+from tstarbot.data.pool.macro_def import COMBAT_UNITS, COMBAT_UNITS_FOOD_DICT, BUILDING_UNITS
+from tstarbot.data.pool.map_tool import get_slopes
 
 
 Strategy = Enum('Strategy', ('RUSH', 'ECONOMY_FIRST', 'ONEWAVE', 'REFORM', 'HARASS'))
@@ -60,6 +61,8 @@ class ZergStrategyMgr(BaseStrategyMgr):
                                               world_size={'x': 200, 'y': 150},
                                               caption='SC2: Strategy Viewer')
         self._init_config(dc)
+        self._global_step = 0
+        self._slopes = None
 
     def reset(self):
         self._army = Army()
@@ -73,11 +76,15 @@ class ZergStrategyMgr(BaseStrategyMgr):
         self._rally_pos_for_attack = None
         if self._enable_render:
             self._renderer = list()
+        self._global_step = 0
+        self._slopes = None
 
     def update(self, dc, am):
         super(ZergStrategyMgr, self).update(dc, am)
         self._army.update(dc.dd.combat_pool)
         self._dc = dc
+        if self._global_step == 1:
+            self._slopes = get_slopes(dc.sd.timestep)
 
         self._command_army(dc.dd.combat_command_queue)
 
@@ -86,6 +93,7 @@ class ZergStrategyMgr(BaseStrategyMgr):
                                 enemy_clusters=dc.dd.enemy_pool.enemy_clusters,
                                 commands=self._cmds)
             self._renderer.render()
+        self._global_step += 1
 
     def _init_config(self, dc):
         if hasattr(dc, 'config'):
@@ -281,39 +289,75 @@ class ZergStrategyMgr(BaseStrategyMgr):
         enemy_combat_units = self._find_enemy_combat_units(enemy_pool.units)
         if len(enemy_combat_units) == 0 or enemy_pool.closest_cluster is None:
             return False
-
-        enemy_attacking_me = False
         bases = self._dc.dd.base_pool.bases
-        for tag in bases:
-            b = bases[tag].unit
-            for e in enemy_combat_units:
-                if self._cal_square_dist(e, b) < 30:
-                    enemy_attacking_me = True
-                    closest_enemy = e
-                    break
-            if enemy_attacking_me:
-                break
 
-        if enemy_attacking_me:
-            # print('Defend.')
-            for squad in self._army.squads + [self._create_queen_squads()]:
-                if squad.uniform is not None and \
-                        squad.combat_status not in [MutaliskSquadStatus.IDLE,
-                                                    MutaliskSquadStatus.PHASE1]:
-                    continue
-                if squad.status == SquadStatus.SCOUT:
-                    continue
-                squad.status = SquadStatus.MOVE
-                cmd = CombatCommand(
-                    type=CombatCmdType.ATTACK,
-                    squad=squad,
-                    position={
-                        'x': closest_enemy.float_attr.pos_x,
-                        'y': closest_enemy.float_attr.pos_y
-                    })
-                cmd_queue.push(cmd)
-                self._cmds.append(cmd)
-            return True
+        if len(bases) > 2:
+            enemy_attacking_me = False
+            for tag in bases:
+                b = bases[tag].unit
+                for e in enemy_combat_units:
+                    if self._cal_square_dist(e, b) < 30:
+                        enemy_attacking_me = True
+                        closest_enemy = e
+                        break
+                if enemy_attacking_me:
+                    break
+
+            if enemy_attacking_me:
+                print('Defend.')
+                for squad in self._army.squads + [self._create_queen_squads()]:
+                    if squad.uniform is not None and \
+                            squad.combat_status not in [MutaliskSquadStatus.IDLE,
+                                                        MutaliskSquadStatus.PHASE1]:
+                        continue
+                    if squad.status == SquadStatus.SCOUT:
+                        continue
+                    squad.status = SquadStatus.MOVE
+                    cmd = CombatCommand(
+                        type=CombatCmdType.ATTACK,
+                        squad=squad,
+                        position={
+                            'x': closest_enemy.float_attr.pos_x,
+                            'y': closest_enemy.float_attr.pos_y
+                        })
+                    cmd_queue.push(cmd)
+                    self._cmds.append(cmd)
+                return True
+        else:
+            enemy_attacking_me = False
+            for tag in bases:
+                b = bases[tag].unit
+                for e in enemy_combat_units:
+                    if self._cal_square_dist(e, b) < 60:
+                        enemy_attacking_me = True
+                        # closest_enemy = e
+                        break
+                if enemy_attacking_me:
+                    break
+
+            if enemy_attacking_me:
+                print('Defend rush.')
+                for squad in self._army.squads + [self._create_queen_squads()]:
+                    if squad.uniform is not None and \
+                            squad.combat_status not in [MutaliskSquadStatus.IDLE,
+                                                        MutaliskSquadStatus.PHASE1]:
+                        continue
+                    if squad.status == SquadStatus.SCOUT:
+                        continue
+                    squad.status = SquadStatus.MOVE
+
+                    second_base_pos = self._get_second_base_pos()
+                    defend_base_pos = self._get_main_base_pos() if second_base_pos is None else second_base_pos
+
+                    cmd = CombatCommand(
+                        type=CombatCmdType.ATTACK,
+                        squad=squad,
+                        position=self._get_slope_up_pos(defend_base_pos)
+                    )
+                    cmd_queue.push(cmd)
+                    self._cmds.append(cmd)
+                return True
+
         return False
 
     def _command_army_reform(self, cmd_queue):
@@ -511,7 +555,12 @@ class ZergStrategyMgr(BaseStrategyMgr):
     def _mutalisk_harass(self, cmd_queue, mutalisk_uniform,
                          harass_station_pos1, harass_station_pos2):
         enemy_units = self._dc.dd.enemy_pool.units
-        enemy_bases = [e for e in enemy_units if e.int_attr.unit_type == UNIT_TYPEID.ZERG_HATCHERY.value]
+        enemy_buildings_and_drones_overlords = [e for e in enemy_units
+                                                if e.int_attr.unit_type in BUILDING_UNITS or
+                                                e.int_attr.unit_type in [UNIT_TYPEID.ZERG_OVERLORD.value,
+                                                                         UNIT_TYPEID.ZERG_DRONE.value,
+                                                                         UNIT_TYPEID.ZERG_OVERSEER.value]
+                                                ]
 
         for squad in self._army.squads:
             if squad.uniform == mutalisk_uniform and squad.combat_status == MutaliskSquadStatus.IDLE:
@@ -544,11 +593,11 @@ class ZergStrategyMgr(BaseStrategyMgr):
         if len(rallied_mutalisk_squads) > 0:
             rallied_mutalisk_squads[0].combat_status = MutaliskSquadStatus.PHASE2
 
-        if len(enemy_bases) == 0:
+        if len(enemy_buildings_and_drones_overlords) == 0:
             return None
         for squad in self._army.squads:
             if squad.uniform == mutalisk_uniform and squad.combat_status == MutaliskSquadStatus.PHASE2:
-                closest_enemy_base = self._find_closest_enemy_to_pos(squad.centroid, enemy_bases)
+                closest_enemy_base = self._find_closest_enemy_to_pos(squad.centroid, enemy_buildings_and_drones_overlords)
                 cmd = CombatCommand(
                         type=CombatCmdType.ATTACK,
                         squad=squad,
@@ -632,7 +681,7 @@ class ZergStrategyMgr(BaseStrategyMgr):
     def _find_enemy_combat_units(emeny_units):
         enemy_combat_units = []
         for u in emeny_units:
-            if u.int_attr.unit_type in COMBAT_ATTACK_UNITS:
+            if u.int_attr.unit_type in COMBAT_UNITS:
                 enemy_combat_units.append(u)
         return enemy_combat_units
 
@@ -663,3 +712,45 @@ class ZergStrategyMgr(BaseStrategyMgr):
         pos = {'x': center_x,
                'y': center_y}
         return pos
+
+    def _get_main_base_pos(self):
+        return {'x': self._dc.dd.base_pool.home_pos[0],
+                'y': self._dc.dd.base_pool.home_pos[1]}
+
+    def _get_second_base_pos(self):
+        bases = self._dc.dd.base_pool.bases
+        if len(bases) < 2:
+            return None
+        min_dist = 100000
+        second_base_pos = None
+        for tag in bases:
+            area = bases[tag].resource_area
+            d = self._dc.dd.base_pool.home_dist[area]
+            if 0.1 < d < min_dist:
+                min_dist = d
+                second_base_pos = area.ideal_base_pos
+        return {'x': second_base_pos[0],
+                'y': second_base_pos[1]}
+
+    def _get_slope_to_xy(self, xy):
+        if self._slopes is None:
+            return None
+        min_dist = 100000
+        target_slope = None
+        for s in self._slopes:
+            d = self._distance({'x': s.x, 'y': s.y}, xy)
+            if d < min_dist:
+                min_dist = d
+                target_slope = s
+        return target_slope
+
+    def _get_slope_up_pos(self, base_pos):
+        slope = self._get_slope_to_xy(base_pos)
+        max_height = max(slope.height)
+        highest_pos = [pos for pos, h in zip(slope.pos, slope.height) if h == max_height]
+        target_pos = np.mean(highest_pos, axis=0)
+        offset_x = base_pos['x'] - target_pos[0]
+        offset_y = base_pos['y'] - target_pos[1]
+        x = target_pos[0] + 0.3 * offset_x
+        y = target_pos[1] + 0.3 * offset_y
+        return {'x': x, 'y': y}

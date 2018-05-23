@@ -7,6 +7,7 @@ from tstarbot.combat.micro.ravager_micro import RavagerMgr
 from tstarbot.combat.micro.viper_micro import ViperMgr
 from tstarbot.combat.micro.corruptor_micro import CorruptorMgr
 from tstarbot.combat.micro.infestor_micro import InfestorMgr
+from tstarbot.combat.micro.queen_micro import QueenMgr
 
 
 class MicroMgr(MicroBase):
@@ -20,6 +21,7 @@ class MicroMgr(MicroBase):
         self.viper_mgr = ViperMgr()
         self.corruptor_mgr = CorruptorMgr()
         self.infestor_mgr = InfestorMgr()
+        self.queen_mgr = QueenMgr()
 
         self.default_micro_version = 1
         self.init_config(dc)
@@ -64,6 +66,10 @@ class MicroMgr(MicroBase):
                 UNIT_TYPEID.ZERG_ULTRALISK.value]:
             self.update(dc)
             action = self.attack_pos(u, pos)
+        elif u.int_attr.unit_type in [
+                UNIT_TYPEID.ZERG_QUEEN.value]:
+            self.queen_mgr.update(dc)
+            action = self.queen_mgr.act(u, pos, mode)
         else:
             self.update(dc)
             if self.default_micro_version == 1:
