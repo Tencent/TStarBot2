@@ -77,6 +77,8 @@ class ZergCombatMgr(BaseCombatMgr):
             actions = self.exe_defend(squad, pos)
         elif mode == CombatCmdType.RALLY:
             actions = self.exe_rally(squad, pos)
+        elif mode == CombatCmdType.ROCK:
+            actions = self.exe_rock(squad, pos)
         return actions
 
     def exe_attack(self, squad, pos):
@@ -119,6 +121,20 @@ class ZergCombatMgr(BaseCombatMgr):
         actions = []
         for u in squad.units:
             actions.append(self.attack_pos(u.unit, pos))
+        return actions
+
+    def exe_rock(self, squad, pos):
+        actions = []
+        rocks = [u for u in self.dc.sd.obs['units']
+                 if u.int_attr.unit_type == UNIT_TYPEID.NEUTRAL_DESTRUCTIBLEROCKEX1DIAGONALHUGEBLUR.value]
+        target_rock = None
+        for r in rocks:
+            d = ((r.float_attr.pos_x - pos['x']) ** 2 + (r.float_attr.pos_y - pos['y']) ** 2) ** 0.5
+            if d < 0.1:
+                target_rock = r
+                break
+        for u in squad.units:
+            actions.append(self.micro_mgr.attack_target(u, target_rock))
         return actions
 
     def exe_micro(self, u, pos, mode):

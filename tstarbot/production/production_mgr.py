@@ -308,10 +308,10 @@ class ZergProductionMgr(BaseProductionMgr):
     def __init__(self, dc):
         super(ZergProductionMgr, self).__init__(dc)
         self.ultra_goal = {UNIT_TYPEID.ZERG_ROACH: 13,
-                           UNIT_TYPEID.ZERG_HYDRALISK: 20,
+                           UNIT_TYPEID.ZERG_HYDRALISK: 23,
                            UNIT_TYPEID.ZERG_INFESTOR: 3,
                            UNIT_TYPEID.ZERG_CORRUPTOR: 0,
-                           UNIT_TYPEID.ZERG_LURKERMP: 8,
+                           UNIT_TYPEID.ZERG_LURKERMP: 6,
                            UNIT_TYPEID.ZERG_VIPER: 2,
                            UNIT_TYPEID.ZERG_RAVAGER: 4,
                            UNIT_TYPEID.ZERG_ULTRALISK: 4,
@@ -576,7 +576,7 @@ class ZergProductionMgr(BaseProductionMgr):
                     UNIT_TYPEID.ZERG_QUEEN] + \
                    [UNIT_TYPEID.ZERG_DRONE,
                     UNIT_TYPEID.ZERG_ROACH] * 1 + \
-                   [UNIT_TYPEID.ZERG_SPINECRAWLER] + \
+                   [UNIT_TYPEID.ZERG_SPINECRAWLER] * 4 + \
                    [UNIT_TYPEID.ZERG_DRONE,
                     UNIT_TYPEID.ZERG_ROACH] * 2 + \
                    [UNIT_TYPEID.ZERG_SPINECRAWLER,

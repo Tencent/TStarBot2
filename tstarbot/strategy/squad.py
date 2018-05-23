@@ -9,17 +9,17 @@ from tstarbot.data.pool import macro_def as tm
 from tstarbot.data.pool.combat_pool import CombatUnitStatus
 
 
-SquadStatus = Enum('SquadStatus', ('IDLE', 'MOVE', 'ATTACK', 'DEFEND', 'SCOUT'))
+SquadStatus = Enum('SquadStatus', ('IDLE', 'MOVE', 'ATTACK', 'DEFEND', 'SCOUT', 'ROCK'))
 MutaliskSquadStatus = Enum('SquadStatus', ('IDLE', 'PHASE1', 'PHASE2'))
 
 
 class Squad(object):
 
-    def __init__(self, units):
+    def __init__(self, units, uniform=None):
         self._units = units  # combat_unit
         self._status = SquadStatus.IDLE
         self.combat_status = MutaliskSquadStatus.IDLE
-        self._uniform = None
+        self._uniform = uniform
         for u in units:
             assert u.unit.int_attr.alliance == tm.AllianceType.SELF.value
 

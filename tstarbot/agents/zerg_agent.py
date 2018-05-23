@@ -61,13 +61,13 @@ class ZergAgent(base_agent.BaseAgent):
         self.strategy_mgr.update(self.dc, self.am)
         self.production_mgr.update(self.dc, self.am)
 
-        # Construct
-        self.building_mgr.update(self.dc, self.am)
-        self.resource_mgr.update(self.dc, self.am)
-
         # Battle
         self.combat_mgr.update(self.dc, self.am)
         self.scout_mgr.update(self.dc, self.am)
+
+        # Construct
+        self.building_mgr.update(self.dc, self.am)
+        self.resource_mgr.update(self.dc, self.am)
 
         return self.am.pop_actions()
 
