@@ -200,8 +200,8 @@ class ScoutPool(PoolBase):
             if target.has_enemy_base:
                 continue
 
-            if target.has_army:
-                continue
+            #if target.has_army:
+            #    continue
 
             if target.has_scout:
                 continue
@@ -222,8 +222,8 @@ class ScoutPool(PoolBase):
             if target.has_enemy_base:
                 continue
 
-            if target.has_army:
-                continue
+            #if target.has_army:
+            #    continue
 
             if target.has_scout:
                 continue
