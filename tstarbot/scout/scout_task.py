@@ -11,6 +11,7 @@ SCOUT_BASE_RANGE = 10
 SCOUT_SAFE_RANGE = 12
 SCOUT_CRUISE_RANGE = 5
 SCOUT_CRUISE_ARRIVAED_RANGE = 1
+SCOUT_VIEW_RANGE = 10
 
 class ScoutTask(object):
     def __init__(self, scout, home):
@@ -171,6 +172,8 @@ class ScoutExploreTask(ScoutTask):
             if self._check_in_base_range() and not self._judge_task_done():
                 self._target.has_enemy_base = True
                 self._target.has_army = True
+            else:
+                self._target.has_scout = False
             #print('SCOUT explore_task post destory; target=', str(self._target))
         else:
             #print('SCOUT task post_process, status=', self._status, ';target=', str(self._target))
@@ -348,6 +351,20 @@ class ScoutExploreTask(ScoutTask):
                  if not air_force:
                      air_force = True
                  break
+
+        view_armys = []
+        for enemy in armys:
+            dist = md.calculate_distance(self._scout.unit().float_attr.pos_x,
+                                         self._scout.unit().float_attr.pos_y,
+                                         enemy.float_attr.pos_x,
+                                         enemy.float_attr.pos_y)
+            if dist < SCOUT_VIEW_RANGE:
+                view_armys.append(enemy)
+        if len(view_armys) > 0:
+            self._scout.snapshot_armys = view_armys
+        else:
+            self._scout.snapshot_armys = None
+
         return find_base, air_force
 
     def _check_attack(self):
@@ -749,18 +766,71 @@ class ScoutForcedTask(ScoutTask):
 
 class ScoutEnemyTask(ScoutTask):
     def __init__(self, scout, home, target):
-        pass
+        super(ScoutEnemyTask, self).__init__(scout, home)
+        self._target = target
+        self._circle_path = []
+        self._cur_circle_target = 0  # index of _circle_path
+        self._cur_step = ForcedScoutStep.STEP_INIT
 
     def type(self):
-        pass
-        #return md.ScoutTaskType.
+        return md.ScoutTaskType.FORCED
 
     def post_process(self):
-        pass
+        self._target.has_scout = False
+        self._scout.is_doing_task = False
+
+        if self._status == md.ScoutTaskStatus.SCOUT_DESTROY:
+            self._target.has_enemy_base = True
+            self._target.has_army = True
 
     def _do_task_inner(self, view_enemys, dc):
-        pass
+        if self._check_scout_lost():
+            self._status = md.ScoutTaskStatus.SCOUT_DESTROY
+            return None
 
-    def _exec_by_status(self):
-        pass
+        if self._cur_step == ForcedScoutStep.STEP_INIT:
+            # step one, move to target base
+            action = self._move_to_target(self._target.pos)
+            self._cur_step = ForcedScoutStep.STEP_MOVE_TO_BASE
+            return action
+        elif self._cur_step == ForcedScoutStep.STEP_MOVE_TO_BASE:
+            # step two, circle target base
+            if self._arrive_xy(self.scout().unit(), self._target.pos[0],
+                    self._target.pos[1], 5) or self._detect_enemy(view_enemys):
+                self._cur_step = ForcedScoutStep.STEP_RETREAT
+                return self._move_to_home()
+            else:
+                return None
+        elif self._cur_step == ForcedScoutStep.STEP_RETREAT:
+            # step three, retreat
+            if self._arrive_xy(self.scout().unit(),
+                               self._home[0], self._home[1], 10):
+                self._status = md.ScoutTaskStatus.DONE
 
+            return None
+
+    def _arrive_xy(self, u, target_x, target_y, error):
+        x = u.float_attr.pos_x - target_x
+        y = u.float_attr.pos_y - target_y
+        distance = (x * x + y * y) ** 0.5
+
+        return distance < error
+
+    def distance(self, pos1, pos2):
+        x = pos1[0] - pos2[0]
+        y = pos1[1] - pos2[1]
+
+        return (x * x + y * y) ** 0.5
+
+    def _detect_enemy(self, view_enemys):
+        scout = self.scout().unit()
+        scout_pos = [scout.float_attr.pos_x, scout.float_attr.pos_y]
+
+        for enemy in view_enemys:
+            enemy_pos = [enemy.float_attr.pos_x, enemy.float_attr.pos_y]
+
+            if self.distance(enemy_pos, scout_pos) < 8:
+                print('distance < 8')
+                return True
+
+        return False

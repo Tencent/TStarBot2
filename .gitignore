@@ -4,3 +4,4 @@ tstarbot/__pycache__/
 agents/__pycache__/
 __pycache__
 *.pyc
+.DS_Store

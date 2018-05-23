@@ -21,7 +21,8 @@ from tstarbot.data.pool.macro_def import COMBAT_UNITS, COMBAT_UNITS_FOOD_DICT
 Strategy = Enum('Strategy', ('RUSH', 'ECONOMY_FIRST', 'ONEWAVE', 'REFORM', 'HARASS'))
 UNIT_BLACKLIST = {
     UNIT_TYPEID.ZERG_QUEEN.value,
-    UNIT_TYPEID.ZERG_MUTALISK.value
+    UNIT_TYPEID.ZERG_MUTALISK.value,
+    UNIT_TYPEID.ZERG_ZERGLING.value
 }
 
 

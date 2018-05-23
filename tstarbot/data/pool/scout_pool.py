@@ -2,7 +2,7 @@ from tstarbot.data.pool.pool_base import PoolBase
 from tstarbot.data.pool import macro_def as md
 from pysc2.lib.typeenums import UNIT_TYPEID
 from tstarbot.data.pool.worker_pool import EmployStatus
-
+from tstarbot.data.pool.combat_pool import CombatUnitStatus
 import queue
 
 MAX_AREA_DISTANCE = 12
@@ -14,6 +14,7 @@ class Scout(object):
         self._unit = unit
         self._lost = False # is building lost
         self.is_doing_task = False
+        self.snapshot_armys = None
 
     def unit(self):
         return self._unit
@@ -110,8 +111,7 @@ class ScoutPool(PoolBase):
             self._init = True
 
         units = timestep.observation['units']
-        #self._update_scout(units)
-        self._update_all_overlord(units)
+        self._update_all_scouts(units)
 
     def add_scout(self, u):
         tag = u.int_attr.tag
@@ -135,7 +135,7 @@ class ScoutPool(PoolBase):
 
         return scouts
 
-    def _update_all_overlord(self, units):
+    def _update_all_scouts(self, units):
         # set all scouts 'lost' state
         for k, b in self._scouts.items():
             b.set_lost(True)
@@ -147,6 +147,9 @@ class ScoutPool(PoolBase):
                     and u.int_attr.alliance == md.AllianceType.SELF.value:
                 self.add_scout(u)
             elif u.int_attr.unit_type == UNIT_TYPEID.ZERG_DRONE.value \
+                    and u.int_attr.tag in self._scouts:
+                self.add_scout(u)
+            elif u.int_attr.unit_type == UNIT_TYPEID.ZERG_ZERGLING.value \
                     and u.int_attr.tag in self._scouts:
                 self.add_scout(u)
 
@@ -168,12 +171,22 @@ class ScoutPool(PoolBase):
 
     def select_drone_scout(self):
         worker = self._dd.worker_pool.employ_worker(EmployStatus.EMPLOY_SCOUT)
-        if worker == None:
+        if worker is None:
             return None
 
         self.add_scout(worker.unit)
 
         return self._scouts[worker.unit.int_attr.tag]
+
+    def select_zergling_scout(self):
+        zergling = self._dd.combat_pool.employ_combat_unit(
+            CombatUnitStatus.SCOUT, UNIT_TYPEID.ZERG_ZERGLING.value)
+        if zergling is None:
+            return None
+
+        self.add_scout(zergling)
+
+        return self._scouts[zergling.int_attr.tag]
 
     def find_cruise_target(self):
         for target in self._scout_base_target:
@@ -276,4 +289,11 @@ class ScoutPool(PoolBase):
                 self._scout_base_target.append(scout_target)
         #print('SCOUT area_number=', len(areas))
         #print('SCOUT target_number=', len(self._scout_base_target))
+
+    def get_view_scouts(self):
+        valid_scouts = []
+        for scout in self._scouts.values():
+            if scout.is_doing_task and scout.snapshot_armys is not None:
+                valid_scouts.append(scout)
+        return valid_scouts
 

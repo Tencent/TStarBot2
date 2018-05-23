@@ -17,6 +17,6 @@ production_verbose = 0
 scout_explore_version = 2
 max_forced_scout_count = 0  # num of drones used to scout
 combat_strategy = 'HARASS'  # 'REFORM' | 'HARASS'
-production_strategy = 'ADV_ARMS'  # 'RUSH' | 'ADV_ARMS'
+production_strategy = 'DEF_AND_ADV'  # 'RUSH' | 'ADV_ARMS'
 default_micro_version = 1
 game_version = '3.16.1'  # '3.16.1' | '4.3'

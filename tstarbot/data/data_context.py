@@ -14,6 +14,7 @@ from tstarbot.data.pool.worker_pool import WorkerPool
 from tstarbot.data.pool.combat_pool import CombatUnitPool
 from tstarbot.data.pool.enemy_pool import EnemyPool
 from tstarbot.data.pool.scout_pool import ScoutPool
+from tstarbot.data.pool.opponent_pool import OppoPool
 from s2clientprotocol import sc2api_pb2 as sc_pb
 from pysc2.lib.data_raw import data_raw_3_16, data_raw_4_0
 from pysc2.lib import TechTree
@@ -60,6 +61,7 @@ class DynamicData(object):
         self.base_pool = BasePool(self)
         self.enemy_pool = EnemyPool(self)
         self.scout_pool = ScoutPool(self)
+        self.oppo_pool = OppoPool()
 
     def update(self, timestep):
         # update command queues
@@ -77,7 +79,7 @@ class DynamicData(object):
     def reset(self):
         self.base_pool.reset()
         self.scout_pool.reset()
-
+        self.oppo_pool.reset()
 
 class DataContext:
     def __init__(self, config):
