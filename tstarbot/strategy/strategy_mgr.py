@@ -209,6 +209,12 @@ class ZergStrategyMgr(BaseStrategyMgr):
         queen_squad = Squad(queens, 'queen')
         return queen_squad
 
+    def _create_zergling_squads(self):
+        zerglings = [u for u in self._army.unsquaded_units
+                  if u.unit.unit_type == UNIT_TYPEID.ZERG_ZERGLING.value]
+        zergling_squad = Squad(zerglings, 'zerg6zerg')
+        return zergling_squad
+
     def _command_army(self, cmd_queue):
         self._cmds = list()
         if self._strategy == Strategy.RUSH:
@@ -227,6 +233,7 @@ class ZergStrategyMgr(BaseStrategyMgr):
         elif self._strategy == Strategy.HARASS:
             self._organize_army_by_size(size=1)
             self._command_army_harass(cmd_queue)
+            self._command_army_zerg6zerg(cmd_queue)
             if not self._command_army_defend(cmd_queue):
                 if not self._command_army_atk_stone(cmd_queue):
                     self._command_army_reform(cmd_queue)
@@ -642,6 +649,68 @@ class ZergStrategyMgr(BaseStrategyMgr):
                                   'y': closest_enemy_base.float_attr.pos_y})
                 cmd_queue.push(cmd)
                 self._cmds.append(cmd)
+
+    def _command_army_zerg6zerg(self, cmd_queue):
+        enemy_pool = self._dc.dd.enemy_pool
+        enemy_combat_units = self._find_enemy_combat_units(enemy_pool.units)
+        if len(enemy_combat_units) == 0 or enemy_pool.closest_cluster is None:
+            return False
+        bases = self._dc.dd.base_pool.bases
+
+        if len(bases) <= 2:
+            enemy_attacking_me = False
+            for tag in bases:
+                b = bases[tag].unit
+                for e in enemy_combat_units:
+                    if self._cal_square_dist(e, b) < 60:
+                        enemy_attacking_me = True
+                        # closest_enemy = e
+                        break
+                if enemy_attacking_me:
+                    break
+
+            second_base_pos = self._get_second_base_pos()
+            defend_base_pos = self._get_main_base_pos() if second_base_pos is None else second_base_pos
+
+            if enemy_attacking_me:
+                print('zerg 6 zerg.')
+                squad = self._create_zergling_squads()
+                squad.status = SquadStatus.MOVE
+
+                closest_enemy = self._find_closest_enemy_to_pos(squad.centroid, enemy_combat_units)
+
+                cmd = CombatCommand(
+                    type=CombatCmdType.MOVE,
+                    squad=squad,
+                    position=self._get_zergling_6pos(closest_enemy, defend_base_pos)
+                )
+
+                cmd_queue.push(cmd)
+                self._cmds.append(cmd)
+                return True
+            else:
+                squad = self._create_zergling_squads()
+                squad.status = SquadStatus.MOVE
+
+                cmd = CombatCommand(
+                    type=CombatCmdType.MOVE,
+                    squad=squad,
+                    position=defend_base_pos
+                )
+
+                cmd_queue.push(cmd)
+                self._cmds.append(cmd)
+
+                return False
+
+        return False
+
+    def _get_zergling_6pos(self, closest_enemy, base_pos, r=6):
+        x = closest_enemy.float_attr.pos_x - base_pos['x']
+        y = closest_enemy.float_attr.pos_y - base_pos['y']
+        target_x = base_pos['x'] + r * y / (x ** 2 + y ** 2) ** 0.5
+        target_y = base_pos['y'] - r * x / (x ** 2 + y ** 2) ** 0.5
+        return {'x': target_x, 'y': target_y}
 
     def _get_mutalisk_safe_pos(self):
         base_pool = self._dc.dd.base_pool
