@@ -9,12 +9,12 @@ from s2clientprotocol import sc2api_pb2 as sc_pb
 from pysc2.lib.typeenums import UNIT_TYPEID
 from pysc2.lib.typeenums import ABILITY_ID
 
-from tstarbot.production.production_mgr import BuildCmdUnit
-from tstarbot.production.production_mgr import BuildCmdUpgrade
-from tstarbot.production.production_mgr import BuildCmdMorph
-from tstarbot.production.production_mgr import BuildCmdBuilding
-from tstarbot.production.production_mgr import BuildCmdExpand
-from tstarbot.production.production_mgr import BuildCmdSpawnLarva
+from tstarbot.production.build_cmd import BuildCmdUnit
+from tstarbot.production.build_cmd import BuildCmdUpgrade
+from tstarbot.production.build_cmd import BuildCmdMorph
+from tstarbot.production.build_cmd import BuildCmdBuilding
+from tstarbot.production.build_cmd import BuildCmdExpand
+from tstarbot.production.build_cmd import BuildCmdSpawnLarva
 from tstarbot.data.pool.macro_def import WORKER_BUILD_ABILITY
 from tstarbot.building.placer import create_placer
 
