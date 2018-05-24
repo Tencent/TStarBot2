@@ -27,6 +27,7 @@ flags.DEFINE_integer("minimap_resolution", 64,
 flags.DEFINE_integer("max_agent_episodes", 3, "Total agent episodes.")
 flags.DEFINE_integer("game_steps_per_episode", 0, "Game steps per episode.")
 flags.DEFINE_integer("step_mul", 8, "Game steps per agent step.")
+flags.DEFINE_integer("random_seed", None, "Random_seed used in game_core.")
 
 flags.DEFINE_string("agent", "pysc2.agents.random_agent.RandomAgent",
                     "Which agent to run")
@@ -102,12 +103,17 @@ def run_loop(agents, env, max_episodes=1):
 
 
 def run_thread(agent_cls, map_name, visualize):
+    rs = FLAGS.random_seed
+    if FLAGS.random_seed is None:
+        rs = int((time.time() % 1) * 1000000)
+    print("Random seed: {}.".format(rs))
     with sc2_env.SC2Env(
             map_name=map_name,
             agent_race=FLAGS.agent_race,
             bot_race=FLAGS.bot_race,
             difficulty=FLAGS.difficulty,
             step_mul=FLAGS.step_mul,
+            random_seed=rs,
             game_steps_per_episode=FLAGS.game_steps_per_episode,
             screen_size_px=(FLAGS.screen_resolution, FLAGS.screen_resolution),
             minimap_size_px=(FLAGS.minimap_resolution, FLAGS.minimap_resolution),
