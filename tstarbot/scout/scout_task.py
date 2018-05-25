@@ -259,7 +259,7 @@ class ScoutExploreTask(ScoutTask):
         elif self._status == md.ScoutTaskStatus.DONE:
             return self._move_to_home()
         else:
-            print('SCOUT explore exec noop, scout status=', self._status)
+            #print('SCOUT explore exec noop, scout status=', self._status)
             return self._noop()
 
     def _detect_enemy_by_ver(self, view_enemys, dc, ver):
@@ -454,7 +454,7 @@ class ScoutCruiseTask(ScoutTask):
         elif self._status == md.ScoutTaskStatus.DONE:
             return self._move_to_home()
         else:
-            print('SCOUT cruise exec noop, scout status=', self._status)
+            #print('SCOUT cruise exec noop, scout status=', self._status)
             return self._noop()
 
     def _exec_under_attack(self, view_enemys):
@@ -830,7 +830,7 @@ class ScoutEnemyTask(ScoutTask):
             enemy_pos = [enemy.float_attr.pos_x, enemy.float_attr.pos_y]
 
             if self.distance(enemy_pos, scout_pos) < 8:
-                print('distance < 8')
+                #print('distance < 8')
                 return True
 
         return False

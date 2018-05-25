@@ -43,7 +43,7 @@ class QueenMgr(MicroBase):
         if len(self.enemy_combat_units) > 0:
             closest_enemy = self.find_closest_enemy(u, self.enemy_combat_units)
             if self.is_queen_run_away(u, closest_enemy):
-                print('queen run away.')
+                # print('queen run away.')
                 action = self.run_away_from_closest_enemy(u, closest_enemy)
             else:
                 action = self.attack_pos(u, pos)

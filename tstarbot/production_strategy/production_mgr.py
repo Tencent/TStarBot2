@@ -3,9 +3,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from tstarbot.production.prod_advarms import ZergProdAdvArms
-from tstarbot.production.prod_rush import ZergProdRush
-from tstarbot.production.prod_defandadv import ZergProdDefAndAdv
+from tstarbot.production_strategy.prod_advarms import ZergProdAdvArms
+from tstarbot.production_strategy.prod_rush import ZergProdRush
+from tstarbot.production_strategy.prod_defandadv import ZergProdDefAndAdv
 
 
 class ZergProductionMgr(object):
@@ -21,7 +21,7 @@ class ZergProductionMgr(object):
         elif self.strategy == 'DEF_AND_ADV':
             self.c = ZergProdDefAndAdv(dc)
         else:
-            raise Exception('Unknow production strategy: "%s"' % str(self.strategy))
+            raise Exception('Unknow production_strategy combat_strategy: "%s"' % str(self.strategy))
 
     def reset(self):
         return self.c.reset()

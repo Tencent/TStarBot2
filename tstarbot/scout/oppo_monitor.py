@@ -28,23 +28,23 @@ class OppoMonitor(object):
             self.judge_opening_tactis(dc)
         elif (self._step_count == OPENING_STAGE and
               dc.dd.oppo_pool.opening_tactics is None):
-            print('SCOUT oppo monitor, un-known, step=', self._step_count)
+            #print('SCOUT oppo monitor, un-known, step=', self._step_count)
             dc.dd.oppo_pool.opening_tactics = op.OppoOpeningTactics.UNKNOWN
         else:
             pass
 
     def judge_opening_tactis(self, dc):
         if self.is_roach_rush():
-            print('SCOUT oppo monitor, ROACH_RUSH, step=', self._step_count)
+            #print('SCOUT oppo monitor, ROACH_RUSH, step=', self._step_count)
             dc.dd.oppo_pool.opening_tactics = op.OppoOpeningTactics.ROACH_RUSH
         elif self.is_baneling_rush():
-            print('SCOUT oppo monitor, BANELING_RUSH, step=', self._step_count)
+            #print('SCOUT oppo monitor, BANELING_RUSH, step=', self._step_count)
             dc.dd.oppo_pool.opening_tactics = op.OppoOpeningTactics.BANELING_RUSH
         elif self.is_zerg_roach_rush():
-            print('SCOUT oppo monitor, ZERG_ROACH_RUSH, step=', self._step_count)
+            #print('SCOUT oppo monitor, ZERG_ROACH_RUSH, step=', self._step_count)
             dc.dd.oppo_pool.opening_tactics = op.OppoOpeningTactics.ZERGROACH_RUSH
         elif self.is_roach_suppress():
-            print('SCOUT oppo monitor, ROACH_SUPPRESS, step=', self._step_count)
+            #print('SCOUT oppo monitor, ROACH_SUPPRESS, step=', self._step_count)
             dc.dd.oppo_pool.opening_tactics = op.OppoOpeningTactics.ROACH_SUPPRESS
         else:
             pass

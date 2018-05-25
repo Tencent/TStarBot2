@@ -114,13 +114,13 @@ class MicroBase(object):
         return action
 
     @staticmethod
-    def run_away_from_closest_enemy(u, closest_enemy_unit):
+    def run_away_from_closest_enemy(u, closest_enemy_unit, run_away_factor=0.2):
         action = sc_pb.Action()
         action.action_raw.unit_command.ability_id = ABILITY_ID.SMART.value
         action.action_raw.unit_command.target_world_space_pos.x = u.float_attr.pos_x + \
-            (u.float_attr.pos_x - closest_enemy_unit.float_attr.pos_x) * 0.2
+            (u.float_attr.pos_x - closest_enemy_unit.float_attr.pos_x) * run_away_factor
         action.action_raw.unit_command.target_world_space_pos.y = u.float_attr.pos_y + \
-            (u.float_attr.pos_y - closest_enemy_unit.float_attr.pos_y) * 0.2
+            (u.float_attr.pos_y - closest_enemy_unit.float_attr.pos_y) * run_away_factor
         action.action_raw.unit_command.unit_tags.append(u.tag)
         return action
 

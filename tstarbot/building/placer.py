@@ -11,7 +11,7 @@ from random import uniform
 
 from pysc2.lib.typeenums import UNIT_TYPEID
 
-from tstarbot.production.map_tool import bitmap2array
+from tstarbot.data.pool.map_tool import bitmap2array
 
 
 def dist_to_pos(unit, pos):

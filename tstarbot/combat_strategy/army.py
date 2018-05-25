@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from tstarbot.strategy.squad import Squad
+from tstarbot.combat_strategy.squad import Squad
 
 
 class Army(object):

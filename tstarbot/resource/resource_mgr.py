@@ -9,7 +9,7 @@ import numpy as np
 from s2clientprotocol import sc2api_pb2 as sc_pb
 from pysc2.lib.typeenums import UNIT_TYPEID, ABILITY_ID, RACE
 
-from tstarbot.production.build_cmd import BuildCmdHarvest
+from tstarbot.production_strategy.build_cmd import BuildCmdHarvest
 from tstarbot.data.pool.macro_def import AllianceType
 
 

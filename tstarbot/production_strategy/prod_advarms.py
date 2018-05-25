@@ -5,21 +5,21 @@ from __future__ import print_function
 
 from pysc2.lib.typeenums import UNIT_TYPEID
 from pysc2.lib.typeenums import UPGRADE_ID
-from tstarbot.production.base_zerg_production_mgr import ZergBaseProductionMgr
-from tstarbot.production.util import *
+from tstarbot.production_strategy.base_zerg_production_mgr import ZergBaseProductionMgr
+from tstarbot.production_strategy.util import *
 
 
-class ZergProdDefAndAdv(ZergBaseProductionMgr):
+class ZergProdAdvArms(ZergBaseProductionMgr):
     def __init__(self, dc):
-        super(ZergProdDefAndAdv, self).__init__(dc)
+        super(ZergProdAdvArms, self).__init__(dc)
         self.ultra_goal = self.get_ultra_goal()
 
     def get_ultra_goal(self):
         return{UNIT_TYPEID.ZERG_ROACH: 13,
-               UNIT_TYPEID.ZERG_HYDRALISK: 23,
+               UNIT_TYPEID.ZERG_HYDRALISK: 20,
                UNIT_TYPEID.ZERG_INFESTOR: 3,
                UNIT_TYPEID.ZERG_CORRUPTOR: 0,
-               UNIT_TYPEID.ZERG_LURKERMP: 6,
+               UNIT_TYPEID.ZERG_LURKERMP: 8,
                UNIT_TYPEID.ZERG_VIPER: 2,
                UNIT_TYPEID.ZERG_RAVAGER: 4,
                UNIT_TYPEID.ZERG_ULTRALISK: 4,
@@ -41,16 +41,15 @@ class ZergProdDefAndAdv(ZergBaseProductionMgr):
                [UNIT_TYPEID.ZERG_SPAWNINGPOOL,
                 UNIT_TYPEID.ZERG_DRONE,
                 UNIT_TYPEID.ZERG_DRONE,
-                UNIT_TYPEID.ZERG_DRONE,
-                UNIT_TYPEID.ZERG_ZERGLING,
                 UNIT_TYPEID.ZERG_ROACHWARREN,
+                UNIT_TYPEID.ZERG_DRONE,
                 UNIT_TYPEID.ZERG_DRONE,
                 UNIT_TYPEID.ZERG_DRONE,
                 UNIT_TYPEID.ZERG_DRONE,
                 UNIT_TYPEID.ZERG_QUEEN] + \
                [UNIT_TYPEID.ZERG_DRONE,
                 UNIT_TYPEID.ZERG_ROACH] * 1 + \
-               [UNIT_TYPEID.ZERG_SPINECRAWLER] * 4 + \
+               [UNIT_TYPEID.ZERG_SPINECRAWLER] + \
                [UNIT_TYPEID.ZERG_DRONE,
                 UNIT_TYPEID.ZERG_ROACH] * 2 + \
                [UNIT_TYPEID.ZERG_SPINECRAWLER,

@@ -6,7 +6,7 @@ from __future__ import print_function
 import collections
 from enum import Enum
 
-from tstarbot.strategy.squad import Squad
+from tstarbot.combat_strategy.squad import Squad
 
 
 CombatCmdType = Enum('CombatCmdType', ('MOVE', 'ATTACK', 'DEFEND', 'RALLY', 'ROCK'))

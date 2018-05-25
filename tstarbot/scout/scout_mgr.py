@@ -40,7 +40,7 @@ class ZergScoutMgr(BaseScoutMgr):
 
         if hasattr(dc.config, 'scout_explore_version'):
             self._explore_ver = dc.config.scout_explore_version
-        print('Scout explore version=', self._explore_ver)
+        #print('Scout explore version=', self._explore_ver)
 
         if hasattr(dc.config, 'max_forced_scout_count'):
             self._forced_scout_count = dc.config.max_forced_scout_count
@@ -175,7 +175,7 @@ class ZergScoutMgr(BaseScoutMgr):
         if scout is None:
             return False
 
-        print('Zergling scout start!!')
+        #print('Zergling scout start!!')
         task = st.ScoutEnemyTask(scout, sp.home_pos, target)
         scout.is_doing_task = True
         target.has_scout = True

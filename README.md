@@ -11,7 +11,7 @@ pip install -e .
 ## Dependencies
 ```
 pysc2 (Zheng Yang's fork)
-pillow (for optional image saving)
+pillow
 ```
 All the dependencies will be automatically installed with the `pip install` command.
 
@@ -41,7 +41,9 @@ python -m tstarbot.bin.eval_agent \
     --agent_race Z \
     --bot_race Z
 ```
-See more examples [here](docs/examples_evaluate.md).
+See more examples [here](docs/examples_evaluate.md). 
+In particular, see how a well configured agent plays against 
+difficulty-A builtin bot [here](docs/examples_evaluate.md#against-difficulty-a-builtin-bot). 
 
 ## Profiling
 Use `pysc2.lib.stopwatch` to profile the code. 
@@ -55,6 +57,10 @@ python -m pysc2.bin.agent \
     --bot_race Z \
     --profile
 ```
+
+## Human-vs-AI and AI-vs-AI
+We have a tentative support for "Human-vs-AI" and "AI-vs-AI". 
+See examples [here](docs/examples_howtorun.md#ai-vs-ai).
 
 ## Coding Style
 Use the google python coding style:

@@ -1,4 +1,6 @@
 # Examples: Evaluate
+
+## Full Games
 Evaluate an agent on full game:
 ```
 python -m tstarbot.bin.eval_agent \
@@ -40,20 +42,24 @@ python -m tstarbot.bin.eval_agent \
     --bot_race Z
 ```
 
-Evaluate an early version from Lxhan:
+## Against Difficulty A Builtin Bot 
+A well configured agent plays against Difficulty-A builtin bot:
 ```
 python -m tstarbot.bin.eval_agent \
-    --max_agent_episodes 10 \
-    --step_mul 16 \
-    --map Simple64 \
-    --difficulty 4 \
-    --agent tstarbot.agents.zerg_lxhan_agent.ZergLxHanAgent \
+    --max_agent_episodes 1 \
+    --step_mul 4 \
+    --map AbyssalReef \
+    --difficulty A \
+    --norender \
+    --agent tstarbot.agents.zerg_agent.ZergAgent \
+    --agent_config tstarbot.agents.dft_config \
     --screen_resolution 64 \
     --agent_race Z \
     --bot_race Z \
-    --save_replay False
+    --nodisable_fog
 ```
 
+## Mini Games
 One can also evaluate an agent over Mini Game. Example:
 ```
 python -m tstarbot.bin.eval_agent \

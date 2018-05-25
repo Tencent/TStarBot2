@@ -9,10 +9,10 @@ from pysc2.lib.typeenums import ABILITY_ID
 from pysc2.lib.typeenums import UPGRADE_ID
 from pysc2.lib.typeenums import RACE
 from tstarbot.data.pool.macro_def import BASE_UNITS
-from tstarbot.production.util import *
+from tstarbot.production_strategy.util import *
 import distutils.version
-from tstarbot.production.base_production_mgr import BaseProductionMgr
-from tstarbot.production.build_cmd import *
+from tstarbot.production_strategy.base_production_mgr import BaseProductionMgr
+from tstarbot.production_strategy.build_cmd import *
 
 
 class ZergBaseProductionMgr(BaseProductionMgr):
