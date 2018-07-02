@@ -16,34 +16,38 @@ pillow
 All the dependencies will be automatically installed with the `pip install` command.
 
 ## How to Run
-Run the agent using `pysc2.bin.agent`. Example:
+Run the agent using the scripts from `pysc2.bin`. 
+Example:
 
 ```
 python -m pysc2.bin.agent \
-    --map DefeatRoaches \
-    --agent tstarbot.agents.micro_defeat_roaches_agent.MicroDefeatRoachesAgent \
-    --screen_resolution 64 \
-    --agent_race T \
-    --bot_race Z
+    --map AbyssalReef \
+    --feature_screen_size 64 \
+    --agent tstarbot.agents.zerg_agent.ZergAgent \
+    --agent_race zerg \
+    --agent2 Bot \
+    --agent2_race zerg
 ```
 See more examples [here](docs/examples_howtorun.md).
 
 ## Evaluate
-Evaluate the agent (e.g., winning rate) using `tstarbot.bin.eval_agent`. Example:
+Evaluate the agent (e.g., winning rate) using `tstarbot.bin.eval_agent`. 
+Example:
 ```
 python -m tstarbot.bin.eval_agent \
     --max_agent_episodes 5 \
     --map AbyssalReef \
-    --difficulty 3 \
     --norender \
-    --agent tstarbot.agents.zerg_agent.ZergAgent \
+    --agent1 tstarbot.agents.zerg_agent.ZergAgent \
     --screen_resolution 64 \
-    --agent_race Z \
-    --bot_race Z
+    --agent1_race Z \
+    --agent2 Bot \
+    --agent2_race Z \
+    --difficulty 3
 ```
 See more examples [here](docs/examples_evaluate.md). 
 In particular, see how a well configured agent plays against 
-difficulty-A builtin bot [here](docs/examples_evaluate.md#against-difficulty-a-builtin-bot). 
+difficulty-A (cheat_insane) builtin bot [here](docs/examples_evaluate.md#against-difficulty-a-builtin-bot). 
 
 ## Profiling
 Use `pysc2.lib.stopwatch` to profile the code. 
@@ -51,17 +55,17 @@ As an example, see `tstarbot/agents/micro_defeat_roaches_agent.py` and run the f
 ```
 python -m pysc2.bin.agent \
     --map DefeatRoaches \
+    --feature_screen_size 64 \
+    --max_episodes 2 \
     --agent tstarbot.agents.micro_defeat_roaches_agent.MicroDefeatRoachesAgent \
-    --screen_resolution 64 \
-    --agent_race T \
-    --bot_race Z \
+    --agent_race terran \
+    --agent2 Bot \
+    --agent2_race zerg \
     --profile
 ```
 
-## Human-vs-AI and AI-vs-AI
-We have a tentative support for "Human-vs-AI" and "AI-vs-AI". 
+## AI-vs-AI and Human-vs-AI 
 See examples [here](docs/examples_howtorun.md#ai-vs-ai).
 
 ## Coding Style
-Use the google python coding style:
-http://zh-google-styleguide.readthedocs.io/en/latest/google-python-styleguide/python_style_rules/
+Be consistent with that of `pysc2`.
