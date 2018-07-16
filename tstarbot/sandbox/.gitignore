@@ -1,2 +1,6 @@
 cmd_tmpl
 my_config.py
+my_rl_config.py
+model-50000.data-00000-of-00001
+model-50000.index
+model-50000.meta

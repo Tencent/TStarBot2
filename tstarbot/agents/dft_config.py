@@ -16,6 +16,7 @@ resource_verbose = 0
 production_verbose = 0
 combat_verbose = 0
 scout_explore_version = 2
+explore_rl_support = False
 max_forced_scout_count = 0  # num of drones used to scout
 combat_strategy = 'HARASS'  # 'REFORM' | 'HARASS'
 production_strategy = 'DEF_AND_ADV'  # 'RUSH' | 'ADV_ARMS' | 'DEF_AND_ADV'

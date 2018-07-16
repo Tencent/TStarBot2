@@ -3,182 +3,185 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from s2clientprotocol import sc2api_pb2 as sc_pb
-import pysc2.lib.typeenums as tp
-import tstarbot.scout.scout_task as st
+import tstarbot.scout.tasks.scout_task as st
+from tstarbot.scout.tasks.explor_task import ScoutExploreTask
+from tstarbot.scout.tasks.cruise_task import ScoutCruiseTask
+from tstarbot.scout.tasks.force_scout import ScoutForcedTask
+
 import tstarbot.scout.oppo_monitor as om
 import tstarbot.data.pool.macro_def as md
 
-from tstarbot.data.pool.worker_pool import EmployStatus
-from tstarbot.data.pool.scout_pool import Scout
 
 class BaseScoutMgr(object):
-    def __init__(self):
-        pass
+  def __init__(self):
+    pass
 
-    def update(self, dc, am):
-        pass
+  def update(self, dc, am):
+    pass
 
-    def reset(self):
-        pass
+  def reset(self):
+    pass
 
 DEF_EXPLORE_VER = 0
 
 class ZergScoutMgr(BaseScoutMgr):
-    def __init__(self, dc):
-        super(ZergScoutMgr, self).__init__()
-        self._tasks = []
-        self._oppo_monitor = om.OppoMonitor()
-        self._explore_ver = DEF_EXPLORE_VER
-        self._forced_scout_count = 0
-        self._assigned_forced_scout_count = 0
-        self._init_config(dc)
+  def __init__(self, dc):
+    super(ZergScoutMgr, self).__init__()
+    self._tasks = []
+    self._oppo_monitor = om.OppoMonitor()
+    self._explore_ver = DEF_EXPLORE_VER
+    self._forced_scout_count = 0
+    self._assigned_forced_scout_count = 0
 
-    def _init_config(self, dc):
-        if not hasattr(dc, 'config'):
-            return
+    # explore task rl
+    self._rl_support = False
+    self._explore_task_model = None
+    self._map_max_x = 0
+    self._map_max_y = 0
 
-        if hasattr(dc.config, 'scout_explore_version'):
-            self._explore_ver = dc.config.scout_explore_version
-        #print('Scout explore version=', self._explore_ver)
+    self._init_config(dc)
 
-        if hasattr(dc.config, 'max_forced_scout_count'):
-            self._forced_scout_count = dc.config.max_forced_scout_count
+  def _init_config(self, dc):
+    if not hasattr(dc, 'config'):
+      return
 
-    def reset(self):
-        self._tasks = []
-        self._assigned_forced_scout_count = 0
-        self._oppo_monitor = om.OppoMonitor()
+    if hasattr(dc.config, 'scout_explore_version'):
+      self._explore_ver = dc.config.scout_explore_version
+    #print('Scout explore version=', self._explore_ver)
 
-    # def _parse_explore_ver(self):
-    #     if self._explore_ver == 0:
-    #         self._forced_scout_count = 0
-    #     elif self._explore_ver == 1:
-    #         self._forced_scout_count = 1
-    #     else:
-    #         raise ValueError(
-    #             'ScoutMgr: unknown scout_expolore_version {}'.format(
-    #                 self._explore_ver)
-    #         )
+    if hasattr(dc.config, 'max_forced_scout_count'):
+      self._forced_scout_count = dc.config.max_forced_scout_count
 
-    def update(self, dc, am):
-        super(ZergScoutMgr, self).update(dc, am)
-        #print('SCOUT scout_mgr update, task_num=', len(self._tasks))
-        self._dispatch_task(dc)
-        self._check_task(dc)
+    if hasattr(dc.config, 'scout_explore_task_model'):
+      self._explore_task_model = dc.config.scout_explore_task_model
 
-        actions = []
-        # observe the enemy
-        units = dc.sd.obs['units']
-        view_enemys = []
-        for u in units:
-            if u.int_attr.alliance == md.AllianceType.ENEMY.value:
-                view_enemys.append(u)
+    if hasattr(dc.config, 'scout_map_max_x'):
+      self._map_max_x = dc.config.scout_map_max_x
 
-        #print('SCOUT view enemy number:', len(view_enemys))
-        for task in self._tasks:
-            act = task.do_task(view_enemys, dc)
-            if act is not None:
-                actions.append(act)
+    if hasattr(dc.config, 'scout_map_max_y'):
+      self._map_max_y = dc.config.scout_map_max_y
 
-        self._oppo_monitor.analysis(dc)
-        if len(actions) > 0:
-            am.push_actions(actions)
+    if hasattr(dc.config, 'explore_rl_support'):
+      self._rl_support = dc.config.explore_rl_support
 
-    def _check_task(self, dc):
-        keep_tasks = []
-        done_tasks = []
-        for task in self._tasks:
-            if task.status() == md.ScoutTaskStatus.DONE:
-                done_tasks.append(task)
-            elif task.status() == md.ScoutTaskStatus.SCOUT_DESTROY:
-                done_tasks.append(task)
-            else:
-                keep_tasks.append(task)
+  def reset(self):
+    self._tasks = []
+    self._assigned_forced_scout_count = 0
+    self._oppo_monitor = om.OppoMonitor()
 
-        for task in done_tasks:
-            task.post_process()
+  def update(self, dc, am):
+    super(ZergScoutMgr, self).update(dc, am)
+    #print('SCOUT scout_mgr update, task_num=', len(self._tasks))
+    self._dispatch_task(dc)
+    self._check_task(dc)
 
-            if task.type() == md.ScoutTaskType.FORCED \
-                and task.status() == md.ScoutTaskStatus.DONE:
-                dc.dd.scout_pool.remove_scout(task.scout().unit().int_attr.tag)
+    actions = []
+    # observe the enemy
+    units = dc.sd.obs['units']
+    view_enemys = []
+    for u in units:
+      if u.int_attr.alliance == md.AllianceType.ENEMY.value:
+        view_enemys.append(u)
 
-        self._tasks = keep_tasks
+    #print('SCOUT view enemy number:', len(view_enemys))
+    for task in self._tasks:
+      act = task.do_task(view_enemys, dc)
+      if act is not None:
+        actions.append(act)
 
-    def _dispatch_task(self, dc):
-        if self._forced_scout_count > self._assigned_forced_scout_count:
-            ret = self._dispatch_forced_scout_task(dc)
-            if ret:
-                self._assigned_forced_scout_count += 1
+    self._oppo_monitor.analysis(dc)
+    if len(actions) > 0:
+      am.push_actions(actions)
 
-        if self._explore_ver < st.EXPLORE_V3:
-            self._dispatch_cruise_task(dc)
-        self._dispatch_explore_task(dc)
+  def _check_task(self, dc):
+    keep_tasks = []
+    done_tasks = []
+    for task in self._tasks:
+      if task.status() == md.ScoutTaskStatus.DONE:
+        done_tasks.append(task)
+      elif task.status() == md.ScoutTaskStatus.SCOUT_DESTROY:
+        done_tasks.append(task)
+      else:
+        keep_tasks.append(task)
 
-        self._dispatch_enemy_scout_task(dc)
+    for task in done_tasks:
+      task.post_process()
 
-    def _dispatch_explore_task(self, dc):
-        sp = dc.dd.scout_pool
-        scout = sp.select_scout()
-        if self._explore_ver >= st.EXPLORE_V3:
-            target = sp.find_enemy_subbase_target()
-        else:
-            target = sp.find_furthest_idle_target()
-        if scout is None or target is None:
-            # not need dispatch task
-            return
-        task = st.ScoutExploreTask(scout, target, sp.home_pos, self._explore_ver)
-        scout.is_doing_task = True
-        target.has_scout = True
-        self._tasks.append(task)
+      if task.type() == md.ScoutTaskType.FORCED \
+        and task.status() == md.ScoutTaskStatus.DONE:
+        dc.dd.scout_pool.remove_scout(task.scout().unit().int_attr.tag)
 
-    def _dispatch_cruise_task(self, dc):
-        sp = dc.dd.scout_pool
-        scout = sp.select_scout()
-        target = sp.find_cruise_target()
-        if scout is None or target is None:
-            return
+    self._tasks = keep_tasks
 
-        task = st.ScoutCruiseTask(scout, sp.home_pos, target)
-        scout.is_doing_task = True
-        target.has_cruise = True
-        self._tasks.append(task)
+  def _dispatch_task(self, dc):
+    if self._forced_scout_count > self._assigned_forced_scout_count:
+      ret = self._dispatch_forced_scout_task(dc)
+      if ret:
+        self._assigned_forced_scout_count += 1
 
-    def _dispatch_forced_scout_task(self, dc):
-        sp = dc.dd.scout_pool
+    if self._explore_ver < st.EXPLORE_V3:
+      self._dispatch_cruise_task(dc)
 
-        target = sp.find_forced_scout_target()
-        #target = sp.find_furthest_idle_target()
-        if target is None:
-            return False
+    self._dispatch_explore_task(dc)
 
-        scout = sp.select_drone_scout()
-        if scout is None:
-            return False
+  def _dispatch_explore_task(self, dc):
+    sp = dc.dd.scout_pool
+    scout = sp.select_scout()
+    if self._explore_ver >= st.EXPLORE_V3:
+      target = sp.find_enemy_subbase_target()
+    else:
+      target = sp.find_furthest_idle_target()
+    if scout is None or target is None:
+      # not need dispatch task
+      return
 
-        task = st.ScoutForcedTask(scout, target, sp.home_pos)
-        scout.is_doing_task = True
-        target.has_scout = True
-        self._tasks.append(task)
+    if self._rl_support:
+      # rl-based explore task
+      if self._explore_task_model is None:
+        raise ValueError('no valid explore_task_model provided!')
 
-        return True
+      from tstarbot.scout.tasks.explor_task_rl import ScoutExploreTaskRL
 
-    def _dispatch_enemy_scout_task(self, dc):
-        sp = dc.dd.scout_pool
+      task = ScoutExploreTaskRL(scout, target, sp.home_pos,
+                                self._explore_task_model,
+                                self._map_max_x, self._map_max_y)
+      self._rl_support = False  # currently only start one
+    else:
+      # rule base explore task
+      task = ScoutExploreTask(scout, target, sp.home_pos, self._explore_ver)
 
-        target = sp.find_forced_scout_target()
-        #target = sp.find_furthest_idle_target()
-        if target is None:
-            return False
+    scout.is_doing_task = True
+    target.has_scout = True
+    self._tasks.append(task)
 
-        scout = sp.select_zergling_scout()
-        if scout is None:
-            return False
+  def _dispatch_cruise_task(self, dc):
+    sp = dc.dd.scout_pool
+    scout = sp.select_scout()
+    target = sp.find_cruise_target()
+    if scout is None or target is None:
+      return
 
-        #print('Zergling scout start!!')
-        task = st.ScoutEnemyTask(scout, sp.home_pos, target)
-        scout.is_doing_task = True
-        target.has_scout = True
-        self._tasks.append(task)
+    task = ScoutCruiseTask(scout, sp.home_pos, target)
+    scout.is_doing_task = True
+    target.has_cruise = True
+    self._tasks.append(task)
 
-        return True
+  def _dispatch_forced_scout_task(self, dc):
+    sp = dc.dd.scout_pool
+
+    target = sp.find_forced_scout_target()
+    #target = sp.find_furthest_idle_target()
+    if target is None:
+      return False
+
+    scout = sp.select_drone_scout()
+    if scout is None:
+      return False
+
+    task = ScoutForcedTask(scout, target, sp.home_pos)
+    scout.is_doing_task = True
+    target.has_scout = True
+    self._tasks.append(task)
+
+    return True
+
