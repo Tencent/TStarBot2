@@ -65,7 +65,8 @@ python -m pysc2.bin.agent \
 ```
 
 ## AI-vs-AI and Human-vs-AI 
-See examples [here](docs/examples_howtorun.md#ai-vs-ai).
+See examples [here](docs/examples_howtorun.md#ai-vs-ai) for AI-vs-AI and 
+examples [here](docs/examples_howtorun.md#human-vs-ai) for Human-vs-AI.
 
 ## Coding Style
 Be consistent with that of `pysc2`.

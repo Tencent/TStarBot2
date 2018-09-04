@@ -117,6 +117,7 @@ class ZergStrategyMgr(BaseStrategyMgr):
             'Combat combat_strategy [%s] is not supported.' %
             dc.config.combat_strategy)
 
+  ######################## create army #########################
   def _organize_army_by_size(self, size):
     self._create_fixed_size_spec_type_squads(size, UNIT_BLACKLIST)
     self._create_fixed_size_mutalisk_squads(squad_size=3,
@@ -230,6 +231,7 @@ class ZergStrategyMgr(BaseStrategyMgr):
     zergling_squad = Squad(zerglings, 'zerg6zerg')
     return zergling_squad
 
+  ######################## push command #########################
   def _command_army(self, cmd_queue):
     self._cmds = list()
     if self._strategy == Strategy.RUSH:
@@ -244,14 +246,20 @@ class ZergStrategyMgr(BaseStrategyMgr):
     elif self._strategy == Strategy.REFORM:
       self._organize_army_by_size(size=1)
       self._command_army_defend(cmd_queue)
-      self._command_army_reform(cmd_queue)
+      self._command_army_reform(cmd_queue,
+                                food_trigger=80,
+                                retreat_food=None,
+                                all_in=True)
     elif self._strategy == Strategy.HARASS:
       self._organize_army_by_size(size=1)
       self._command_army_harass(cmd_queue)
       self._command_army_zerg6zerg(cmd_queue)
       if not self._command_army_defend(cmd_queue):
         if not self._command_army_atk_stone(cmd_queue):
-          self._command_army_reform(cmd_queue)
+          self._command_army_reform(cmd_queue,
+                                    food_trigger=100,
+                                    retreat_food=180,
+                                    all_in=False)
 
   def _command_army_rush(self, cmd_queue):
     enemy_pool = self._dc.dd.enemy_pool
@@ -397,8 +405,11 @@ class ZergStrategyMgr(BaseStrategyMgr):
 
     return False
 
-  def _command_army_reform(self, cmd_queue):
+  def _command_army_reform(self, cmd_queue, food_trigger, retreat_food, all_in):
     enemy_pool = self._dc.dd.enemy_pool
+    self._food_trigger = food_trigger
+    if retreat_food is None:
+      retreat_food = self._food_trigger - 20
 
     # rally after production_strategy
     if not self._ready_to_go:
@@ -409,9 +420,9 @@ class ZergStrategyMgr(BaseStrategyMgr):
       if self._rally_pos is None:
         return None
       for squad in self._army.squads:
-        if squad.uniform is not None:
+        if squad.uniform is not None and not all_in:
           continue
-        if squad.status == SquadStatus.SCOUT:
+        if squad.status == SquadStatus.SCOUT and not all_in:
           continue
         squad.status = SquadStatus.MOVE
 
@@ -425,9 +436,9 @@ class ZergStrategyMgr(BaseStrategyMgr):
       rallied_squads = [squad for squad in self._army.squads
                         if self._distance(squad.centroid, self._rally_pos) < 10]
       for squad in rallied_squads:
-        if squad.uniform is not None:
+        if squad.uniform is not None and not all_in:
           continue
-        if squad.status == SquadStatus.SCOUT:
+        if squad.status == SquadStatus.SCOUT and not all_in:
           continue
         squad.status = SquadStatus.IDLE
       if self._dc.sd.obs['player'][3] >= self._food_trigger and \
@@ -448,17 +459,17 @@ class ZergStrategyMgr(BaseStrategyMgr):
 
       temp_pos = attack_pos
       for squad in self._army.squads:
-        if squad.uniform is not None:
+        if squad.uniform is not None and not all_in:
           continue
-        if squad.status == SquadStatus.SCOUT:
+        if squad.status == SquadStatus.SCOUT and not all_in:
           continue
         # safe dist
         if 25 < self._distance(squad.centroid,
                                enemy_pool.closest_cluster.centroid) < 30:
           self._rally_pos_for_attack = squad.centroid
 
-      if (self._dc.sd.obs['player'][5] < self.estimate_enemy_army_power()
-          or self._dc.sd.obs['player'][3] < 180):
+      if (self._dc.sd.obs['player'][5] < self._estimate_enemy_army_power()
+          or self._dc.sd.obs['player'][3] < retreat_food):
         if self._verbose > 0:
           print('Retreat.')
         self._ready_to_go = False
@@ -466,9 +477,9 @@ class ZergStrategyMgr(BaseStrategyMgr):
         self._food_trigger = min(self._food_trigger, 195)
 
       for squad in self._army.squads:
-        if squad.uniform is not None:
+        if squad.uniform is not None and not all_in:
           continue
-        if squad.status == SquadStatus.SCOUT:
+        if squad.status == SquadStatus.SCOUT and not all_in:
           continue
         squad.status = SquadStatus.MOVE
         cmd = CombatCommand(
@@ -484,9 +495,9 @@ class ZergStrategyMgr(BaseStrategyMgr):
           squad.centroid, self._rally_pos_for_attack) < 8] \
         if (self._rally_pos_for_attack is not None) else []
       for squad in rallied_squads_for_attack:
-        if squad.uniform is not None:
+        if squad.uniform is not None and not all_in:
           continue
-        if squad.status == SquadStatus.SCOUT:
+        if squad.status == SquadStatus.SCOUT and not all_in:
           continue
         squad.status = SquadStatus.IDLE
 
@@ -499,9 +510,9 @@ class ZergStrategyMgr(BaseStrategyMgr):
         return None
       if self._verbose > 0:
         print('Attack')
-      est_enemy_power = self.estimate_enemy_army_power()
+      est_enemy_power = self._estimate_enemy_army_power()
       if (self._dc.sd.obs['player'][5] < est_enemy_power
-          or self._dc.sd.obs['player'][3] < 180):
+          or self._dc.sd.obs['player'][3] < retreat_food):
         if self._verbose > 0:
           print('Retreat.')
         self._ready_to_attack = False
@@ -510,9 +521,9 @@ class ZergStrategyMgr(BaseStrategyMgr):
         self._food_trigger = min(self._food_trigger, 195)
         return None
       for squad in self._army.squads:
-        if squad.uniform is not None:
+        if squad.uniform is not None and not all_in:
           continue
-        if squad.status == SquadStatus.SCOUT:
+        if squad.status == SquadStatus.SCOUT and not all_in:
           continue
         squad.status = SquadStatus.ATTACK
         cmd = CombatCommand(
@@ -521,46 +532,6 @@ class ZergStrategyMgr(BaseStrategyMgr):
           position=attack_pos)
         cmd_queue.push(cmd)
         self._cmds.append(cmd)
-
-  def estimate_enemy_army_power(self):
-    enemy_combat_units = [u for u in self._dc.dd.enemy_pool.units if
-                          u.int_attr.unit_type in COMBAT_UNITS]
-    enemy_army_food = 0
-    for e in enemy_combat_units:
-      if e.int_attr.unit_type not in COMBAT_UNITS_FOOD_DICT.keys():
-        continue
-      enemy_army_food += COMBAT_UNITS_FOOD_DICT[e.int_attr.unit_type]
-    return enemy_army_food
-
-  def estimate_self_army_power_in_battle(self):
-    enemy_combat_units = [u for u in self._dc.dd.enemy_pool.units if
-                          u.int_attr.unit_type in COMBAT_UNITS]
-    if len(enemy_combat_units) == 0:
-      return -1
-    # do not include mutalisk
-    self_combat_units = [u.unit for u in self._dc.dd.combat_pool.units
-                         if u.unit.int_attr.unit_type !=
-                         UNIT_TYPEID.ZERG_MUTALISK.value]
-    battle_pos = None
-    for e in enemy_combat_units:
-      for u in self_combat_units:
-        if self._cal_square_dist(u, e) < 30:
-          battle_pos = {'x': u.float_attr.pos_x,
-                        'y': u.float_attr.pos_y}
-
-    if battle_pos is None:
-      return -1
-
-    self_combat_units_in_battle = [u for u in self_combat_units
-                                   if self._distance({'x': u.float_attr.pos_x,
-                                                      'y': u.float_attr.pos_y},
-                                                     battle_pos) < 10]
-    self_army_food_in_battle = 0
-    for u in self_combat_units_in_battle:
-      if u.int_attr.unit_type not in COMBAT_UNITS_FOOD_DICT.keys():
-        continue
-      self_army_food_in_battle += COMBAT_UNITS_FOOD_DICT[u.int_attr.unit_type]
-    return self_army_food_in_battle
 
   def _command_army_harass(self, cmd_queue):
     # if has mutalisk -> harass
@@ -614,6 +585,102 @@ class ZergStrategyMgr(BaseStrategyMgr):
       cmd_queue.push(cmd)
       self._cmds.append(cmd)
     return True
+
+  def _command_army_zerg6zerg(self, cmd_queue):
+    enemy_pool = self._dc.dd.enemy_pool
+    enemy_combat_units = self._find_enemy_combat_units(enemy_pool.units)
+    if len(enemy_combat_units) == 0 or enemy_pool.closest_cluster is None:
+      return False
+    bases = self._dc.dd.base_pool.bases
+
+    if len(bases) <= 2:
+      enemy_attacking_me = False
+      for tag in bases:
+        b = bases[tag].unit
+        for e in enemy_combat_units:
+          if self._cal_square_dist(e, b) < 60:
+            enemy_attacking_me = True
+            break
+        if enemy_attacking_me:
+          break
+
+      second_base_pos = self._get_second_base_pos()
+      defend_base_pos = self._get_main_base_pos() \
+        if second_base_pos is None else second_base_pos
+
+      if enemy_attacking_me:
+        squad = self._create_zergling_squads()
+        squad.status = SquadStatus.MOVE
+
+        closest_enemy = self._find_closest_enemy_to_pos(squad.centroid,
+                                                        enemy_combat_units)
+
+        cmd = CombatCommand(
+          type=CombatCmdType.MOVE,
+          squad=squad,
+          position=self._get_zergling_6pos(closest_enemy, defend_base_pos)
+        )
+
+        cmd_queue.push(cmd)
+        self._cmds.append(cmd)
+        return True
+      else:
+        squad = self._create_zergling_squads()
+        squad.status = SquadStatus.MOVE
+
+        cmd = CombatCommand(
+          type=CombatCmdType.MOVE,
+          squad=squad,
+          position=defend_base_pos
+        )
+
+        cmd_queue.push(cmd)
+        self._cmds.append(cmd)
+
+        return False
+
+    return False
+
+  ####################### utils within ZergStrategyMgr ########################
+  def _estimate_enemy_army_power(self):
+    enemy_combat_units = [u for u in self._dc.dd.enemy_pool.units if
+                          u.int_attr.unit_type in COMBAT_UNITS]
+    enemy_army_food = 0
+    for e in enemy_combat_units:
+      if e.int_attr.unit_type not in COMBAT_UNITS_FOOD_DICT.keys():
+        continue
+      enemy_army_food += COMBAT_UNITS_FOOD_DICT[e.int_attr.unit_type]
+    return enemy_army_food
+
+  def _estimate_self_army_power_in_battle(self):
+    enemy_combat_units = [u for u in self._dc.dd.enemy_pool.units if
+                          u.int_attr.unit_type in COMBAT_UNITS]
+    if len(enemy_combat_units) == 0:
+      return -1
+    # do not include mutalisk
+    self_combat_units = [u.unit for u in self._dc.dd.combat_pool.units
+                         if u.unit.int_attr.unit_type !=
+                         UNIT_TYPEID.ZERG_MUTALISK.value]
+    battle_pos = None
+    for e in enemy_combat_units:
+      for u in self_combat_units:
+        if self._cal_square_dist(u, e) < 30:
+          battle_pos = {'x': u.float_attr.pos_x,
+                        'y': u.float_attr.pos_y}
+
+    if battle_pos is None:
+      return -1
+
+    self_combat_units_in_battle = [u for u in self_combat_units
+                                   if self._distance({'x': u.float_attr.pos_x,
+                                                      'y': u.float_attr.pos_y},
+                                                     battle_pos) < 10]
+    self_army_food_in_battle = 0
+    for u in self_combat_units_in_battle:
+      if u.int_attr.unit_type not in COMBAT_UNITS_FOOD_DICT.keys():
+        continue
+      self_army_food_in_battle += COMBAT_UNITS_FOOD_DICT[u.int_attr.unit_type]
+    return self_army_food_in_battle
 
   def _mutalisk_harass(self, cmd_queue, mutalisk_uniform,
                        harass_station_pos1, harass_station_pos2):
@@ -676,61 +743,6 @@ class ZergStrategyMgr(BaseStrategyMgr):
                     'y': closest_enemy_base.float_attr.pos_y})
         cmd_queue.push(cmd)
         self._cmds.append(cmd)
-
-  def _command_army_zerg6zerg(self, cmd_queue):
-    enemy_pool = self._dc.dd.enemy_pool
-    enemy_combat_units = self._find_enemy_combat_units(enemy_pool.units)
-    if len(enemy_combat_units) == 0 or enemy_pool.closest_cluster is None:
-      return False
-    bases = self._dc.dd.base_pool.bases
-
-    if len(bases) <= 2:
-      enemy_attacking_me = False
-      for tag in bases:
-        b = bases[tag].unit
-        for e in enemy_combat_units:
-          if self._cal_square_dist(e, b) < 60:
-            enemy_attacking_me = True
-            break
-        if enemy_attacking_me:
-          break
-
-      second_base_pos = self._get_second_base_pos()
-      defend_base_pos = self._get_main_base_pos() \
-        if second_base_pos is None else second_base_pos
-
-      if enemy_attacking_me:
-        squad = self._create_zergling_squads()
-        squad.status = SquadStatus.MOVE
-
-        closest_enemy = self._find_closest_enemy_to_pos(squad.centroid,
-                                                        enemy_combat_units)
-
-        cmd = CombatCommand(
-          type=CombatCmdType.MOVE,
-          squad=squad,
-          position=self._get_zergling_6pos(closest_enemy, defend_base_pos)
-        )
-
-        cmd_queue.push(cmd)
-        self._cmds.append(cmd)
-        return True
-      else:
-        squad = self._create_zergling_squads()
-        squad.status = SquadStatus.MOVE
-
-        cmd = CombatCommand(
-          type=CombatCmdType.MOVE,
-          squad=squad,
-          position=defend_base_pos
-        )
-
-        cmd_queue.push(cmd)
-        self._cmds.append(cmd)
-
-        return False
-
-    return False
 
   def _get_zergling_6pos(self, closest_enemy, base_pos, r=6):
     x = closest_enemy.float_attr.pos_x - base_pos['x']
@@ -813,19 +825,6 @@ class ZergStrategyMgr(BaseStrategyMgr):
     idx = np.argmin(dist)
     return enemies[idx]
 
-  @staticmethod
-  def _find_enemy_combat_units(emeny_units):
-    enemy_combat_units = []
-    for u in emeny_units:
-      if u.int_attr.unit_type in COMBAT_UNITS:
-        enemy_combat_units.append(u)
-    return enemy_combat_units
-
-  @staticmethod
-  def _cal_square_dist(u1, u2):
-    return pow(pow(u1.float_attr.pos_x - u2.float_attr.pos_x, 2) +
-               pow(u1.float_attr.pos_y - u2.float_attr.pos_y, 2), 0.5)
-
   def _find_closest_enemy_to_pos(self, pos, enemies):
     dist = []
     for e in enemies:
@@ -834,20 +833,6 @@ class ZergStrategyMgr(BaseStrategyMgr):
       dist.append(self._distance(pos, e_pos))
     idx = np.argmin(dist)
     return enemies[idx]
-
-  @staticmethod
-  def _get_center_of_units(units):
-    center_x = 0
-    center_y = 0
-    for u in units:
-      center_x += u.float_attr.pos_x
-      center_y += u.float_attr.pos_y
-    if len(units) > 0:
-      center_x /= len(units)
-      center_y /= len(units)
-    pos = {'x': center_x,
-           'y': center_y}
-    return pos
 
   def _get_main_base_pos(self):
     return {'x': self._dc.dd.base_pool.home_pos[0],
@@ -891,3 +876,30 @@ class ZergStrategyMgr(BaseStrategyMgr):
     x = target_pos[0] + offset_fac * offset_x
     y = target_pos[1] + offset_fac * offset_y
     return {'x': x, 'y': y}
+
+  @staticmethod
+  def _find_enemy_combat_units(emeny_units):
+    enemy_combat_units = []
+    for u in emeny_units:
+      if u.int_attr.unit_type in COMBAT_UNITS:
+        enemy_combat_units.append(u)
+    return enemy_combat_units
+
+  @staticmethod
+  def _cal_square_dist(u1, u2):
+    return pow(pow(u1.float_attr.pos_x - u2.float_attr.pos_x, 2) +
+               pow(u1.float_attr.pos_y - u2.float_attr.pos_y, 2), 0.5)
+
+  @staticmethod
+  def _get_center_of_units(units):
+    center_x = 0
+    center_y = 0
+    for u in units:
+      center_x += u.float_attr.pos_x
+      center_y += u.float_attr.pos_y
+    if len(units) > 0:
+      center_x /= len(units)
+      center_y /= len(units)
+    pos = {'x': center_x,
+           'y': center_y}
+    return pos

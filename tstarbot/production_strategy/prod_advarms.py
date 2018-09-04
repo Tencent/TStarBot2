@@ -17,10 +17,10 @@ class ZergProdAdvArms(ZergBaseProductionMgr):
   @staticmethod
   def get_ultra_goal():
     return{UNIT_TYPEID.ZERG_ROACH: 13,
-           UNIT_TYPEID.ZERG_HYDRALISK: 20,
+           UNIT_TYPEID.ZERG_HYDRALISK: 23,
            UNIT_TYPEID.ZERG_INFESTOR: 3,
            UNIT_TYPEID.ZERG_CORRUPTOR: 0,
-           UNIT_TYPEID.ZERG_LURKERMP: 8,
+           UNIT_TYPEID.ZERG_LURKERMP: 6,
            UNIT_TYPEID.ZERG_VIPER: 2,
            UNIT_TYPEID.ZERG_RAVAGER: 4,
            UNIT_TYPEID.ZERG_ULTRALISK: 4,
@@ -40,8 +40,11 @@ class ZergProdAdvArms(ZergBaseProductionMgr):
             UNIT_TYPEID.ZERG_HATCHERY,
             UNIT_TYPEID.ZERG_DRONE,
             UNIT_TYPEID.ZERG_EXTRACTOR] + \
-           [UNIT_TYPEID.ZERG_DRONE] * 4 + \
+           [UNIT_TYPEID.ZERG_DRONE] * 2 + \
            [UNIT_TYPEID.ZERG_SPAWNINGPOOL,
+            UNIT_TYPEID.ZERG_DRONE,
+            UNIT_TYPEID.ZERG_DRONE,
+            UNIT_TYPEID.ZERG_DRONE,
             UNIT_TYPEID.ZERG_DRONE,
             UNIT_TYPEID.ZERG_DRONE,
             UNIT_TYPEID.ZERG_ROACHWARREN,
@@ -66,9 +69,7 @@ class ZergProdAdvArms(ZergBaseProductionMgr):
       goal = [UNIT_TYPEID.ZERG_LAIR] + \
              [UNIT_TYPEID.ZERG_DRONE] * 6 + \
              [UNIT_TYPEID.ZERG_ROACH] * 5 + \
-             [UNIT_TYPEID.ZERG_SPIRE] * 1 + \
              [UNIT_TYPEID.ZERG_DRONE, UNIT_TYPEID.ZERG_ROACH] * 5 + \
-             [UNIT_TYPEID.ZERG_MUTALISK] * 6 + \
              [UNIT_TYPEID.ZERG_EVOLUTIONCHAMBER] + \
              [UNIT_TYPEID.ZERG_ROACH,
               UNIT_TYPEID.ZERG_DRONE] * 3 + \

@@ -17,6 +17,9 @@ from tstarbot.data.data_context import DataContext
 from tstarbot.act.act_mgr import ActMgr
 
 
+DFT_CONFIG_PATH = 'tstarbot.agents.dft_config'
+
+
 class ZergAgent(base_agent.BaseAgent):
   """A ZvZ Zerg agent for full game map."""
 
@@ -24,9 +27,10 @@ class ZergAgent(base_agent.BaseAgent):
     super(ZergAgent, self).__init__()
     self._sleep_per_step = None
 
-    config = None
+    config_path = DFT_CONFIG_PATH
     if kwargs.get('config_path'):  # use the config file
-      config = importlib.import_module(kwargs['config_path'])
+      config_path = kwargs['config_path']
+    config = importlib.import_module(config_path)
     self._init_config(config)
 
     self.dc = DataContext(config)
