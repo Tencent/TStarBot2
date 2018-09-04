@@ -44,7 +44,7 @@ python -m tstarbot.bin.eval_agent \
     --bot_race Z
 ```
 
-## Against Difficulty A Builtin Bot 
+## Against Difficulty Level 10 (a.k.a Level A) Builtin Bot 
 A well configured agent plays against Difficulty-A (cheat_insane) builtin bot:
 ```
 python -m tstarbot.bin.eval_agent \
@@ -53,7 +53,7 @@ python -m tstarbot.bin.eval_agent \
     --map AbyssalReef \
     --norender \
     --agent1 tstarbot.agents.zerg_agent.ZergAgent \
-    --agent1_config tstarbot.agents.dft_config \
+    --agent1_config tstarbot.agents.vs_builtin_ai_config \
     --screen_resolution 64 \
     --agent1_race Z \
     --agent2 Bot \

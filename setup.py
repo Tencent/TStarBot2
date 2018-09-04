@@ -15,7 +15,6 @@ setup(
     ],
 
     install_requires=[
-        'pysc2',
         'pillow'
     ],
 )

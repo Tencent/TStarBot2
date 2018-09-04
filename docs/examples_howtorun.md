@@ -63,7 +63,7 @@ First, run:
 python -m pysc2.bin.play_vs_agent \
     --human \
     --map AbyssalReef \
-    --user_race terran
+    --user_race zerg
 ```
 to host a game.
 

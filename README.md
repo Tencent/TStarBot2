@@ -10,10 +10,10 @@ pip install -e .
 
 ## Dependencies
 ```
-pysc2 (Zheng Yang's fork)
+pysc2 (Use Tencent AI Lab fork, required!)
 pillow
 ```
-All the dependencies will be automatically installed with the `pip install` command.
+We recommend `pip install` each Python package.
 
 ## How to Run
 Run the agent using the scripts from `pysc2.bin`. 
