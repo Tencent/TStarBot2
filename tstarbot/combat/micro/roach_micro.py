@@ -47,7 +47,9 @@ class RoachMgr(MicroBase):
       # burrow to recover when idle
       if (u.float_attr.health / u.float_attr.health_max < 1 and
               closest_enemy_dist > 1.2 * self.roach_attack_range):
-        action = self.burrow_down(u)
+        if UPGRADE_ID.BURROW.value in self.dc.sd.obs[
+            'raw_data'].player.upgrade_ids:
+          action = self.burrow_down(u)
     elif u.int_attr.unit_type == UNIT_TYPEID.ZERG_ROACHBURROWED.value:
       if u.float_attr.health / u.float_attr.health_max == 1:
         action = self.burrow_up(u)

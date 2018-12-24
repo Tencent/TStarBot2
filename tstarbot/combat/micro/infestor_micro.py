@@ -59,6 +59,9 @@ class InfestorMgr(MicroBase):
         else:
           bases = self.dc.dd.base_pool.bases
           base_units = [bases[tag].unit for tag in bases]
+          if len(base_units) == 0:
+            action = self.hold_fire(u)
+            return action
           closest_base = self.find_closest_enemy(u, base_units)
           base_pos = {'x': closest_base.float_attr.pos_x,
                       'y': closest_base.float_attr.pos_y}

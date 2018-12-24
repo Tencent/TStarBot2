@@ -118,6 +118,9 @@ class ViperMgr(MicroBase):
         base_units = [bases[tag].unit for tag in bases
                       if bases[tag].unit.float_attr.health > 500
                       and bases[tag].unit.float_attr.build_progress == 1]
+        if len(base_units) == 0:
+          action = self.hold_fire(u)
+          return action
         closest_base = self.find_closest_enemy(u, base_units)
         if self.dist_between_units(u, closest_base) < self.viper_consume_range:
           action = self.consume_target(u, closest_base)

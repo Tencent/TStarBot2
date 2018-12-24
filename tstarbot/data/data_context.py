@@ -82,6 +82,7 @@ class DynamicData(object):
     self.base_pool.reset()
     self.scout_pool.reset()
     self.oppo_pool.reset()
+    self.enemy_pool.reset()
 
 
 class DataContext:

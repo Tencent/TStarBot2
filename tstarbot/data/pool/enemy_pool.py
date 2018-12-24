@@ -66,8 +66,16 @@ class EnemyPool(PoolBase):
     self._is_set_main_base = False
     self._main_base_pos = None
 
+  def reset(self):
+    self._enemy_units = list()
+    self._enemy_clusters = list()
+    self._self_bases = list()
+    self._is_set_main_base = False
+    self._main_base_pos = None
+
   def update(self, timestep):
     self._enemy_units = list()
+    self._self_bases = list()
     units = timestep.observation['units']
     if not self._is_set_main_base:
       for u in units:

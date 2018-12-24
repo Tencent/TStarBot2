@@ -86,6 +86,8 @@ class MicroBase(object):
   def attack_closest_enemy(self, u, enemies):
     action = sc_pb.Action()
     action.action_raw.unit_command.ability_id = ABILITY_ID.ATTACK_ATTACK.value
+    if len(enemies) == 0:
+      return self.hold_fire(u)
     target = self.find_closest_enemy(u, enemies=enemies)
     action.action_raw.unit_command.target_unit_tag = target.tag
     action.action_raw.unit_command.unit_tags.append(u.tag)
