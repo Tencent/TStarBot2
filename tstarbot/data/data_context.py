@@ -5,8 +5,7 @@ from __future__ import division
 from __future__ import print_function
 
 from s2clientprotocol import sc2api_pb2 as sc_pb
-from pysc2.lib.data_raw import data_raw_3_16
-from pysc2.lib.data_raw import data_raw_4_0
+from pysc2.lib.data_raw import get_data_raw
 from pysc2.lib import TechTree
 
 from tstarbot.data.queue.build_command_queue import BuildCommandQueue
@@ -21,14 +20,13 @@ from tstarbot.data.pool.enemy_pool import EnemyPool
 from tstarbot.data.pool.scout_pool import ScoutPool
 from tstarbot.data.pool.opponent_pool import OppoPool
 
-
 class StaticData(object):
   def __init__(self, config):
     self._obs = None
     self._timestep = None
-    self._data_raw = data_raw_4_0
-
     self.game_version = '3.16.1'
+    self._data_raw = get_data_raw(self.game_version)
+
     if hasattr(config, 'game_version'):
       self.game_version = config.game_version
     self.TT = TechTree()
